@@ -1,8 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { cookies } from 'next/headers'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 
 export type AdminActionResult = {
@@ -11,27 +10,9 @@ export type AdminActionResult = {
 }
 
 export async function getCustomers() {
-  const cookieStore = await cookies()
-  const isAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  if (!(await isAdminAuthenticated())) return []
 
   const adminClient = createAdminClient()
-
-  let isAuthorized = isAdminCookie
-  if (!isAuthorized && user) {
-    const { data: profile } = await adminClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle()
-    if (profile?.role === 'admin') {
-      isAuthorized = true
-    }
-  }
-
-  if (!isAuthorized) return []
 
   // 1. Fetch registered customer profiles
   const { data: profiles } = await adminClient
@@ -40,7 +21,14 @@ export async function getCustomers() {
     .eq('role', 'customer')
     .order('created_at', { ascending: false })
 
-  // 2. Fetch all orders to include ordering customers
+  // 2. Fetch direct-auth customers (users table is the login source of truth)
+  const { data: directUsers } = await adminClient
+    .from('users')
+    .select('*')
+    .eq('role', 'customer')
+    .order('created_at', { ascending: false })
+
+  // 3. Fetch all orders to include ordering customers
   const { data: orders } = await adminClient
     .from('orders')
     .select('id, user_id, shipping_address, created_at')
@@ -60,6 +48,32 @@ export async function getCustomers() {
         role: 'customer',
         is_active: p.is_active ?? true,
         created_at: p.created_at,
+        orders_count: 0,
+      })
+    }
+  })
+
+  // Merge direct-auth users, whose is_active flag controls sign-in
+  directUsers?.forEach((u) => {
+    const emailKey = u.email?.trim().toLowerCase()
+    if (!emailKey) return
+
+    const existing = customerMap.get(emailKey)
+    if (existing) {
+      existing.is_active = u.is_active ?? existing.is_active
+      if (!existing.phone && u.phone) existing.phone = u.phone
+      if ((!existing.full_name || existing.full_name === 'Customer') && u.full_name) {
+        existing.full_name = u.full_name
+      }
+    } else {
+      customerMap.set(emailKey, {
+        id: u.id,
+        full_name: u.full_name || 'Customer',
+        email: u.email,
+        phone: u.phone || '',
+        role: 'customer',
+        is_active: u.is_active ?? true,
+        created_at: u.created_at,
         orders_count: 0,
       })
     }
@@ -100,36 +114,37 @@ export async function toggleCustomerStatus(
   id: string,
   isActive: boolean
 ): Promise<AdminActionResult> {
-  const cookieStore = await cookies()
-  const isAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
 
   const adminClient = createAdminClient()
 
-  let isAuthorized = isAdminCookie
-  if (!isAuthorized && user) {
-    const { data: profile } = await adminClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle()
-    if (profile?.role === 'admin') {
-      isAuthorized = true
-    }
-  }
-
-  if (!isAuthorized) return { error: 'Unauthorized' }
-
-  const { error } = await adminClient
+  const { data: profileRows, error: profileError } = await adminClient
     .from('profiles')
     .update({ is_active: isActive })
     .eq('id', id)
     .eq('role', 'customer')
+    .select('id')
 
-  if (error) {
-    return { error: error.message }
+  // The direct-auth login checks the `users` table, so keep both in sync.
+  const { data: userRows, error: userError } = await adminClient
+    .from('users')
+    .update({ is_active: isActive })
+    .eq('id', id)
+    .eq('role', 'customer')
+    .select('id')
+
+  if (profileError) {
+    return { error: profileError.message }
+  }
+
+  if (userError) {
+    return { error: userError.message }
+  }
+
+  if (!profileRows?.length && !userRows?.length) {
+    return { error: 'No registered account found for this customer' }
   }
 
   revalidatePath('/admin/customers')

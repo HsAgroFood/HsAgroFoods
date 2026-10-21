@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { hashPassword, verifyPassword, setUserSession, clearUserSession, getAuthUser, AuthUser } from '@/lib/userAuth'
 import { sendSignupOtpEmail, sendPasswordResetEmail } from '@/lib/brevo'
+import { createAdminSessionValue } from '@/lib/adminSession'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
@@ -547,10 +548,11 @@ export async function adminLogin(
 
   if (isDefaultAdmin) {
     const cookieStore = await cookies()
-    cookieStore.set('admin_session', 'authenticated', {
+    cookieStore.set('admin_session', await createAdminSessionValue(), {
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })
     revalidatePath('/admin', 'layout')
@@ -566,12 +568,18 @@ export async function adminLogin(
     .eq('role', 'admin')
     .maybeSingle()
 
-  if (dbAdmin && dbAdmin.password_hash && verifyPassword(password, dbAdmin.password_hash)) {
+  if (
+    dbAdmin &&
+    dbAdmin.is_active !== false &&
+    dbAdmin.password_hash &&
+    verifyPassword(password, dbAdmin.password_hash)
+  ) {
     const cookieStore = await cookies()
-    cookieStore.set('admin_session', 'authenticated', {
+    cookieStore.set('admin_session', await createAdminSessionValue(), {
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7,
     })
     revalidatePath('/admin', 'layout')

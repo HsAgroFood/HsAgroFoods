@@ -1,7 +1,109 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
+
+export type HeroTextMode = 'global' | 'per_slide'
+
+export type HeroGlobalText = {
+  title: string
+  subtitle: string
+  button_text: string
+  button_link: string
+}
+
+export type HeroConfig = {
+  text_mode: HeroTextMode
+  global_text: HeroGlobalText
+}
+
+const HERO_CONFIG_SLUG = '__system_hero_config__'
+
+const DEFAULT_GLOBAL_TEXT: HeroGlobalText = {
+  title: 'Pure Spice. Real Taste. Trusted Every Time.',
+  subtitle: "Jaandaar Masale brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
+  button_text: 'Shop Now',
+  button_link: '/shop',
+}
+
+const DEFAULT_HERO_CONFIG: HeroConfig = {
+  text_mode: 'per_slide',
+  global_text: DEFAULT_GLOBAL_TEXT,
+}
+
+async function readHeroConfig(
+  adminClient: ReturnType<typeof createAdminClient>
+): Promise<HeroConfig> {
+  const { data } = await adminClient
+    .from('categories')
+    .select('description')
+    .eq('slug', HERO_CONFIG_SLUG)
+    .maybeSingle()
+
+  if (!data?.description) return DEFAULT_HERO_CONFIG
+
+  try {
+    const parsed = JSON.parse(data.description)
+    const text = parsed?.global_text || {}
+
+    return {
+      text_mode: parsed?.text_mode === 'global' ? 'global' : 'per_slide',
+      global_text: {
+        title: typeof text.title === 'string' ? text.title : DEFAULT_GLOBAL_TEXT.title,
+        subtitle: typeof text.subtitle === 'string' ? text.subtitle : DEFAULT_GLOBAL_TEXT.subtitle,
+        button_text: typeof text.button_text === 'string' ? text.button_text : DEFAULT_GLOBAL_TEXT.button_text,
+        button_link: typeof text.button_link === 'string' ? text.button_link : DEFAULT_GLOBAL_TEXT.button_link,
+      },
+    }
+  } catch {
+    return DEFAULT_HERO_CONFIG
+  }
+}
+
+export async function getHeroConfig(): Promise<HeroConfig> {
+  try {
+    const adminClient = createAdminClient()
+    return await readHeroConfig(adminClient)
+  } catch {
+    return DEFAULT_HERO_CONFIG
+  }
+}
+
+async function saveHeroConfig(
+  patch: Partial<HeroConfig>
+): Promise<{ success: boolean; error?: string }> {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
+  try {
+    const adminClient = createAdminClient()
+    const current = await readHeroConfig(adminClient)
+    const next: HeroConfig = {
+      text_mode: patch.text_mode ?? current.text_mode,
+      global_text: patch.global_text ?? current.global_text,
+    }
+
+    const { error } = await adminClient.from('categories').upsert(
+      {
+        slug: HERO_CONFIG_SLUG,
+        name: 'System Hero Config',
+        description: JSON.stringify(next),
+        is_active: false,
+      },
+      { onConflict: 'slug' }
+    )
+
+    if (error) return { success: false, error: error.message }
+
+    revalidatePath('/', 'layout')
+    revalidatePath('/admin/hero-slides')
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Failed to save hero settings.' }
+  }
+}
 
 // Global Text
 export async function updateGlobalHeroText(data: {
@@ -10,30 +112,21 @@ export async function updateGlobalHeroText(data: {
   button_text: string
   button_link: string
 }) {
-  const adminClient = createAdminClient()
-  const { error } = await adminClient
-    .from('hero_slides')
-    .update({
-      title: data.title,
-      subtitle: data.subtitle,
-      button_text: data.button_text,
-      button_link: data.button_link,
-      updated_at: new Date().toISOString()
-    })
-    .neq('id', '00000000-0000-0000-0000-000000000000')
-
-  if (error) return { success: false, error: error.message }
-
-  revalidatePath('/', 'layout')
-  revalidatePath('/admin/hero-slides')
-  return { success: true }
+  return saveHeroConfig({
+    global_text: {
+      title: data.title || '',
+      subtitle: data.subtitle || '',
+      button_text: data.button_text || '',
+      button_link: data.button_link || '',
+    },
+  })
 }
 
-export async function updateHeroTextMode(_mode: 'global' | 'per_slide'): Promise<{ success: boolean; error?: string }> {
-  // Graceful no-op for text mode toggle so schema error never occurs
-  revalidatePath('/', 'layout')
-  revalidatePath('/admin/hero-slides')
-  return { success: true }
+export async function updateHeroTextMode(mode: 'global' | 'per_slide'): Promise<{ success: boolean; error?: string }> {
+  if (mode !== 'global' && mode !== 'per_slide') {
+    return { success: false, error: 'Invalid hero text mode.' }
+  }
+  return saveHeroConfig({ text_mode: mode })
 }
 
 export async function updateHeroSlideText(id: string, data: {
@@ -42,6 +135,10 @@ export async function updateHeroSlideText(id: string, data: {
   button_text: string
   button_link: string
 }) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
   const { error } = await adminClient
     .from('hero_slides')
@@ -119,7 +216,6 @@ export async function getHeroSlides() {
     .order('created_at', { ascending: true })
 
   if (error) {
-    console.error('Error fetching hero slides:', error)
     return []
   }
 
@@ -150,6 +246,10 @@ export async function saveHeroSlide(slide: {
   button_link: string
   is_active?: boolean
 }) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
 
   if (slide.id) {
@@ -195,6 +295,10 @@ export async function saveHeroSlide(slide: {
 }
 
 export async function createHeroSlide(imageUrl: string, slideData?: any) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
   const { count } = await adminClient
     .from('hero_slides')
@@ -224,6 +328,10 @@ export async function createHeroSlide(imageUrl: string, slideData?: any) {
 }
 
 export async function deleteHeroSlide(id: string) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
   const { error } = await adminClient
     .from('hero_slides')
@@ -238,6 +346,10 @@ export async function deleteHeroSlide(id: string) {
 }
 
 export async function toggleHeroSlideStatus(id: string, isActive: boolean) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
   const { error } = await adminClient
     .from('hero_slides')

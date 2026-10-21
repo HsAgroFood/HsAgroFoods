@@ -1,10 +1,15 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 
 export async function toggleUseGlobalFaqs(productId: string, useGlobalFaqs: boolean) {
-  const supabase = await createClient()
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
+  const supabase = createAdminClient()
   const { error } = await supabase
     .from('products')
     .update({ use_global_faqs: useGlobalFaqs })
@@ -14,9 +19,10 @@ export async function toggleUseGlobalFaqs(productId: string, useGlobalFaqs: bool
     return { success: false, error: error.message }
   }
 
-  // Use the RPC function or just revalidate path
   revalidatePath('/admin/products/[id]/edit', 'page')
   revalidatePath('/product/[slug]', 'page')
-  
+  revalidatePath('/shop')
+  revalidatePath('/')
+
   return { success: true }
 }

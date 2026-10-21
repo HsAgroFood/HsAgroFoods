@@ -21,6 +21,8 @@ export function OrderStatusManager({
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [orderStatus, setOrderStatus] = useState(initialOrderStatus)
+  const [paymentStatus, setPaymentStatus] = useState(initialPaymentStatus)
 
   const handleStatusChange = (type: 'order' | 'payment', value: string) => {
     setError(null)
@@ -34,6 +36,11 @@ export function OrderStatusManager({
       if (result.error) {
         setError(result.error)
       } else {
+        if (type === 'order') {
+          setOrderStatus(value)
+        } else {
+          setPaymentStatus(value)
+        }
         setSuccess(true)
         router.refresh()
         setTimeout(() => setSuccess(false), 2000)
@@ -61,7 +68,7 @@ export function OrderStatusManager({
         </label>
         <select
           disabled={isPending}
-          defaultValue={initialOrderStatus}
+          value={orderStatus}
           onChange={(e) => handleStatusChange('order', e.target.value)}
           className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all capitalize"
         >
@@ -77,7 +84,7 @@ export function OrderStatusManager({
         </label>
         <select
           disabled={isPending}
-          defaultValue={initialPaymentStatus}
+          value={paymentStatus}
           onChange={(e) => handleStatusChange('payment', e.target.value)}
           className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all capitalize"
         >

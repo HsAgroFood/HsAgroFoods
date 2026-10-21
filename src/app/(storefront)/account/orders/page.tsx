@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { cookies } from 'next/headers'
+import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Package, Clock, Truck, CheckCircle2, XCircle, MapPin, MessageCircle, ArrowRight, ShieldCheck } from 'lucide-react'
@@ -37,8 +37,7 @@ import { getEffectiveUser } from '@/lib/userAuth'
 
 export default async function AccountOrdersPage() {
   const user = await getEffectiveUser()
-  const cookieStore = await cookies()
-  const hasAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
+  const hasAdminCookie = await isAdminAuthenticated()
 
   if (!user && !hasAdminCookie) {
     redirect('/login')

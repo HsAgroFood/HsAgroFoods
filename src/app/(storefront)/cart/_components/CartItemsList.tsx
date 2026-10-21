@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react'
@@ -40,6 +40,11 @@ export function CartItemsList({
   const [items, setItems] = useState<CartItem[]>(initialItems as CartItem[])
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const { refreshCart } = useCart()
+
+  // Keep local state in sync when the server sends fresh cart data
+  useEffect(() => {
+    setItems(initialItems as CartItem[])
+  }, [initialItems])
 
   const FREE_SHIPPING_THRESHOLD = shippingConfig.free_shipping_threshold
   const SHIPPING_COST = shippingConfig.standard_shipping_cost

@@ -1,9 +1,14 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 
 export async function getInquiries() {
+  if (!(await isAdminAuthenticated())) {
+    return []
+  }
+
   const adminClient = createAdminClient()
   const { data, error } = await adminClient
     .from('inquiries')
@@ -11,7 +16,7 @@ export async function getInquiries() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Failed to fetch inquiries:', error)
+    console.error('Failed to fetch inquiries:', error?.message || error)
     return []
   }
 
@@ -19,6 +24,10 @@ export async function getInquiries() {
 }
 
 export async function markInquiryAsRead(id: string) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
   const { error } = await adminClient
     .from('inquiries')
@@ -32,6 +41,10 @@ export async function markInquiryAsRead(id: string) {
 }
 
 export async function deleteInquiry(id: string) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
   const adminClient = createAdminClient()
   const { error } = await adminClient
     .from('inquiries')

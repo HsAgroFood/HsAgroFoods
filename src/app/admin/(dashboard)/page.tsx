@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { cookies } from 'next/headers'
+import { isAdminAuthenticated } from '@/lib/adminAuth'
+import { redirect } from 'next/navigation'
 import {
   ShoppingCart,
   Users,
@@ -16,17 +16,19 @@ export const metadata: Metadata = {
 }
 
 async function getStats() {
-  const cookieStore = await cookies()
-  const isAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-  const supabase = isAdminCookie ? createAdminClient() : await createClient()
+  if (!(await isAdminAuthenticated())) {
+    redirect('/admin/login')
+  }
+
+  const supabase = createAdminClient()
 
   const [ordersRes, customersRes, productsRes, recentOrdersRes] =
     await Promise.all([
       supabase
         .from('orders')
-        .select('id, total_amount', { count: 'exact', head: false }),
+        .select('id, total_amount, order_status, payment_status', { count: 'exact', head: false }),
       supabase
-        .from('profiles')
+        .from('users')
         .select('id', { count: 'exact', head: true })
         .eq('role', 'customer'),
       supabase
@@ -41,10 +43,12 @@ async function getStats() {
 
   const totalOrders = ordersRes.count || 0
   const totalRevenue =
-    ordersRes.data?.reduce(
-      (sum, order) => sum + (Number(order.total_amount) || 0),
-      0
-    ) || 0
+    ordersRes.data
+      ?.filter(
+        (order) =>
+          order.order_status !== 'cancelled' && order.payment_status !== 'refunded'
+      )
+      .reduce((sum, order) => sum + (Number(order.total_amount) || 0), 0) || 0
   const totalCustomers = customersRes.count || 0
   const totalProducts = productsRes.count || 0
   const recentOrders = recentOrdersRes.data || []

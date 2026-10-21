@@ -2,30 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
-
-async function checkAdminAuth(supabase: any) {
-  try {
-    const cookieStore = await cookies()
-    if (cookieStore.get('admin_session')?.value === 'authenticated') {
-      return true
-    }
-  } catch {
-    // Ignore
-  }
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return false
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  return profile?.role === 'admin'
-}
 
 export async function getAnnouncement() {
   try {
@@ -49,10 +27,9 @@ export async function getAnnouncement() {
 }
 
 export async function saveAnnouncement(message: string, isActive: boolean) {
-  const supabase = await createClient()
-
-  const isAdmin = await checkAdminAuth(supabase)
-  if (!isAdmin) return { success: false, error: 'Unauthorized' }
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
 
   try {
     const adminSupabase = createAdminClient()

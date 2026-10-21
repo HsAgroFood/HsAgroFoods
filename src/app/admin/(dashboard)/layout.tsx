@@ -1,9 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import AdminSidebar from '@/components/admin/Sidebar'
 import AdminHeader from '@/components/admin/Header'
+import { isAdminAuthenticated } from '@/lib/adminAuth'
 
-import { cookies } from 'next/headers'
 import { AdminNavProvider } from '@/contexts/AdminNavContext'
 
 export default async function AdminDashboardLayout({
@@ -11,32 +10,8 @@ export default async function AdminDashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies()
-  const hasAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-
-  if (!hasAdminCookie) {
-    try {
-      const supabase = await createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
-        redirect('/admin/login')
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-      if (!profile || profile.role !== 'admin') {
-        redirect('/admin/login')
-      }
-    } catch {
-      redirect('/admin/login')
-    }
+  if (!(await isAdminAuthenticated())) {
+    redirect('/admin/login')
   }
 
   return (

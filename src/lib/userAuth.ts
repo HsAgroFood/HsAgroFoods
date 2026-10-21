@@ -151,7 +151,24 @@ export async function getAuthUser(): Promise<AuthUser | null> {
 export async function getEffectiveUser(): Promise<AuthUser | null> {
   // 1. Direct JWT session
   const directUser = await getAuthUser()
-  if (directUser) return directUser
+  if (directUser) {
+    try {
+      const adminClient = createAdminClient()
+      const { data: account } = await adminClient
+        .from('users')
+        .select('is_active')
+        .eq('id', directUser.id)
+        .maybeSingle()
+
+      if (account && account.is_active === false) {
+        return null
+      }
+    } catch {
+      // Ignore lookup failure and keep the signed session
+    }
+
+    return directUser
+  }
 
   // 2. Supabase Auth fallback
   try {
@@ -164,9 +181,13 @@ export async function getEffectiveUser(): Promise<AuthUser | null> {
       const adminClient = createAdminClient()
       const { data: profile } = await adminClient
         .from('profiles')
-        .select('full_name, email, role, phone')
+        .select('full_name, email, role, phone, is_active')
         .eq('id', sbUser.id)
         .maybeSingle()
+
+      if (profile && profile.is_active === false) {
+        return null
+      }
 
       return {
         id: sbUser.id,

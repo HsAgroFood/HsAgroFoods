@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { verifyAdminSessionValue } from '@/lib/adminSession'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -47,7 +48,6 @@ export async function updateSession(request: NextRequest) {
     // Only do network auth lookup if path actually requires authentication
     if (isProtectedPath || isAdminPath) {
       const hasUserCookie = !!request.cookies.get('user_session')?.value
-      const hasAdminCookie = request.cookies.get('admin_session')?.value === 'authenticated'
 
       if (isProtectedPath && !hasUserCookie) {
         const {
@@ -67,7 +67,9 @@ export async function updateSession(request: NextRequest) {
           return supabaseResponse
         }
 
-        const hasAdminCookie = request.cookies.get('admin_session')?.value === 'authenticated'
+        const hasAdminCookie = await verifyAdminSessionValue(
+          request.cookies.get('admin_session')?.value
+        )
         if (!hasAdminCookie) {
           const url = request.nextUrl.clone()
           url.pathname = '/admin/login'

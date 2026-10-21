@@ -1,9 +1,8 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
 
 export type ActionResult = {
   error?: string
@@ -11,34 +10,15 @@ export type ActionResult = {
 }
 
 async function getAdminClient() {
-  try {
-    const cookieStore = await cookies()
-    if (cookieStore.get('admin_session')?.value === 'authenticated') {
-      return createAdminClient()
-    }
-  } catch {
-    // Ignore cookie read failure
-  }
+  if (!(await isAdminAuthenticated())) return null
+  return createAdminClient()
+}
 
-  try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return null
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role === 'admin') {
-      return createAdminClient()
-    }
-  } catch {
-    // Ignore auth failure
-  }
-
-  return null
+function revalidateReviewConsumers() {
+  revalidatePath('/admin/reviews')
+  revalidatePath('/product/[slug]', 'page')
+  revalidatePath('/shop')
+  revalidatePath('/')
 }
 
 export async function approveReview(
@@ -98,8 +78,7 @@ export async function approveReview(
       }
     }
 
-    revalidatePath('/admin/reviews')
-    revalidatePath(`/product/[slug]`)
+    revalidateReviewConsumers()
     return { success: true }
   } catch (err: any) {
     console.error('Unexpected error approving review:', err)
@@ -170,8 +149,7 @@ export async function deleteReview(
       }
     }
 
-    revalidatePath('/admin/reviews')
-    revalidatePath(`/product/[slug]`)
+    revalidateReviewConsumers()
     return { success: true }
   } catch (err: any) {
     console.error('Unexpected error deleting review:', err)

@@ -1,90 +1,136 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
-import { cookies } from 'next/headers'
 
-async function checkAdminAuth(supabase: any) {
-  try {
-    const cookieStore = await cookies()
-    if (cookieStore.get('admin_session')?.value === 'authenticated') {
-      return true
-    }
-  } catch {
-    // Ignore
-  }
+const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded']
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return false
+function revalidateOrderConsumers(orderId: string) {
+  revalidatePath('/admin/orders')
+  revalidatePath(`/admin/orders/${orderId}`)
+  revalidatePath('/account/orders')
+  revalidatePath('/account')
+  revalidatePath('/', 'layout')
+}
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  return profile?.role === 'admin'
+function isMissingColumnError(error: { code?: string; message?: string } | null) {
+  if (!error) return false
+  return (
+    error.code === 'PGRST204' ||
+    /column .* does not exist/i.test(error.message || '')
+  )
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
-  const supabase = await createClient()
-  
-  const isAdmin = await checkAdminAuth(supabase)
-  if (!isAdmin) return { success: false, error: 'Unauthorized: Admin access required' }
-
-  const updateData: any = { 
-    order_status: status,
-    updated_at: new Date().toISOString()
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
   }
 
-  // Use Admin client to reliably update orders bypassing RLS
+  if (!ORDER_STATUSES.includes(status)) {
+    return { success: false, error: 'Invalid order status.' }
+  }
+
   const adminClient = createAdminClient()
-  const { error } = await adminClient
+  const now = new Date().toISOString()
+
+  const { data: current } = await adminClient
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .maybeSingle()
+
+  const updateData: any = {
+    order_status: status,
+    updated_at: now,
+  }
+
+  if (status === 'shipped') {
+    updateData.shipped_at = current?.shipped_at || now
+    updateData.delivered_at = null
+    updateData.cancelled_at = null
+  } else if (status === 'delivered') {
+    updateData.shipped_at = current?.shipped_at || now
+    updateData.delivered_at = current?.delivered_at || now
+    updateData.cancelled_at = null
+  } else if (status === 'cancelled') {
+    updateData.cancelled_at = now
+  } else {
+    updateData.shipped_at = null
+    updateData.delivered_at = null
+    updateData.cancelled_at = null
+  }
+
+  let { error } = await adminClient
     .from('orders')
     .update(updateData)
     .eq('id', orderId)
+
+  if (isMissingColumnError(error)) {
+    const retry = await adminClient
+      .from('orders')
+      .update({ order_status: status, updated_at: now })
+      .eq('id', orderId)
+    error = retry.error
+  }
 
   if (error) {
     console.error('Failed to update order status:', error)
     return { success: false, error: error.message }
   }
 
-  revalidatePath('/admin/orders')
-  revalidatePath(`/admin/orders/${orderId}`)
-  revalidatePath('/account/orders')
-  revalidatePath('/account')
-  revalidatePath('/', 'layout')
+  revalidateOrderConsumers(orderId)
   return { success: true }
 }
 
 export async function updatePaymentStatus(orderId: string, status: string) {
-  const supabase = await createClient()
-  
-  const isAdmin = await checkAdminAuth(supabase)
-  if (!isAdmin) return { success: false, error: 'Unauthorized: Admin access required' }
-
-  const updateData: any = { 
-    payment_status: status,
-    updated_at: new Date().toISOString()
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
   }
 
-  // Use Admin client to reliably update orders bypassing RLS
+  if (!PAYMENT_STATUSES.includes(status)) {
+    return { success: false, error: 'Invalid payment status.' }
+  }
+
   const adminClient = createAdminClient()
-  const { error } = await adminClient
+  const now = new Date().toISOString()
+
+  const { data: current } = await adminClient
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .maybeSingle()
+
+  const updateData: any = {
+    payment_status: status,
+    updated_at: now,
+  }
+
+  if (status === 'paid') {
+    updateData.paid_at = current?.paid_at || now
+  } else if (status === 'pending' || status === 'failed') {
+    updateData.paid_at = null
+  }
+
+  let { error } = await adminClient
     .from('orders')
     .update(updateData)
     .eq('id', orderId)
+
+  if (isMissingColumnError(error)) {
+    const retry = await adminClient
+      .from('orders')
+      .update({ payment_status: status, updated_at: now })
+      .eq('id', orderId)
+    error = retry.error
+  }
 
   if (error) {
     console.error('Failed to update payment status:', error)
     return { success: false, error: error.message }
   }
 
-  revalidatePath('/admin/orders')
-  revalidatePath(`/admin/orders/${orderId}`)
-  revalidatePath('/account/orders')
-  revalidatePath('/account')
-  revalidatePath('/', 'layout')
+  revalidateOrderConsumers(orderId)
   return { success: true }
 }

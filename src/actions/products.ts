@@ -1,8 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { cookies } from 'next/headers'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -12,17 +11,14 @@ export type ActionResult = {
 }
 
 async function getAdminDb() {
-  const cookieStore = await cookies()
-  const hasAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-  if (hasAdminCookie) {
-    return createAdminClient()
-  }
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) {
-    return createAdminClient()
-  }
-  return supabase
+  const authorized = await isAdminAuthenticated()
+  return authorized ? createAdminClient() : null
+}
+
+function revalidateProductStorefront() {
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath('/product/[slug]', 'page')
 }
 
 function slugify(text: string): string {
@@ -40,6 +36,7 @@ export async function createProduct(
   formData: FormData
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const name = formData.get('name') as string
   const categoryId = formData.get('category_id') as string
@@ -140,8 +137,7 @@ export async function createProduct(
   }
 
   revalidatePath('/admin/products')
-  revalidatePath('/shop')
-  revalidatePath('/')
+  revalidateProductStorefront()
   redirect(`/admin/products/${product.id}/edit`)
 }
 
@@ -150,6 +146,7 @@ export async function updateProduct(
   formData: FormData
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const id = formData.get('id') as string
   const name = formData.get('name') as string
@@ -233,12 +230,14 @@ export async function updateProduct(
 
   revalidatePath('/admin/products')
   revalidatePath(`/admin/products/${id}/edit`)
-  revalidatePath('/shop')
-  revalidatePath('/')
+  revalidateProductStorefront()
   redirect('/admin/products')
 }
 
 export async function deleteProduct(id: string): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
   const adminSupabase = createAdminClient()
 
   const { error } = await adminSupabase.from('products').delete().eq('id', id)
@@ -248,8 +247,7 @@ export async function deleteProduct(id: string): Promise<ActionResult> {
   }
 
   revalidatePath('/admin/products')
-  revalidatePath('/shop')
-  revalidatePath('/')
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -259,6 +257,9 @@ export async function saveProductInformation(
   productId: string,
   items: { id?: string; label: string; value: string; display_order: number }[]
 ): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
   const supabase = createAdminClient()
 
   // Delete existing items and re-insert
@@ -288,7 +289,8 @@ export async function saveProductInformation(
     }
   }
 
-  revalidatePath(`/admin/products/${productId}`)
+  revalidatePath(`/admin/products/${productId}/edit`)
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -298,6 +300,9 @@ export async function addProductImage(
   productId: string,
   imageUrl: string
 ): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
   const supabase = createAdminClient()
 
   // Get max sort_order
@@ -338,12 +343,14 @@ export async function addProductImage(
 
   revalidatePath(`/admin/products/${productId}/edit`)
   revalidatePath('/admin/products')
-  revalidatePath('/shop')
-  revalidatePath('/')
+  revalidateProductStorefront()
   return { success: true }
 }
 
 export async function deleteProductImage(imageId: string, productId: string): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
   const supabase = createAdminClient()
 
   // Check if this is the featured image before deleting
@@ -386,8 +393,7 @@ export async function deleteProductImage(imageId: string, productId: string): Pr
 
   revalidatePath(`/admin/products/${productId}/edit`)
   revalidatePath('/admin/products')
-  revalidatePath('/shop')
-  revalidatePath('/')
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -395,6 +401,9 @@ export async function setFeaturedImage(
   productId: string,
   imageUrl: string
 ): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
   const supabase = createAdminClient()
 
   const { error } = await supabase
@@ -408,8 +417,7 @@ export async function setFeaturedImage(
 
   revalidatePath(`/admin/products/${productId}/edit`)
   revalidatePath('/admin/products')
-  revalidatePath('/shop')
-  revalidatePath('/')
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -417,6 +425,9 @@ export async function reorderProductImages(
   productId: string,
   orderedIds: string[]
 ): Promise<ActionResult> {
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
   const supabase = createAdminClient()
 
   for (let i = 0; i < orderedIds.length; i++) {
@@ -428,6 +439,7 @@ export async function reorderProductImages(
   }
 
   revalidatePath(`/admin/products/${productId}/edit`)
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -438,6 +450,7 @@ export async function createProductVariant(
   formData: FormData
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const productId = formData.get('product_id') as string
   const variantName = formData.get('variant_name') as string
@@ -464,6 +477,7 @@ export async function createProductVariant(
   }
 
   revalidatePath(`/admin/products/${productId}/edit`)
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -472,6 +486,7 @@ export async function updateProductVariant(
   formData: FormData
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const id = formData.get('id') as string
   const productId = formData.get('product_id') as string
@@ -501,6 +516,7 @@ export async function updateProductVariant(
   }
 
   revalidatePath(`/admin/products/${productId}/edit`)
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -509,6 +525,7 @@ export async function deleteProductVariant(
   productId: string
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const { error } = await supabase.from('product_variants').delete().eq('id', id)
 
@@ -517,6 +534,7 @@ export async function deleteProductVariant(
   }
 
   revalidatePath(`/admin/products/${productId}/edit`)
+  revalidateProductStorefront()
   return { success: true }
 }
 
@@ -525,7 +543,10 @@ export async function saveProductFaqs(
   productId: string,
   items: { id?: string; question: string; answer: string; display_order: number }[]
 ): Promise<ActionResult> {
-  const supabase = await createClient()
+  if (!(await isAdminAuthenticated())) {
+    return { error: UNAUTHORIZED_ERROR }
+  }
+  const supabase = createAdminClient()
 
   // Delete existing FAQs and re-insert
   const { error: deleteError } = await supabase
@@ -554,6 +575,7 @@ export async function saveProductFaqs(
     }
   }
 
-  revalidatePath(`/admin/products/${productId}`)
+  revalidatePath(`/admin/products/${productId}/edit`)
+  revalidateProductStorefront()
   return { success: true }
 }

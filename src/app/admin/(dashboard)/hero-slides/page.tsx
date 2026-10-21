@@ -1,4 +1,4 @@
-import { getHeroSlides } from '@/actions/admin/hero'
+import { getHeroSlides, getHeroConfig } from '@/actions/admin/hero'
 import { GlobalHeroTextForm } from './_components/GlobalHeroTextForm'
 import { HeroSlideList } from './_components/HeroSlideList'
 import { TextModeToggle } from './_components/TextModeToggle'
@@ -8,24 +8,13 @@ export const metadata = {
 }
 
 export default async function AdminHeroSlidesPage() {
-  const slides = await getHeroSlides()
+  const [slides, heroConfig] = await Promise.all([getHeroSlides(), getHeroConfig()])
 
-  // Determine text_mode from any slide (defaults to 'global' if none exist)
-  const currentMode = slides.length > 0 ? (slides[0].text_mode || 'global') : 'global'
+  const currentMode = heroConfig.text_mode
 
-  // Extract global text from the first slide if it exists
-  const globalText = slides.length > 0 ? {
-    title: slides[0].title || '',
-    subtitle: slides[0].subtitle || '',
-    button_text: slides[0].button_text || '',
-    button_link: slides[0].button_link || '',
-    text_mode: currentMode
-  } : {
-    title: '',
-    subtitle: '',
-    button_text: '',
-    button_link: '',
-    text_mode: 'global'
+  const globalText = {
+    ...heroConfig.global_text,
+    text_mode: currentMode,
   }
 
   return (

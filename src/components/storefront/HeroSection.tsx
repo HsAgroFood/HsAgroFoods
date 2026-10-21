@@ -1,4 +1,4 @@
-import { getHeroSlides } from '@/actions/admin/hero'
+import { getHeroSlides, getHeroConfig } from '@/actions/admin/hero'
 import { HeroBackgroundSlider, HeroSlideItem, GlobalHeroText } from '@/components/storefront/HeroBackgroundSlider'
 
 export const dynamic = 'force-dynamic'
@@ -72,24 +72,19 @@ export async function HeroSection() {
   }
 
   try {
-    const slides = await getHeroSlides()
+    const [slides, heroConfig] = await Promise.all([getHeroSlides(), getHeroConfig()])
+
+    textMode = heroConfig.text_mode
+    globalText = heroConfig.global_text
 
     if (slides && slides.length > 0) {
-      if (slides[0].text_mode) {
-        textMode = slides[0].text_mode
-      }
-
       const filtered = slides.filter((s: any) => s.is_active)
       if (filtered.length > 0) {
         activeSlides = filtered
-        if (filtered[0].title) globalText.title = filtered[0].title
-        if (filtered[0].subtitle) globalText.subtitle = filtered[0].subtitle
-        if (filtered[0].button_text) globalText.button_text = filtered[0].button_text
-        if (filtered[0].button_link) globalText.button_link = filtered[0].button_link
       }
     }
   } catch (error) {
-    console.error('Error fetching hero slides, falling back to defaults:', error)
+    console.error('Error fetching hero slides, falling back to defaults:', error instanceof Error ? error.message : error)
   }
 
   // If no active slides from database, use rich default curated slides

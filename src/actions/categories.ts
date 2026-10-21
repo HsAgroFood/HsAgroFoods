@@ -1,8 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { cookies } from 'next/headers'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -12,17 +11,8 @@ export type ActionResult = {
 }
 
 async function getAdminDb() {
-  const cookieStore = await cookies()
-  const hasAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-  if (hasAdminCookie) {
-    return createAdminClient()
-  }
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) {
-    return createAdminClient()
-  }
-  return supabase
+  const authorized = await isAdminAuthenticated()
+  return authorized ? createAdminClient() : null
 }
 
 function slugify(text: string): string {
@@ -40,6 +30,7 @@ export async function createCategory(
   formData: FormData
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const name = formData.get('name') as string
   const description = formData.get('description') as string
@@ -78,6 +69,7 @@ export async function updateCategory(
   formData: FormData
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const id = formData.get('id') as string
   const name = formData.get('name') as string
@@ -117,6 +109,7 @@ export async function updateCategory(
 
 export async function deleteCategory(id: string): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const { error } = await supabase.from('categories').delete().eq('id', id)
 
@@ -135,6 +128,7 @@ export async function toggleCategoryStatus(
   isActive: boolean
 ): Promise<ActionResult> {
   const supabase = await getAdminDb()
+  if (!supabase) return { error: UNAUTHORIZED_ERROR }
 
   const { error } = await supabase
     .from('categories')

@@ -185,6 +185,10 @@ CREATE TABLE IF NOT EXISTS public.orders (
   shipping_address JSONB,
   razorpay_order_id TEXT,
   razorpay_payment_id TEXT,
+  paid_at TIMESTAMPTZ,
+  shipped_at TIMESTAMPTZ,
+  delivered_at TIMESTAMPTZ,
+  cancelled_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );

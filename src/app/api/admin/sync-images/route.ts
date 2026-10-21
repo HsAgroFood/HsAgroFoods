@@ -1,9 +1,14 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
 export async function POST() {
   try {
+    if (!(await isAdminAuthenticated())) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    }
+
     const supabase = createAdminClient()
 
     // 1. Black Pepper -> /images/black-pepper.jpg

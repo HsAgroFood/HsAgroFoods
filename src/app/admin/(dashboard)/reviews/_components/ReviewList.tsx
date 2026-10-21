@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { approveReview, deleteReview } from '@/actions/admin/reviews'
 import { Star, CheckCircle, Trash2, Clock } from 'lucide-react'
 
@@ -17,6 +18,7 @@ type Review = {
 }
 
 export function ReviewList({ initialReviews }: { initialReviews: Review[] }) {
+  const router = useRouter()
   const [isProcessing, setIsProcessing] = useState<string | null>(null)
 
   async function handleApprove(id: string) {
@@ -29,6 +31,8 @@ export function ReviewList({ initialReviews }: { initialReviews: Review[] }) {
     const result = await approveReview({}, formData)
     if (result.error) {
       alert(result.error)
+    } else {
+      router.refresh()
     }
     setIsProcessing(null)
   }
@@ -43,6 +47,8 @@ export function ReviewList({ initialReviews }: { initialReviews: Review[] }) {
     const result = await deleteReview({}, formData)
     if (result.error) {
       alert(result.error)
+    } else {
+      router.refresh()
     }
     setIsProcessing(null)
   }

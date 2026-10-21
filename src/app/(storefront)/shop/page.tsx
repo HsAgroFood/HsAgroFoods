@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ShopSidebar } from './_components/ShopSidebar'
 import { Sparkles, X, ChevronRight } from 'lucide-react'
 import { FALLBACK_PRODUCTS } from '@/constants/fallbackProducts'
+import { CartCount } from '@/components/storefront/CartCount'
 
 export const metadata = {
   title: 'Shop All Spices — Pure Indian Spices | Jaandaar Masale',
@@ -103,6 +104,7 @@ export default async function ShopPage({
       originalPrice,
       rating,
       reviewCount,
+      variantId: minVariant?.id || null,
     }
   })
 
@@ -123,6 +125,7 @@ export default async function ShopPage({
         originalPrice: minVariant?.original_price || null,
         rating: p.average_rating,
         reviewCount: p.review_count,
+        variantId: minVariant?.id || null,
       }
     })
   }
@@ -185,6 +188,9 @@ export default async function ShopPage({
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
+
+          {/* Cart Summary */}
+          <CartCount />
 
           {/* Sidebar / Filters */}
           <ShopSidebar

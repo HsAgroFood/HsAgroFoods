@@ -1,8 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { cookies } from 'next/headers'
+import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 
 export type ShippingConfig = {
@@ -52,29 +51,11 @@ export async function updateShippingConfig(
   standardShippingCost: number
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const cookieStore = await cookies()
-    const isAdminCookie = cookieStore.get('admin_session')?.value === 'authenticated'
-
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    if (!(await isAdminAuthenticated())) {
+      return { success: false, error: UNAUTHORIZED_ERROR }
+    }
 
     const adminClient = createAdminClient()
-
-    let isAuthorized = isAdminCookie
-    if (!isAuthorized && user) {
-      const { data: profile } = await adminClient
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle()
-      if (profile?.role === 'admin') {
-        isAuthorized = true
-      }
-    }
-
-    if (!isAuthorized) {
-      return { success: false, error: 'Unauthorized: Admin access required.' }
-    }
 
     const payload: ShippingConfig = {
       free_shipping_threshold: Math.max(0, Math.round(Number(freeShippingThreshold) || 0)),

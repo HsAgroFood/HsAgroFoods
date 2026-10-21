@@ -1,6 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Sparkles, Star } from 'lucide-react'
+import { useState } from 'react'
+import { Sparkles, Star, ShoppingCart, Check } from 'lucide-react'
+import { useCart } from '@/contexts/CartContext'
+import { addToCart } from '@/actions/cart'
 
 export type ProductCardProps = {
   id: string
@@ -12,6 +17,7 @@ export type ProductCardProps = {
   originalPrice?: number | null
   rating?: number | null
   reviewCount?: number | null
+  variantId?: string | null
 }
 
 export function ProductCard({
@@ -24,13 +30,43 @@ export function ProductCard({
   originalPrice,
   rating,
   reviewCount,
+  variantId,
 }: ProductCardProps) {
+  const { refreshCart } = useCart()
+  const [addingToCart, setAddingToCart] = useState<string | null>(null)
+  const [addedSuccess, setAddedSuccess] = useState<string | null>(null)
+
   const hasDiscount = originalPrice && minPrice && originalPrice > minPrice
   const discountPercent = hasDiscount
     ? Math.round(((originalPrice - minPrice) / originalPrice) * 100)
     : null
 
   const hasReviews = Boolean(reviewCount && reviewCount > 0 && rating && rating > 0)
+
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!variantId) return
+
+    setAddingToCart(id)
+
+    try {
+      const result = await addToCart(variantId, 1)
+
+      if (result.success) {
+        refreshCart()
+        setAddedSuccess(id)
+        setTimeout(() => setAddedSuccess(null), 2000)
+      } else {
+        alert(result.error || 'Failed to add to cart')
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to add to cart')
+    } finally {
+      setAddingToCart(null)
+    }
+  }
 
   return (
     <Link
@@ -118,10 +154,22 @@ export function ProductCard({
             </div>
           </div>
 
-          {/* Action Button */}
-          <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#FAF3EB] text-[#7B111A] border border-[#C89B65]/30 group-hover:bg-[#7B111A] group-hover:text-white group-hover:scale-105 transition-all shadow-sm">
-            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" />
-          </div>
+          {/* Action Button with Add to Cart */}
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={!variantId || addingToCart === id}
+            aria-label={`Add ${name} to cart`}
+            className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#FAF3EB] text-[#7B111A] border border-[#C89B65]/30 hover:bg-[#7B111A] hover:text-white hover:scale-105 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {addingToCart === id ? (
+              <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+            ) : addedSuccess === id ? (
+              <Check className="w-3 h-3 sm:w-4 sm:h-4" />
+            ) : (
+              <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
+            )}
+          </button>
         </div>
       </div>
     </Link>

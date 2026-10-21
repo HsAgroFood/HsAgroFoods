@@ -59,6 +59,7 @@ export default async function ProductDetailsPage({
   let isAuthenticated = false
   let reviews: any[] = []
   let relatedProducts: any[] = []
+  let globalFaqs: any[] = []
 
   // Check effective logged-in user
   const effectiveUser = await getEffectiveUser()
@@ -89,10 +90,24 @@ export default async function ProductDetailsPage({
     // If db product exists, fetch reviews & related products
     if (product) {
       const adminClient = createAdminClient()
+
+      if (product.use_global_faqs) {
+        const { data: faqsData } = await adminClient
+          .from('global_faqs')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true })
+
+        if (faqsData && faqsData.length > 0) {
+          globalFaqs = faqsData
+        }
+      }
+
       const { data: reviewsData } = await adminClient
         .from('reviews')
         .select('*')
         .eq('product_id', product.id)
+        .eq('is_approved', true)
         .order('created_at', { ascending: false })
 
       if (reviewsData && reviewsData.length > 0) {
@@ -144,7 +159,7 @@ export default async function ProductDetailsPage({
           featured_image_url,
           average_rating,
           review_count,
-          product_variants ( price, original_price, is_active )
+          product_variants ( id, price, original_price, is_active )
         `)
         .neq('id', product.id)
         .eq('is_active', true)
@@ -171,12 +186,13 @@ export default async function ProductDetailsPage({
             originalPrice,
             rating,
             reviewCount,
+            variantId: minVariant?.id || null,
           }
         })
       }
     }
   } catch (err) {
-    console.error('Error fetching product from DB:', err)
+    console.error('Error fetching product from DB:', err instanceof Error ? err.message : err)
   }
 
   // Graceful fallback to rich static catalog if not in database
@@ -211,6 +227,7 @@ export default async function ProductDetailsPage({
           originalPrice: minVariant?.original_price || null,
           rating: p.average_rating,
           reviewCount: p.review_count,
+          variantId: minVariant?.id || null,
         }
       })
   }
@@ -222,6 +239,7 @@ export default async function ProductDetailsPage({
   const sortedFaqs = (product.product_faqs || []).sort(
     (a: any, b: any) => (a.display_order || 0) - (b.display_order || 0)
   )
+  const displayedFaqs = product.use_global_faqs && globalFaqs.length > 0 ? globalFaqs : sortedFaqs
 
   return (
     <div className="bg-[#F8ECE7] min-h-screen py-4 sm:py-8 lg:py-12 text-[#2A1612]">
@@ -294,7 +312,7 @@ export default async function ProductDetailsPage({
           description={product.description}
           shortDescription={product.short_description}
           specs={sortedInfo}
-          faqs={sortedFaqs}
+          faqs={displayedFaqs}
           reviews={reviews}
           isAuthenticated={isAuthenticated}
           averageRating={Number(product.average_rating) || 0}

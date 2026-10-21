@@ -92,7 +92,11 @@ export default function ProductRow({
               ) {
                 startTransition(async () => {
                   const result = await deleteProduct(product.id)
-                  if (result.success) setDeleted(true)
+                  if (result.success) {
+                    setDeleted(true)
+                  } else {
+                    alert(result.error || 'Failed to delete product')
+                  }
                 })
               }
             }}
