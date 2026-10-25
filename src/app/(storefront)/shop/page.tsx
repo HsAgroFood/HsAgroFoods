@@ -63,6 +63,7 @@ export default async function ShopPage({
         id,
         variant_name,
         price,
+         original_price,
         stock_quantity,
         is_active
       )

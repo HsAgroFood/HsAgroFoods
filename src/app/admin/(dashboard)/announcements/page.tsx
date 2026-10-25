@@ -5,6 +5,8 @@ export const metadata = {
   title: 'Announcements | Admin Dashboard',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminAnnouncementsPage() {
   const announcement = await getAnnouncement()
 

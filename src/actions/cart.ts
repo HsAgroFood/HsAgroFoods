@@ -41,6 +41,10 @@ export async function addToCart(variantId: string, quantity: number = 1) {
       return { success: false, error: 'Invalid product variant' }
     }
 
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      return { success: false, error: 'Quantity must be a positive whole number.' }
+    }
+
     const user = await getEffectiveUser()
 
     if (!user) {
@@ -154,6 +158,10 @@ export async function removeFromCart(cartItemId: string) {
 
 export async function updateCartQuantity(cartItemId: string, quantity: number) {
   try {
+    if (!Number.isInteger(quantity)) {
+      return { success: false, error: 'Quantity must be a whole number.' }
+    }
+
     if (quantity <= 0) {
       return removeFromCart(cartItemId)
     }

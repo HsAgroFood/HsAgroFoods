@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   title: 'Dashboard',
 }
 
+export const dynamic = 'force-dynamic'
+
 async function getStats() {
   if (!(await isAdminAuthenticated())) {
     redirect('/admin/login')

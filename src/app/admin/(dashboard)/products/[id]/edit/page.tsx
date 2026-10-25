@@ -5,11 +5,12 @@ import ProductForm from '../../_components/ProductForm'
 import ProductInfoEditor from '../../_components/ProductInfoEditor'
 import ProductFaqEditor from '../../_components/ProductFaqEditor'
 import { ProductVariantsEditor } from '../../_components/ProductVariantsEditor'
-import { ProductImagesEditor } from '../../_components/ProductImagesEditor'
 
 export const metadata: Metadata = {
   title: 'Edit Product',
 }
+
+export const dynamic = 'force-dynamic'
 
 export default async function EditProductPage({
   params,

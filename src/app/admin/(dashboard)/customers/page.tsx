@@ -5,6 +5,8 @@ export const metadata = {
   title: 'Customers | Admin Dashboard',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function CustomersPage() {
   const customers = await getCustomers()
 

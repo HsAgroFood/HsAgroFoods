@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { ImageKitUpload } from '@/components/admin/ImageKitUpload'
 import { Plus, Trash2, Star, Loader2, Sparkles } from 'lucide-react'
 import { addProductImage, deleteProductImage, setFeaturedImage } from '@/actions/products'
@@ -27,6 +28,7 @@ export function ProductImagesEditor({
 }) {
   const [isPending, startTransition] = useTransition()
   const [uploadMsg, setUploadMsg] = useState<string | null>(null)
+  const router = useRouter()
 
   const handleUploadSuccess = (result: { url: string }) => {
     if (result && result.url) {
@@ -35,6 +37,8 @@ export function ProductImagesEditor({
         const res = await addProductImage(product.id, result.url)
         if (res.error) {
           alert(res.error)
+        } else {
+          router.refresh()
         }
         setUploadMsg(null)
       })
@@ -44,14 +48,24 @@ export function ProductImagesEditor({
   const handleDelete = (imageId: string) => {
     if (confirm('Are you sure you want to delete this image?')) {
       startTransition(async () => {
-        await deleteProductImage(imageId, product.id)
+        const res = await deleteProductImage(imageId, product.id)
+        if (res.error) {
+          alert(res.error)
+        } else {
+          router.refresh()
+        }
       })
     }
   }
 
   const handleSetFeatured = (imageUrl: string) => {
     startTransition(async () => {
-      await setFeaturedImage(product.id, imageUrl)
+      const res = await setFeaturedImage(product.id, imageUrl)
+      if (res.error) {
+        alert(res.error)
+      } else {
+        router.refresh()
+      }
     })
   }
 

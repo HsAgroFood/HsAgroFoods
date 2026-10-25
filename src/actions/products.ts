@@ -59,6 +59,29 @@ export async function createProduct(
     return { error: 'Product name is required' }
   }
 
+  const hasPrice = Boolean(priceStr?.trim())
+  const price = hasPrice ? Number(priceStr) : null
+  if (price !== null && (!Number.isFinite(price) || price < 0)) {
+    return { error: 'Selling price must be a non-negative number.' }
+  }
+
+  const hasOriginalPrice = Boolean(originalPriceStr?.trim())
+  const originalPrice = hasOriginalPrice ? Number(originalPriceStr) : null
+  if (hasOriginalPrice && !hasPrice) {
+    return { error: 'Selling price is required when an original price is supplied.' }
+  }
+  if (originalPrice !== null && (!Number.isFinite(originalPrice) || originalPrice < 0)) {
+    return { error: 'Original price must be a non-negative number.' }
+  }
+  if (originalPrice !== null && price !== null && originalPrice < price) {
+    return { error: 'Original price cannot be lower than the selling price.' }
+  }
+
+  const stockQuantity = stockQuantityStr ? Number(stockQuantityStr) : 100
+  if (hasPrice && (!Number.isInteger(stockQuantity) || stockQuantity < 0)) {
+    return { error: 'Stock quantity must be a non-negative whole number.' }
+  }
+
   const slug = slugify(name)
 
   const { data: product, error } = await supabase.from('products').insert({
@@ -94,7 +117,7 @@ export async function createProduct(
   if (galleryImagesRaw) {
     try {
       const parsedGallery: string[] = JSON.parse(galleryImagesRaw)
-      parsedGallery.forEach((url, idx) => {
+      parsedGallery.forEach((url) => {
         if (url && url !== featuredImageUrl) {
           imagesToInsert.push({
             product_id: product.id,
@@ -109,19 +132,15 @@ export async function createProduct(
   }
 
   if (imagesToInsert.length > 0) {
-    await supabase.from('product_images').insert(imagesToInsert)
+    const { error: imageError } = await supabase.from('product_images').insert(imagesToInsert)
+    if (imageError) {
+      await supabase.from('products').delete().eq('id', product.id)
+      return { error: imageError.message }
+    }
   }
 
   // If price is provided, create the initial variant automatically
-  if (priceStr && !isNaN(parseFloat(priceStr))) {
-    const price = parseFloat(priceStr)
-    const originalPrice = originalPriceStr && !isNaN(parseFloat(originalPriceStr))
-      ? parseFloat(originalPriceStr)
-      : null
-    const stockQuantity = stockQuantityStr && !isNaN(parseInt(stockQuantityStr, 10))
-      ? parseInt(stockQuantityStr, 10)
-      : 100
-
+  if (price !== null) {
     const { error: variantError } = await supabase.from('product_variants').insert({
       product_id: product.id,
       variant_name: variantName,
@@ -132,7 +151,8 @@ export async function createProduct(
     })
 
     if (variantError) {
-      console.error('Error inserting initial variant for product:', variantError)
+      await supabase.from('products').delete().eq('id', product.id)
+      return { error: variantError.message }
     }
   }
 
@@ -199,7 +219,8 @@ export async function updateProduct(
     try {
       const parsedGallery: string[] = JSON.parse(galleryImagesRaw)
       // Delete old product images and re-insert
-      await supabase.from('product_images').delete().eq('product_id', id)
+      const { error: deleteImagesError } = await supabase.from('product_images').delete().eq('product_id', id)
+      if (deleteImagesError) return { error: deleteImagesError.message }
 
       const imagesToInsert: { product_id: string; image_url: string; sort_order: number }[] = []
       if (featuredImageUrl) {
@@ -221,10 +242,11 @@ export async function updateProduct(
       })
 
       if (imagesToInsert.length > 0) {
-        await supabase.from('product_images').insert(imagesToInsert)
+        const { error: insertImagesError } = await supabase.from('product_images').insert(imagesToInsert)
+        if (insertImagesError) return { error: insertImagesError.message }
       }
     } catch {
-      // Ignore
+      return { error: 'Gallery images must be valid JSON.' }
     }
   }
 
@@ -431,11 +453,15 @@ export async function reorderProductImages(
   const supabase = createAdminClient()
 
   for (let i = 0; i < orderedIds.length; i++) {
-    await supabase
+    const { error } = await supabase
       .from('product_images')
       .update({ sort_order: i })
       .eq('id', orderedIds[i])
       .eq('product_id', productId)
+
+    if (error) {
+      return { error: error.message }
+    }
   }
 
   revalidatePath(`/admin/products/${productId}/edit`)
@@ -463,12 +489,29 @@ export async function createProductVariant(
     return { error: 'Product ID, Variant Name, and Price are required' }
   }
 
+  const parsedPrice = Number(price)
+  const parsedOriginalPrice = originalPrice ? Number(originalPrice) : null
+  const parsedStockQuantity = Number(stockQuantity || '0')
+
+  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    return { error: 'Price must be a non-negative number.' }
+  }
+  if (parsedOriginalPrice !== null && (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice < 0)) {
+    return { error: 'Original price must be a non-negative number.' }
+  }
+  if (parsedOriginalPrice !== null && parsedOriginalPrice < parsedPrice) {
+    return { error: 'Original price cannot be lower than the selling price.' }
+  }
+  if (!Number.isInteger(parsedStockQuantity) || parsedStockQuantity < 0) {
+    return { error: 'Stock quantity must be a non-negative whole number.' }
+  }
+
   const { error } = await supabase.from('product_variants').insert({
     product_id: productId,
     variant_name: variantName,
-    price: parseFloat(price),
-    original_price: originalPrice ? parseFloat(originalPrice) : null,
-    stock_quantity: parseInt(stockQuantity || '0', 10),
+    price: parsedPrice,
+    original_price: parsedOriginalPrice,
+    stock_quantity: parsedStockQuantity,
     is_active: isActive,
   })
 
@@ -500,13 +543,30 @@ export async function updateProductVariant(
     return { error: 'Variant ID, Name, and Price are required' }
   }
 
+  const parsedPrice = Number(price)
+  const parsedOriginalPrice = originalPrice ? Number(originalPrice) : null
+  const parsedStockQuantity = Number(stockQuantity || '0')
+
+  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    return { error: 'Price must be a non-negative number.' }
+  }
+  if (parsedOriginalPrice !== null && (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice < 0)) {
+    return { error: 'Original price must be a non-negative number.' }
+  }
+  if (parsedOriginalPrice !== null && parsedOriginalPrice < parsedPrice) {
+    return { error: 'Original price cannot be lower than the selling price.' }
+  }
+  if (!Number.isInteger(parsedStockQuantity) || parsedStockQuantity < 0) {
+    return { error: 'Stock quantity must be a non-negative whole number.' }
+  }
+
   const { error } = await supabase
     .from('product_variants')
     .update({
       variant_name: variantName,
-      price: parseFloat(price),
-      original_price: originalPrice ? parseFloat(originalPrice) : null,
-      stock_quantity: parseInt(stockQuantity || '0', 10),
+      price: parsedPrice,
+      original_price: parsedOriginalPrice,
+      stock_quantity: parsedStockQuantity,
       is_active: isActive,
     })
     .eq('id', id)

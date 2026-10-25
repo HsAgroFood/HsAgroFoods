@@ -5,6 +5,8 @@ export const metadata = {
   title: 'Global FAQs | Jaandaar Masale Admin',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function GlobalFaqsPage() {
   const { data: initialFaqs } = await getGlobalFaqs()
 

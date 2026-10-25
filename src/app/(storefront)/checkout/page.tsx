@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getEffectiveUser } from '@/lib/userAuth'
 import { redirect } from 'next/navigation'
 import { getCart } from '@/actions/cart'
 import { getShippingConfig } from '@/actions/shipping'
@@ -11,8 +12,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function CheckoutPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getEffectiveUser()
 
   // Get Cart & Shipping Configuration in parallel
   const [{ items }, shippingConfig] = await Promise.all([
@@ -27,7 +27,8 @@ export default async function CheckoutPage() {
   // Get Addresses if authenticated
   let addresses = []
   if (user) {
-    const { data } = await supabase
+    const adminClient = createAdminClient()
+    const { data } = await adminClient
       .from('addresses')
       .select('*')
       .eq('user_id', user.id)

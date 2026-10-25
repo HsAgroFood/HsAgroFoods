@@ -22,7 +22,7 @@ export function GlobalFaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
     const formData = new FormData(e.currentTarget)
     const res = await addGlobalFaq(formData)
     if (res.success && res.data) {
-      setFaqs([...faqs, res.data])
+      setFaqs((current) => [...current, res.data!])
       setIsAdding(false)
     } else {
       alert('Error adding FAQ')
@@ -35,7 +35,7 @@ export function GlobalFaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
     setLoading(true)
     const res = await deleteGlobalFaq(id)
     if (res.success) {
-      setFaqs(faqs.filter(f => f.id !== id))
+      setFaqs((current) => current.filter(f => f.id !== id))
     } else {
       alert('Error deleting FAQ')
     }
@@ -48,7 +48,7 @@ export function GlobalFaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
     const formData = new FormData(e.currentTarget)
     const res = await updateGlobalFaq(id, formData)
     if (res.success && res.data) {
-      setFaqs(faqs.map(f => f.id === id ? res.data : f))
+      setFaqs((current) => current.map(f => f.id === id ? res.data! : f))
       alert('Saved!')
     } else {
       alert('Error updating FAQ')

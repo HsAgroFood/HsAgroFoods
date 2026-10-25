@@ -185,8 +185,26 @@ export async function POST(req: NextRequest) {
 
     if (eventType === 'payment.failed') {
       const paymentEntity = event.payload?.payment?.entity
+      const failedOrderId = paymentEntity?.order_id
+
+      if (failedOrderId) {
+        const { error: failedUpdateError } = await adminClient
+          .from('orders')
+          .update({ payment_status: 'failed' })
+          .eq('razorpay_order_id', failedOrderId)
+          .eq('payment_status', 'pending')
+
+        if (failedUpdateError) {
+          console.error('❌ [Razorpay Webhook] Failed to persist payment failure:', failedUpdateError)
+          return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
+        }
+
+        revalidatePath('/admin/orders')
+        revalidatePath('/account/orders')
+      }
+
       console.warn(`⚠️ [Razorpay Webhook] Payment failed for Razorpay Order: ${paymentEntity?.order_id}, Reason: ${paymentEntity?.error_description}`)
-      return NextResponse.json({ received: true, note: 'Payment failed logged' })
+      return NextResponse.json({ received: true, note: 'Payment failure persisted' })
     }
 
     return NextResponse.json({ received: true, ignored: true })

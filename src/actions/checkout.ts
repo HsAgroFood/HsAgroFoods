@@ -1,6 +1,5 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getCart } from '@/actions/cart'
 import { getShippingConfig } from '@/actions/shipping'
@@ -9,6 +8,29 @@ import { cookies } from 'next/headers'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { sendOrderConfirmationEmail } from '@/lib/brevo'
+
+type StockAdjustment = {
+  variantId: string
+  previousStock: number
+}
+
+async function rollbackPendingOrder(
+  adminClient: ReturnType<typeof createAdminClient>,
+  orderId: string,
+  adjustments: StockAdjustment[] = []
+) {
+  for (const adjustment of adjustments) {
+    await adminClient
+      .from('product_variants')
+      .update({
+        stock_quantity: adjustment.previousStock,
+        is_active: adjustment.previousStock > 0,
+      })
+      .eq('id', adjustment.variantId)
+  }
+
+  await adminClient.from('orders').delete().eq('id', orderId)
+}
 
 // Initialize Razorpay
 let razorpayInstance: any = null
@@ -19,7 +41,7 @@ try {
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     })
   }
-} catch (e) {
+} catch {
   console.warn('Razorpay credentials missing or invalid')
 }
 
@@ -42,6 +64,10 @@ export async function createOrder(
   paymentMethod: 'COD' | 'RAZORPAY'
 ) {
   try {
+    if (paymentMethod !== 'COD' && paymentMethod !== 'RAZORPAY') {
+      return { success: false, error: 'Invalid payment method.' }
+    }
+
     const adminClient = createAdminClient()
 
     // 1. Check user authentication via JWT / direct DB session
@@ -70,6 +96,7 @@ export async function createOrder(
         .from('addresses')
         .select('*')
         .eq('id', addressInput)
+        .eq('user_id', user.id)
         .single()
 
       if (!address) {
@@ -192,29 +219,23 @@ export async function createOrder(
       targetUserId = user.id
     }
 
-    // D) Fallback: dynamically fetch a customer profile from DB so foreign key constraint is satisfied
-    if (!targetUserId) {
-      const { data: fallbackProfile } = await adminClient
-        .from('profiles')
-        .select('id')
-        .eq('role', 'customer')
-        .limit(1)
-        .maybeSingle()
-
-      targetUserId = fallbackProfile?.id || null
-    }
-
     // 5. Verify stock availability and calculate totals securely
     let subtotal = 0
     const orderItemsToInsert: any[] = []
 
     for (const item of items) {
       const variant: any = item.product_variants
-      if (!variant) continue
+      if (!variant) {
+        return { success: false, error: 'One or more cart items are no longer available.' }
+      }
 
       const product = Array.isArray(variant.products) ? variant.products[0] : variant.products
       const currentStock = Number(variant.stock_quantity ?? 0)
       const requestedQty = Number(item.quantity || 1)
+
+      if (!Number.isInteger(requestedQty) || requestedQty < 1) {
+        return { success: false, error: 'Cart quantities must be positive whole numbers.' }
+      }
 
       // Stock check: Prevent overselling
       if (currentStock < requestedQty) {
@@ -240,6 +261,10 @@ export async function createOrder(
         quantity: requestedQty,
         line_total: lineTotal,
       })
+    }
+
+    if (orderItemsToInsert.length === 0) {
+      return { success: false, error: 'Your cart contains no purchasable items.' }
     }
 
     const shippingConfig = await getShippingConfig()
@@ -285,10 +310,12 @@ export async function createOrder(
 
     if (itemsError) {
       console.error('Failed to insert order items:', itemsError)
+      await adminClient.from('orders').delete().eq('id', order.id)
       return { success: false, error: 'Order item processing failed. Please contact support.' }
     }
 
     // 8. Auto-Deduct Inventory Stock
+    const stockAdjustments: StockAdjustment[] = []
     for (const item of items) {
       const variant: any = item.product_variants
       if (!variant?.id) continue
@@ -297,22 +324,33 @@ export async function createOrder(
       const purchasedQty = Number(item.quantity || 1)
       const newStock = Math.max(0, currentStock - purchasedQty)
 
-      await adminClient
+      const { error: inventoryError } = await adminClient
         .from('product_variants')
         .update({
           stock_quantity: newStock,
           is_active: newStock > 0,
         })
         .eq('id', variant.id)
+
+      if (inventoryError) {
+        await rollbackPendingOrder(adminClient, order.id, stockAdjustments)
+        return { success: false, error: 'Inventory could not be updated. Please try again.' }
+      }
+
+      stockAdjustments.push({
+        variantId: variant.id,
+        previousStock: currentStock,
+      })
     }
 
-    revalidatePath('/products')
+    revalidatePath('/shop')
     revalidatePath('/cart')
     revalidatePath('/admin/products')
 
     // 8. Handle Payment Method Specific Logic
     if (paymentMethod === 'RAZORPAY') {
       if (!razorpayInstance) {
+        await rollbackPendingOrder(adminClient, order.id, stockAdjustments)
         return { 
           success: false, 
           error: 'Online Payment Gateway is currently under maintenance. Please select Cash on Delivery (COD) to place your order!' 
@@ -345,6 +383,7 @@ export async function createOrder(
         }
       } catch (err: any) {
         console.error('Razorpay Error:', err)
+        await rollbackPendingOrder(adminClient, order.id, stockAdjustments)
         return { 
           success: false, 
           error: 'Online payment could not be initialized. Please choose Cash on Delivery (COD).' 
@@ -518,8 +557,7 @@ export async function verifyRazorpayPayment(
     }
 
     // Clear user and guest cart
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getEffectiveUser()
     if (user) {
       await adminClient
         .from('cart_items')

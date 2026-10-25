@@ -49,7 +49,7 @@ export default async function HomePage() {
           image: p.featured_image_url || SPICE_ASSETS.redChilly,
           tag: 'Featured',
           href: `/product/${p.slug}`,
-          priceText: minPrice ? `From ₹${minPrice}` : undefined,
+          priceText: minPrice !== null ? `From ₹${minPrice}` : undefined,
         }
       })
     }

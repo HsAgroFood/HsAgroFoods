@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: 'New Product',
 }
 
+export const dynamic = 'force-dynamic'
+
 const DEFAULT_CATEGORIES = [
   { name: 'Pure & Ground Spices', slug: 'pure-ground-spices', description: 'Freshly grounded single-origin pure spices' },
   { name: 'Blended Masalas', slug: 'blended-masalas', description: 'Authentic traditional Indian spice blends' },

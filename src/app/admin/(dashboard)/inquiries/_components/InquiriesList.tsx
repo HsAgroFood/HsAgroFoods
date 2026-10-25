@@ -13,7 +13,9 @@ export function InquiriesList({ initialInquiries }: { initialInquiries: any[] })
     startTransition(async () => {
       const res = await markInquiryAsRead(id)
       if (res.success) {
-        setInquiries(inquiries.map(inq => inq.id === id ? { ...inq, is_resolved: true } : inq))
+        setInquiries((current) => current.map(inq => inq.id === id ? { ...inq, is_resolved: true } : inq))
+      } else {
+        alert(res.error || 'Failed to mark inquiry as read')
       }
     })
   }
@@ -23,8 +25,10 @@ export function InquiriesList({ initialInquiries }: { initialInquiries: any[] })
     startTransition(async () => {
       const res = await deleteInquiry(id)
       if (res.success) {
-        setInquiries(inquiries.filter(inq => inq.id !== id))
+        setInquiries((current) => current.filter(inq => inq.id !== id))
         if (expandedId === id) setExpandedId(null)
+      } else {
+        alert(res.error || 'Failed to delete inquiry')
       }
     })
   }

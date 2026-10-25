@@ -7,6 +7,8 @@ export const metadata = {
   title: 'Hero Slides | Admin Dashboard',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminHeroSlidesPage() {
   const [slides, heroConfig] = await Promise.all([getHeroSlides(), getHeroConfig()])
 

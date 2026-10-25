@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: 'Edit Category',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function EditCategoryPage({
   params,
 }: {

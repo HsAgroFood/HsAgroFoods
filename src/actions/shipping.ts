@@ -31,9 +31,16 @@ export async function getShippingConfig(): Promise<ShippingConfig> {
 
     if (data?.description) {
       const parsed = JSON.parse(data.description)
+      const threshold = Number(parsed.free_shipping_threshold)
+      const shippingCost = Number(parsed.standard_shipping_cost)
+
       return {
-        free_shipping_threshold: Number(parsed.free_shipping_threshold) || DEFAULT_SHIPPING_CONFIG.free_shipping_threshold,
-        standard_shipping_cost: Number(parsed.standard_shipping_cost) || DEFAULT_SHIPPING_CONFIG.standard_shipping_cost,
+        free_shipping_threshold: Number.isFinite(threshold) && threshold >= 0
+          ? threshold
+          : DEFAULT_SHIPPING_CONFIG.free_shipping_threshold,
+        standard_shipping_cost: Number.isFinite(shippingCost) && shippingCost >= 0
+          ? shippingCost
+          : DEFAULT_SHIPPING_CONFIG.standard_shipping_cost,
       }
     }
   } catch (err) {
@@ -57,9 +64,20 @@ export async function updateShippingConfig(
 
     const adminClient = createAdminClient()
 
+    const threshold = Number(freeShippingThreshold)
+    const shippingCost = Number(standardShippingCost)
+
+    if (!Number.isFinite(threshold) || threshold < 0) {
+      return { success: false, error: 'Free shipping threshold must be a non-negative number.' }
+    }
+
+    if (!Number.isFinite(shippingCost) || shippingCost < 0) {
+      return { success: false, error: 'Standard shipping cost must be a non-negative number.' }
+    }
+
     const payload: ShippingConfig = {
-      free_shipping_threshold: Math.max(0, Math.round(Number(freeShippingThreshold) || 0)),
-      standard_shipping_cost: Math.max(0, Math.round(Number(standardShippingCost) || 0)),
+      free_shipping_threshold: Math.round(threshold),
+      standard_shipping_cost: Math.round(shippingCost),
     }
 
     const { error } = await adminClient

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, Trash2, Edit2, Check, X, Loader2 } from 'lucide-react'
 import { createProductVariant, updateProductVariant, deleteProductVariant } from '@/actions/products'
 
@@ -24,6 +25,7 @@ export function ProductVariantsEditor({
   const [isPending, startTransition] = useTransition()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
+  const router = useRouter()
 
   // Form State
   const [formData, setFormData] = useState({
@@ -61,7 +63,12 @@ export function ProductVariantsEditor({
   const handleDelete = (id: string) => {
     if (confirm('Are you sure you want to delete this variant?')) {
       startTransition(async () => {
-        await deleteProductVariant(id, productId)
+        const result = await deleteProductVariant(id, productId)
+        if (result.error) {
+          alert(result.error)
+          return
+        }
+        router.refresh()
       })
     }
   }
@@ -76,14 +83,19 @@ export function ProductVariantsEditor({
       if (formData.original_price) fd.append('original_price', formData.original_price)
       fd.append('stock_quantity', formData.stock_quantity)
       if (formData.is_active) fd.append('is_active', 'on')
+      if (editingId) fd.append('id', editingId)
 
-      if (editingId) {
-        fd.append('id', editingId)
-        await updateProductVariant({}, fd)
-      } else {
-        await createProductVariant({}, fd)
+      const result = editingId
+        ? await updateProductVariant({}, fd)
+        : await createProductVariant({}, fd)
+
+      if (result.error) {
+        alert(result.error)
+        return
       }
+
       resetForm()
+      router.refresh()
     })
   }
 

@@ -41,6 +41,10 @@ export async function updateOrderStatus(orderId: string, status: string) {
     .eq('id', orderId)
     .maybeSingle()
 
+  if (!current) {
+    return { success: false, error: 'Order not found.' }
+  }
+
   const updateData: any = {
     order_status: status,
     updated_at: now,
@@ -102,6 +106,10 @@ export async function updatePaymentStatus(orderId: string, status: string) {
     .eq('id', orderId)
     .maybeSingle()
 
+  if (!current) {
+    return { success: false, error: 'Order not found.' }
+  }
+
   const updateData: any = {
     payment_status: status,
     updated_at: now,
@@ -109,7 +117,7 @@ export async function updatePaymentStatus(orderId: string, status: string) {
 
   if (status === 'paid') {
     updateData.paid_at = current?.paid_at || now
-  } else if (status === 'pending' || status === 'failed') {
+  } else if (status !== 'paid') {
     updateData.paid_at = null
   }
 

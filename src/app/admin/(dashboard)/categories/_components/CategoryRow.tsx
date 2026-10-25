@@ -4,11 +4,14 @@ import Link from 'next/link'
 import { Pencil, Trash2 } from 'lucide-react'
 import { deleteCategory, toggleCategoryStatus } from '@/actions/categories'
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import type { Category } from '@/types/database'
 
 export default function CategoryRow({ category }: { category: Category }) {
   const [isPending, startTransition] = useTransition()
   const [deleted, setDeleted] = useState(false)
+  const [isActive, setIsActive] = useState(category.is_active)
+  const router = useRouter()
 
   if (deleted) return null
 
@@ -34,16 +37,22 @@ export default function CategoryRow({ category }: { category: Category }) {
           disabled={isPending}
           onClick={() => {
             startTransition(async () => {
-              await toggleCategoryStatus(category.id, !category.is_active)
+              const result = await toggleCategoryStatus(category.id, !isActive)
+              if (result.success) {
+                setIsActive((current) => !current)
+                router.refresh()
+              } else {
+                alert(result.error || 'Failed to update category status')
+              }
             })
           }}
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer transition-colors ${
-            category.is_active
+            isActive
               ? 'bg-green-100 text-green-700 hover:bg-green-200'
               : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
           }`}
         >
-          {category.is_active ? 'Active' : 'Inactive'}
+          {isActive ? 'Active' : 'Inactive'}
         </button>
       </td>
       <td className="px-6 py-3.5 text-sm text-stone-500">
@@ -67,7 +76,12 @@ export default function CategoryRow({ category }: { category: Category }) {
               if (confirm('Are you sure you want to delete this category?')) {
                 startTransition(async () => {
                   const result = await deleteCategory(category.id)
-                  if (result.success) setDeleted(true)
+                  if (result.success) {
+                    setDeleted(true)
+                    router.refresh()
+                  } else {
+                    alert(result.error || 'Failed to delete category')
+                  }
                 })
               }
             }}
