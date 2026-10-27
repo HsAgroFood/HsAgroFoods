@@ -153,12 +153,12 @@ export function Navbar({
     <>
       <header className="sticky top-0 z-40 w-full bg-[#FFF9F0]/95 backdrop-blur-md text-[#14361F] shadow-sm border-b border-[#F2DEC0] transition-all">
         <nav className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-          <div className="flex h-16 sm:h-20 items-center justify-between">
+          <div className="flex h-[68px] sm:h-20 items-center justify-between">
 
             {/* Brand Logo (Transparent PNG on Warm Cream Header + Brand Name) */}
             <div className="flex items-center">
-              <Link href="/" onClick={handleHomeClick} className="group flex items-center gap-2.5" aria-label="HS AgroFoods">
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] group-hover:scale-105 transition-transform shrink-0">
+              <Link href="/" onClick={handleHomeClick} className="group flex items-center gap-2 sm:gap-2.5" aria-label="HS AgroFoods">
+                <div className="relative w-16 h-16 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] group-hover:scale-105 transition-transform shrink-0">
                   <Image
                     src="/images/logo.png"
                     alt="HS AgroFoods Logo"
@@ -166,14 +166,14 @@ export function Navbar({
                     priority
                     unoptimized
                     className="object-contain drop-shadow-xs"
-                    sizes="(max-width: 640px) 56px, (max-width: 1024px) 64px, 72px"
+                    sizes="(max-width: 1024px) 64px, 72px"
                   />
                 </div>
-                <div className="hidden sm:flex flex-col leading-none whitespace-nowrap shrink-0">
-                  <span className="font-serif text-lg lg:text-xl font-extrabold tracking-tight text-[#144D29]">
+                <div className="flex flex-col leading-none whitespace-nowrap shrink-0">
+                  <span className="font-serif text-[17px] sm:text-lg lg:text-xl font-extrabold tracking-tight text-[#144D29]">
                     HS <span className="text-[#E07B0C]">AgroFoods</span>
                   </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7A6248] mt-0.5">
+                  <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.15em] sm:tracking-[0.18em] text-[#7A6248] mt-0.5">
                     100% Pure &amp; Natural
                   </span>
                 </div>
