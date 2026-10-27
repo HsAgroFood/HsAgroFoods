@@ -71,10 +71,10 @@ export function ProductCard({
   return (
     <Link
       href={`/product/${slug}`}
-      className="group relative flex flex-col bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-[#E8DFD5] hover:border-[#C89B65]/70 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      className="group relative flex flex-col bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-[#E8DFD5] hover:border-[#F09819]/70 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
     >
       {/* 100% Pure Ribbon Badge */}
-      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10 inline-flex items-center gap-1 rounded-full bg-[#520C12]/90 backdrop-blur-md px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold tracking-wider text-[#E5AD58] uppercase shadow-sm">
+      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10 inline-flex items-center gap-1 rounded-full bg-[#2D1409]/90 backdrop-blur-md px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold tracking-wider text-[#F09819] uppercase shadow-sm">
         <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
         <span>100% Pure</span>
       </div>
@@ -87,7 +87,7 @@ export function ProductCard({
       )}
 
       {/* Image Container with Warm Glow */}
-      <div className="relative aspect-square bg-[#FAF6F2] overflow-hidden">
+      <div className="relative aspect-square bg-[#FDF9F3] overflow-hidden">
         {featuredImage ? (
           <Image
             src={featuredImage}
@@ -97,7 +97,7 @@ export function ProductCard({
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#FAF6F2]">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#FDF9F3]">
             <span className="text-stone-400 text-xs font-medium">No Image</span>
           </div>
         )}
@@ -127,7 +127,7 @@ export function ProductCard({
           )}
         </div>
 
-        <h3 className="font-serif text-sm sm:text-base lg:text-lg font-bold text-[#2A1612] group-hover:text-[#7B111A] transition-colors line-clamp-1">
+        <h3 className="font-serif text-sm sm:text-base lg:text-lg font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors line-clamp-1">
           {name}
         </h3>
 
@@ -143,7 +143,7 @@ export function ProductCard({
               Starting from
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base sm:text-lg lg:text-xl font-extrabold text-[#7B111A]">
+              <span className="text-base sm:text-lg lg:text-xl font-extrabold text-[#E07B0C]">
                 {minPrice !== null ? `₹${minPrice}` : 'Check options'}
               </span>
               {hasDiscount && (
@@ -160,7 +160,7 @@ export function ProductCard({
             onClick={handleAddToCart}
             disabled={!variantId || addingToCart === id}
             aria-label={`Add ${name} to cart`}
-            className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#FAF3EB] text-[#7B111A] border border-[#C89B65]/30 hover:bg-[#7B111A] hover:text-white hover:scale-105 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#FAF3EB] text-[#E07B0C] border border-[#F09819]/30 hover:bg-[#E07B0C] hover:text-white hover:scale-105 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {addingToCart === id ? (
               <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />

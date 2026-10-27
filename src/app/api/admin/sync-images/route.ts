@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
+import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 
 export async function POST() {
   try {
@@ -11,81 +12,50 @@ export async function POST() {
 
     const supabase = createAdminClient()
 
-    // 1. Black Pepper -> /images/black-pepper.jpg
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/black-pepper.jpg' })
-      .eq('slug', 'whole-black-pepper')
-
-    // 2. Cloves, Cardamom, Cinnamon -> Distinct images
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/garam-masala.jpeg' })
-      .eq('slug', 'aromatic-cloves')
-
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/whole-spices.jpg' })
-      .eq('slug', 'green-cardamom-pods')
-
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/cumin-powder.jpeg' })
-      .eq('slug', 'ceylon-cinnamon')
-
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/coriander-powder.jpeg' })
-      .eq('slug', 'indian-bay-leaves')
-
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/coriander-powder.jpeg' })
-      .eq('slug', 'nagauri-kasuri-methi')
-
-    await supabase
-      .from('products')
-      .update({ featured_image_url: '/images/turmeric-powder.jpeg' })
-      .eq('slug', 'dry-mango-amchur-powder')
-
-    // Remove duplicate variants (keeps the first created one per product_id & variant_name)
-    const { data: allVariants } = await supabase
-      .from('product_variants')
-      .select('id, product_id, variant_name, created_at')
-      .order('created_at', { ascending: true })
-
-    if (allVariants && allVariants.length > 0) {
-      const seen = new Set<string>()
-      const duplicateIds: string[] = []
-
-      for (const v of allVariants) {
-        const key = `${v.product_id}_${v.variant_name}`
-        if (seen.has(key)) {
-          duplicateIds.push(v.id)
-        } else {
-          seen.add(key)
-        }
-      }
-
-      if (duplicateIds.length > 0) {
-        await supabase
-          .from('product_variants')
-          .delete()
-          .in('id', duplicateIds)
-      }
+    // 1. Ensure 3 core categories exist
+    for (const cat of FALLBACK_CATEGORIES) {
+      await supabase
+        .from('categories')
+        .upsert(
+          {
+            name: cat.name,
+            slug: cat.slug,
+            description: cat.description,
+            is_active: true,
+          },
+          { onConflict: 'slug' }
+        )
     }
 
-    // 3. Ensure profiles exist for admin
-    await supabase.from('profiles').upsert([
-      {
-        id: '068a9402-1afc-4f64-a5a2-a9e549e3c00b',
-        full_name: 'Store Administrator',
-        email: 'admin@jaandaarmasale.com',
-        phone: '+919999999999',
-        role: 'admin',
-        is_active: true,
-      }
-    ], { onConflict: 'id' })
+    const { data: dbCategories } = await supabase
+      .from('categories')
+      .select('id, slug')
+
+    const categoryMap: Record<string, string> = {}
+    for (const c of dbCategories || []) {
+      categoryMap[c.slug] = c.id
+    }
+
+    // 2. Sync all 14 HS AgroFoods products
+    for (const prod of Object.values(FALLBACK_PRODUCTS)) {
+      const categoryId = categoryMap[prod.categories.slug] || null
+      await supabase
+        .from('products')
+        .upsert(
+          {
+            category_id: categoryId,
+            name: prod.name,
+            slug: prod.slug,
+            short_description: prod.short_description,
+            description: prod.description,
+            featured_image_url: prod.featured_image_url,
+            is_active: prod.is_active,
+            is_featured: prod.is_featured,
+            use_global_faqs: prod.use_global_faqs,
+          },
+          { onConflict: 'slug' }
+        )
+    }
 
     revalidatePath('/shop')
     revalidatePath('/')

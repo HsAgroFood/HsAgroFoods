@@ -89,7 +89,7 @@ export function CartItemsList({
         {/* Free Shipping Progress Indicator */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8DFD5] shadow-xs mb-6">
           <div className="flex items-center justify-between gap-2 mb-2.5">
-            <span className="text-xs sm:text-sm font-bold text-[#2A1612]">
+            <span className="text-xs sm:text-sm font-bold text-[#14361F]">
               {subtotal >= FREE_SHIPPING_THRESHOLD ? (
                 <span className="text-emerald-700 flex items-center gap-1.5">
                   <span>🎉</span>
@@ -97,7 +97,7 @@ export function CartItemsList({
                 </span>
               ) : (
                 <span>
-                  Add <strong className="text-[#7B111A]">₹{(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(0)}</strong> more to get <strong>FREE Delivery!</strong>
+                  Add <strong className="text-[#E07B0C]">₹{(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(0)}</strong> more to get <strong>FREE Delivery!</strong>
                 </span>
               )}
             </span>
@@ -106,9 +106,9 @@ export function CartItemsList({
             </span>
           </div>
 
-          <div className="w-full bg-[#FAF6F2] rounded-full h-2.5 overflow-hidden border border-[#E8DFD5]/60">
+          <div className="w-full bg-[#FDF9F3] rounded-full h-2.5 overflow-hidden border border-[#E8DFD5]/60">
             <div 
-              className="bg-gradient-to-r from-[#C89B65] via-[#E5AD58] to-[#7B111A] h-full rounded-full transition-all duration-500 ease-out" 
+              className="bg-gradient-to-r from-[#F09819] via-[#F09819] to-[#E07B0C] h-full rounded-full transition-all duration-500 ease-out" 
               style={{ width: `${Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100)}%` }}
             />
           </div>
@@ -128,7 +128,7 @@ export function CartItemsList({
               >
                 {/* Product Photo */}
                 <Link href={`/product/${product.slug}`} className="shrink-0 group">
-                  <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-[#FAF6F2] relative border border-[#E8DFD5] group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden bg-[#FDF9F3] relative border border-[#E8DFD5] group-hover:scale-105 transition-transform duration-300">
                     {product.featured_image_url ? (
                       <Image
                         src={product.featured_image_url}
@@ -150,12 +150,12 @@ export function CartItemsList({
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <Link href={`/product/${product.slug}`}>
-                        <h3 className="text-sm sm:text-base font-bold text-[#2A1612] truncate hover:text-[#7B111A] transition-colors">
+                        <h3 className="text-sm sm:text-base font-bold text-[#14361F] truncate hover:text-[#E07B0C] transition-colors">
                           {product.name}
                         </h3>
                       </Link>
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1">
-                        <span className="px-2.5 py-0.5 rounded-full bg-[#FAF6F2] border border-[#E8DFD5] text-[11px] font-bold text-[#8C7567] shrink-0">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#FDF9F3] border border-[#E8DFD5] text-[11px] font-bold text-[#8C7567] shrink-0">
                           {variant.variant_name}
                         </span>
                         <span className="text-xs text-emerald-700 font-medium shrink-0">In Stock</span>
@@ -177,23 +177,23 @@ export function CartItemsList({
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#F2E8DC]">
                     
                     {/* Quantity Pill Stepper */}
-                    <div className="inline-flex items-center rounded-full bg-[#FAF6F2] border border-[#E8DFD5] p-1 shadow-inner">
+                    <div className="inline-flex items-center rounded-full bg-[#FDF9F3] border border-[#E8DFD5] p-1 shadow-inner">
                       <button
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                         disabled={isLoading}
-                        className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white text-[#2A1612] hover:bg-[#7B111A] hover:text-white transition-colors disabled:opacity-40 shadow-xs cursor-pointer"
+                        className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white text-[#14361F] hover:bg-[#E07B0C] hover:text-white transition-colors disabled:opacity-40 shadow-xs cursor-pointer"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
                       
-                      <span className="w-8 sm:w-10 text-center font-extrabold text-[#2A1612] text-xs sm:text-sm">
+                      <span className="w-8 sm:w-10 text-center font-extrabold text-[#14361F] text-xs sm:text-sm">
                         {item.quantity}
                       </span>
                       
                       <button
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                         disabled={isLoading || item.quantity >= variant.stock_quantity}
-                        className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white text-[#2A1612] hover:bg-[#7B111A] hover:text-white transition-colors disabled:opacity-40 shadow-xs cursor-pointer"
+                        className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white text-[#14361F] hover:bg-[#E07B0C] hover:text-white transition-colors disabled:opacity-40 shadow-xs cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -201,7 +201,7 @@ export function CartItemsList({
 
                     {/* Price Calculation */}
                     <div className="text-right">
-                      <span className="text-base sm:text-lg font-extrabold text-[#7B111A]">
+                      <span className="text-base sm:text-lg font-extrabold text-[#E07B0C]">
                         ₹{(variant.price * item.quantity).toFixed(0)}
                       </span>
                       {item.quantity > 1 && (
@@ -221,7 +221,7 @@ export function CartItemsList({
         <div className="mt-6">
           <Link 
             href="/shop" 
-            className="inline-flex items-center text-xs sm:text-sm font-bold text-[#7B111A] hover:text-[#520C12] transition-colors"
+            className="inline-flex items-center text-xs sm:text-sm font-bold text-[#E07B0C] hover:text-[#2D1409] transition-colors"
           >
             ← Add more freshly ground spices
           </Link>
@@ -233,7 +233,7 @@ export function CartItemsList({
         <div className="bg-white rounded-3xl border border-[#E8DFD5] p-6 sm:p-8 shadow-xs sticky top-28 space-y-6">
           
           <div className="border-b border-[#E8DFD5] pb-4">
-            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
               Order Summary
             </h2>
             <p className="text-xs text-[#8C7567] mt-0.5">
@@ -244,7 +244,7 @@ export function CartItemsList({
           <div className="space-y-3.5 text-sm">
             <div className="flex justify-between">
               <span className="text-[#8C7567]">Items Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} packs)</span>
-              <span className="font-bold text-[#2A1612]">₹{subtotal.toFixed(2)}</span>
+              <span className="font-bold text-[#14361F]">₹{subtotal.toFixed(2)}</span>
             </div>
             
             <div className="flex justify-between items-center">
@@ -254,18 +254,18 @@ export function CartItemsList({
                   FREE
                 </span>
               ) : (
-                <span className="font-bold text-[#2A1612]">₹{shipping.toFixed(2)}</span>
+                <span className="font-bold text-[#14361F]">₹{shipping.toFixed(2)}</span>
               )}
             </div>
 
             <div className="border-t border-[#E8DFD5] pt-4 flex justify-between items-baseline">
               <div>
-                <span className="font-serif text-lg font-bold text-[#2A1612] block">
+                <span className="font-serif text-lg font-bold text-[#14361F] block">
                   Grand Total
                 </span>
                 <span className="text-[10px] text-[#8C7567]">Inclusive of all GST & taxes</span>
               </div>
-              <span className="text-2xl sm:text-3xl font-extrabold text-[#7B111A]">
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#E07B0C]">
                 ₹{total.toFixed(2)}
               </span>
             </div>
@@ -274,7 +274,7 @@ export function CartItemsList({
           {/* Checkout CTA Button */}
           <Link 
             href="/checkout"
-            className="w-full inline-flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-[#7B111A] to-[#8A131E] text-white font-bold rounded-full shadow-lg shadow-[#7B111A]/25 hover:shadow-xl hover:from-[#650E15] hover:to-[#7B111A] transition-all transform hover:-translate-y-0.5 text-center text-sm sm:text-base active:scale-98"
+            className="w-full inline-flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-[#E07B0C] to-[#D1491B] text-white font-bold rounded-full shadow-lg shadow-[#E07B0C]/25 hover:shadow-xl hover:from-[#2D1409] hover:to-[#E07B0C] transition-all transform hover:-translate-y-0.5 text-center text-sm sm:text-base active:scale-98"
           >
             <span>Proceed to Checkout</span>
             <ArrowRight className="w-4 h-4" />
@@ -282,11 +282,11 @@ export function CartItemsList({
 
           {/* Luxury Brand Trust Badges in Cart */}
           <div className="pt-4 border-t border-[#E8DFD5] grid grid-cols-2 gap-3 text-[11px] text-[#8C7567]">
-            <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FAF6F2]">
+            <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FDF9F3]">
               <span className="text-base">🛡️</span>
               <span className="font-medium leading-tight">100% Secure Payment</span>
             </div>
-            <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FAF6F2]">
+            <div className="flex items-center gap-2 p-2 rounded-xl bg-[#FDF9F3]">
               <span className="text-base">🌿</span>
               <span className="font-medium leading-tight">Aroma-Lock Fresh Pack</span>
             </div>

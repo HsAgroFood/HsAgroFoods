@@ -8,7 +8,7 @@ export async function AnnouncementBar() {
   }
 
   return (
-    <div className="bg-[#6B1118] text-white text-xs sm:text-sm font-medium py-2 px-4 text-center border-b border-[#520C12]">
+    <div className="bg-gradient-to-r from-[#FCE8CE] via-[#FDF1E0] to-[#FCE8CE] text-[#9A4406] text-xs sm:text-sm font-semibold tracking-wide py-2 px-4 text-center border-b border-[#F0D5B4]">
       <p>{announcement.message}</p>
     </div>
   )

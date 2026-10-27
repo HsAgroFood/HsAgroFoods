@@ -103,20 +103,20 @@ export function ProductTabsSection({
   // Standard verified spice specifications
   const defaultSpecs = [
     { label: 'Dietary Preference', value: '100% Vegetarian & Vegan Pure' },
-    { label: 'Form & Texture', value: 'Freshly Cold-Ground / Natural Whole' },
+    { label: 'Processing Method', value: 'Low-Temp Dehydrated / Cold Stone-Ground' },
     { label: 'Preservatives & Additives', value: 'Zero Artificial Color, Zero Starch, No Fillers' },
     { label: 'Shelf Life', value: '12 Months from Packaging Date' },
     { label: 'Storage Instructions', value: 'Store in an airtight container in a cool, dry place' },
     { label: 'Quality Certification', value: 'FSSAI Certified & Quality Batch Tested' },
   ]
 
-  const displaySpecs = specs.length > 0 ? specs : defaultSpecs
+  const displaySpecs = specs.length > 0 ? specs.map((s: any) => ({ id: s.id, label: s.label || s.title || 'Specification', value: s.value || s.content || '' })) : defaultSpecs
 
   return (
     <div id="reviews" className="mt-8 sm:mt-12 bg-white rounded-3xl border border-[#E8DFD5] shadow-sm overflow-hidden scroll-mt-24">
       
       {/* ─── Tab Navigation Bar (Swipeable on mobile, Centered on desktop) ─── */}
-      <div className="border-b border-[#E8DFD5] bg-[#FAF6F2]/70 px-3 sm:px-6">
+      <div className="border-b border-[#E8DFD5] bg-[#FDF9F3]/70 px-3 sm:px-6">
         <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-2 sm:py-3">
           
           <button
@@ -124,8 +124,8 @@ export function ProductTabsSection({
             onClick={() => setActiveTab('about')}
             className={`flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'about'
-                ? 'bg-[#7B111A] text-white shadow-sm'
-                : 'text-[#6E5951] hover:text-[#2A1612] hover:bg-white/80'
+                ? 'bg-[#E07B0C] text-white shadow-sm'
+                : 'text-[#6E5951] hover:text-[#14361F] hover:bg-white/80'
             }`}
           >
             <span>🌿</span>
@@ -137,8 +137,8 @@ export function ProductTabsSection({
             onClick={() => setActiveTab('specs')}
             className={`flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'specs'
-                ? 'bg-[#7B111A] text-white shadow-sm'
-                : 'text-[#6E5951] hover:text-[#2A1612] hover:bg-white/80'
+                ? 'bg-[#E07B0C] text-white shadow-sm'
+                : 'text-[#6E5951] hover:text-[#14361F] hover:bg-white/80'
             }`}
           >
             <span>📋</span>
@@ -150,8 +150,8 @@ export function ProductTabsSection({
             onClick={() => setActiveTab('faqs')}
             className={`flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'faqs'
-                ? 'bg-[#7B111A] text-white shadow-sm'
-                : 'text-[#6E5951] hover:text-[#2A1612] hover:bg-white/80'
+                ? 'bg-[#E07B0C] text-white shadow-sm'
+                : 'text-[#6E5951] hover:text-[#14361F] hover:bg-white/80'
             }`}
           >
             <span>💬</span>
@@ -163,8 +163,8 @@ export function ProductTabsSection({
             onClick={() => setActiveTab('reviews')}
             className={`flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'reviews'
-                ? 'bg-[#7B111A] text-white shadow-sm'
-                : 'text-[#6E5951] hover:text-[#2A1612] hover:bg-white/80'
+                ? 'bg-[#E07B0C] text-white shadow-sm'
+                : 'text-[#6E5951] hover:text-[#14361F] hover:bg-white/80'
             }`}
           >
             <span>⭐</span>
@@ -180,42 +180,42 @@ export function ProductTabsSection({
           
           {/* Quality Seals Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#7B111A]/10 text-[#7B111A] flex items-center justify-center shrink-0">
+            <div className="p-4 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#E07B0C]/10 text-[#E07B0C] flex items-center justify-center shrink-0">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold text-[#2A1612]">Cold-Ground</span>
-                <span className="block text-[11px] text-[#8C7567]">Essential Oils Retained</span>
+                <span className="block text-xs font-bold text-[#14361F]">Gentle Process</span>
+                <span className="block text-[11px] text-[#8C7567]">Nutrients &amp; Oils Retained</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center shrink-0">
                 <Leaf className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold text-[#2A1612]">100% Pure</span>
+                <span className="block text-xs font-bold text-[#14361F]">100% Pure</span>
                 <span className="block text-[11px] text-[#8C7567]">Zero Artificial Colors</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0">
                 <Award className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold text-[#2A1612]">Farm Origin</span>
+                <span className="block text-xs font-bold text-[#14361F]">Farm Origin</span>
                 <span className="block text-[11px] text-[#8C7567]">Hand-Sorted Batches</span>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] flex items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-700 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold text-[#2A1612]">FSSAI Tested</span>
+                <span className="block text-xs font-bold text-[#14361F]">FSSAI Tested</span>
                 <span className="block text-[11px] text-[#8C7567]">Safety Guaranteed</span>
               </div>
             </div>
@@ -223,7 +223,7 @@ export function ProductTabsSection({
 
           {/* Description Story */}
           <div className="space-y-4 text-sm sm:text-base text-[#4A3831] leading-relaxed">
-            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
               The Story of {productName}
             </h3>
             
@@ -234,10 +234,10 @@ export function ProductTabsSection({
             </div>
 
             {/* Quote Callout */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF3EB] border border-[#C89B65]/40 text-[#7B111A] text-xs sm:text-sm font-medium flex items-center gap-3">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF3EB] border border-[#F09819]/40 text-[#E07B0C] text-xs sm:text-sm font-medium flex items-center gap-3">
               <span className="text-2xl">🌿</span>
               <p>
-                <strong>Pure Tradition:</strong> Unlike commercial mass-grinding which burns volatile oils at high heat, Jaandaar Masale are processed at low friction temperatures for intense natural flavor and long-lasting freshness.
+                <strong>Pure Tradition:</strong> Unlike commercial high-heat processing which destroys natural nutrients and aromas, HS AgroFoods uses gentle low-temperature dehydration and cold-grinding for intense natural flavor and long-lasting freshness.
               </p>
             </div>
           </div>
@@ -249,10 +249,10 @@ export function ProductTabsSection({
       {activeTab === 'specs' && (
         <div className="p-5 sm:p-8 lg:p-10 space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
-            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
               Product Specifications &amp; Quality
             </h3>
-            <span className="text-xs text-[#7B111A] font-semibold bg-[#FAF3EB] px-3 py-1 rounded-full border border-[#C89B65]/30">
+            <span className="text-xs text-[#E07B0C] font-semibold bg-[#FAF3EB] px-3 py-1 rounded-full border border-[#F09819]/30">
               Verified Batch Standards
             </span>
           </div>
@@ -263,9 +263,9 @@ export function ProductTabsSection({
                 {displaySpecs.map((spec, index) => (
                   <tr
                     key={spec.label || index}
-                    className={index % 2 === 0 ? 'bg-white' : 'bg-[#FAF6F2]'}
+                    className={index % 2 === 0 ? 'bg-white' : 'bg-[#FDF9F3]'}
                   >
-                    <td className="py-3.5 pl-4 sm:pl-6 pr-3 text-xs sm:text-sm font-bold text-[#2A1612] w-2/5 sm:w-1/3 border-r border-[#E8DFD5]">
+                    <td className="py-3.5 pl-4 sm:pl-6 pr-3 text-xs sm:text-sm font-bold text-[#14361F] w-2/5 sm:w-1/3 border-r border-[#E8DFD5]">
                       {spec.label}
                     </td>
                     <td className="px-4 sm:px-6 py-3.5 text-xs sm:text-sm text-[#5A433B] font-medium whitespace-pre-wrap">
@@ -284,11 +284,11 @@ export function ProductTabsSection({
         <div className="p-5 sm:p-8 lg:p-10 space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
                 Frequently Asked Questions
               </h3>
               <p className="text-xs sm:text-sm text-[#6E5951] mt-0.5">
-                Everything you need to know about this spice, shipping, and storage.
+                Everything you need to know about this product, usage, shipping, and storage.
               </p>
             </div>
           </div>
@@ -307,18 +307,18 @@ export function ProductTabsSection({
                       onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
                       className="w-full flex items-center justify-between p-4 sm:p-5 text-left group cursor-pointer"
                     >
-                      <span className="text-sm sm:text-base font-bold text-[#2A1612] group-hover:text-[#7B111A] transition-colors pr-4">
+                      <span className="text-sm sm:text-base font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors pr-4">
                         {faq.question}
                       </span>
                       <ChevronDown
                         className={`w-4 h-4 text-[#8C766E] transition-transform duration-200 shrink-0 ${
-                          isOpen ? 'rotate-180 text-[#7B111A]' : ''
+                          isOpen ? 'rotate-180 text-[#E07B0C]' : ''
                         }`}
                       />
                     </button>
 
                     {isOpen && (
-                      <div className="px-4 pb-5 sm:px-5 sm:pb-6 text-xs sm:text-sm text-[#5A433B] leading-relaxed border-t border-[#F2ECE6] pt-3 whitespace-pre-line bg-[#FAF6F2]/40">
+                      <div className="px-4 pb-5 sm:px-5 sm:pb-6 text-xs sm:text-sm text-[#5A433B] leading-relaxed border-t border-[#F2ECE6] pt-3 whitespace-pre-line bg-[#FDF9F3]/40">
                         {faq.answer}
                       </div>
                     )}
@@ -327,9 +327,9 @@ export function ProductTabsSection({
               })}
             </div>
           ) : (
-            <div className="p-6 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] text-center space-y-3">
+            <div className="p-6 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] text-center space-y-3">
               <Package className="w-8 h-8 text-[#8C766E] mx-auto" />
-              <p className="text-sm font-semibold text-[#2A1612]">
+              <p className="text-sm font-semibold text-[#14361F]">
                 Have questions about {productName}?
               </p>
               <p className="text-xs text-[#6E5951] max-w-md mx-auto">
@@ -337,7 +337,7 @@ export function ProductTabsSection({
               </p>
               <a
                 href={`https://wa.me/919540048786?text=${encodeURIComponent(
-                  `Hi Jaandaar Masale, I have a query about ${productName}`
+                  `Hi HS AgroFoods, I have a query about ${productName}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -356,10 +356,10 @@ export function ProductTabsSection({
         <div className="p-5 sm:p-8 lg:p-10 space-y-8 animate-in fade-in duration-200">
           
           {/* Rating Summary Header */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-5 sm:p-6 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4 text-center sm:text-left">
               <div className="w-16 h-16 rounded-2xl bg-white border border-[#E8DFD5] flex flex-col items-center justify-center shadow-xs">
-                <span className="text-2xl font-black text-[#7B111A]">
+                <span className="text-2xl font-black text-[#E07B0C]">
                   {reviews.length > 0 ? calculatedRating.toFixed(1) : '—'}
                 </span>
                 <span className="text-[10px] font-bold text-amber-600 flex items-center tracking-widest">
@@ -369,7 +369,7 @@ export function ProductTabsSection({
                 </span>
               </div>
               <div>
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#2A1612]">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#14361F]">
                   Customer Reviews
                 </h3>
                 <p className="text-xs text-[#6E5951]">
@@ -383,7 +383,7 @@ export function ProductTabsSection({
             <button
               type="button"
               onClick={() => setWriteReviewOpen(!writeReviewOpen)}
-              className="px-5 py-2.5 rounded-full bg-[#7B111A] text-white text-xs font-bold hover:bg-[#5E0D14] shadow-sm transition-all cursor-pointer whitespace-nowrap"
+              className="px-5 py-2.5 rounded-full bg-[#E07B0C] text-white text-xs font-bold hover:bg-[#2D1409] shadow-sm transition-all cursor-pointer whitespace-nowrap"
             >
               {writeReviewOpen ? 'Cancel' : 'Write a Review'}
             </button>
@@ -392,7 +392,7 @@ export function ProductTabsSection({
           {/* Write a Review Collapsible Box */}
           {writeReviewOpen && (
             <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DFD5] shadow-sm space-y-4 animate-in fade-in duration-200">
-              <h4 className="font-serif text-base font-bold text-[#2A1612]">
+              <h4 className="font-serif text-base font-bold text-[#14361F]">
                 Share Your Experience with {productName}
               </h4>
 
@@ -410,7 +410,7 @@ export function ProductTabsSection({
                   )}
 
                   <div>
-                    <label className="block text-xs font-bold text-[#2A1612] mb-1">
+                    <label className="block text-xs font-bold text-[#14361F] mb-1">
                       Your Rating
                     </label>
                     <div className="flex gap-1">
@@ -436,7 +436,7 @@ export function ProductTabsSection({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#2A1612] mb-1">
+                    <label className="block text-xs font-bold text-[#14361F] mb-1">
                       Review Comments
                     </label>
                     <textarea
@@ -444,14 +444,14 @@ export function ProductTabsSection({
                       rows={3}
                       required
                       placeholder="Share what you liked about the aroma, purity, and taste..."
-                      className="w-full rounded-xl border border-stone-300 p-3 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#7B111A]"
+                      className="w-full rounded-xl border border-stone-300 p-3 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#E07B0C]"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmittingReview}
-                    className="px-6 py-2.5 rounded-full bg-[#7B111A] text-white text-xs font-bold hover:bg-[#5E0D14] transition-all disabled:opacity-60 cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-[#E07B0C] text-white text-xs font-bold hover:bg-[#2D1409] transition-all disabled:opacity-60 cursor-pointer"
                   >
                     {isSubmittingReview ? 'Submitting...' : 'Post Review'}
                   </button>
@@ -461,7 +461,7 @@ export function ProductTabsSection({
                   <p className="text-xs text-stone-600">Please sign in to your account to write a review.</p>
                   <a
                     href="/login"
-                    className="inline-block px-5 py-2 rounded-full bg-[#7B111A] text-white text-xs font-bold hover:bg-[#5E0D14]"
+                    className="inline-block px-5 py-2 rounded-full bg-[#E07B0C] text-white text-xs font-bold hover:bg-[#2D1409]"
                   >
                     Sign In
                   </a>
@@ -476,7 +476,7 @@ export function ProductTabsSection({
               reviews.map((rev) => (
                 <div
                   key={rev.id}
-                  className="p-4 sm:p-5 rounded-2xl bg-[#FAF6F2]/50 border border-[#E8DFD5]/80 space-y-2"
+                  className="p-4 sm:p-5 rounded-2xl bg-[#FDF9F3]/50 border border-[#E8DFD5]/80 space-y-2"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
@@ -488,7 +488,7 @@ export function ProductTabsSection({
                           }`}
                         />
                       ))}
-                      <span className="text-xs font-bold text-[#2A1612] ml-1">
+                      <span className="text-xs font-bold text-[#14361F] ml-1">
                         {rev.user?.full_name || 'Verified Customer'}
                       </span>
                     </div>
@@ -509,9 +509,9 @@ export function ProductTabsSection({
                 </div>
               ))
             ) : (
-              <div className="p-8 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] text-center space-y-2">
+              <div className="p-8 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] text-center space-y-2">
                 <MessageSquare className="w-8 h-8 text-stone-400 mx-auto" />
-                <p className="text-sm font-bold text-[#2A1612]">No reviews yet for this spice.</p>
+                <p className="text-sm font-bold text-[#14361F]">No reviews yet for this product.</p>
                 <p className="text-xs text-[#6E5951]">
                   Be the first to share your experience with {productName}!
                 </p>

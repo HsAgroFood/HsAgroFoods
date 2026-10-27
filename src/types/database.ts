@@ -1,4 +1,4 @@
-// Database type definitions for Jaandaar Masale
+// Database type definitions for HS AgroFoods
 // These types mirror the Supabase database schema
 
 export type UserRole = 'customer' | 'admin'

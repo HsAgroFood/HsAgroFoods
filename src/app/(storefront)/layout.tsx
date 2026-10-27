@@ -10,10 +10,10 @@ import { getEffectiveUser } from '@/lib/userAuth'
 
 export const metadata = {
   title: {
-    template: '%s | Jaandaar Masale',
-    default: 'Jaandaar Masale | Pure Spice. Real Taste. Trusted Every Time.',
+    template: '%s | HS AgroFoods',
+    default: 'HS AgroFoods | Pure Spices & Dehydrated Veg & Fruit Powders',
   },
-  description: 'Bringing the authentic, rich flavors and uncompromised purity of traditional Indian spices right to your kitchen.',
+  description: 'Bringing the authentic aroma of pure cold-ground Indian spices and nutrient-rich dehydrated vegetable & fruit powders right to your kitchen.',
 }
 
 export default async function StorefrontLayout({
@@ -57,7 +57,7 @@ export default async function StorefrontLayout({
 
   return (
     <CartProvider initialCount={cartCount}>
-      <div className="min-h-screen flex flex-col bg-[#F8ECE7]">
+      <div className="min-h-screen flex flex-col bg-[#FBF5EE]">
         <AnnouncementBar />
         <Navbar isLoggedIn={isLoggedIn} user={currentUser} categories={categories} />
         <main className="flex-grow">{children}</main>

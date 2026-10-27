@@ -52,15 +52,15 @@ export function ProfileForm({
             id="email"
             value={email}
             readOnly
-            className="block w-full rounded-xl border border-[#D4C7BA] bg-[#FAF6F2] py-2.5 px-3.5 text-[#5A433B] text-xs sm:text-sm font-medium cursor-not-allowed"
+            className="block w-full rounded-xl border border-[#D4C7BA] bg-[#FDF9F3] py-2.5 px-3.5 text-[#5A433B] text-xs sm:text-sm font-medium cursor-not-allowed"
           />
           <p className="mt-1 text-[11px] text-[#8C7567]">Registered email address (verified)</p>
         </div>
       </div>
 
       <div>
-        <label htmlFor="full_name" className="block text-xs font-bold text-[#2A1612] uppercase tracking-wider">
-          Full Name <span className="text-[#7B111A]">*</span>
+        <label htmlFor="full_name" className="block text-xs font-bold text-[#14361F] uppercase tracking-wider">
+          Full Name <span className="text-[#E07B0C]">*</span>
         </label>
         <div className="mt-1.5">
           <input
@@ -69,14 +69,14 @@ export function ProfileForm({
             name="full_name"
             defaultValue={initialFullName}
             required
-            className="block w-full rounded-xl border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#2A1612] focus:outline-none focus:ring-2 focus:ring-[#7B111A]/30 focus:border-[#7B111A] text-xs sm:text-sm shadow-xs transition-all"
+            className="block w-full rounded-xl border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#14361F] focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-xs sm:text-sm shadow-xs transition-all"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="phone" className="block text-xs font-bold text-[#2A1612] uppercase tracking-wider">
-          Phone Number <span className="text-[#7B111A]">*</span>
+        <label htmlFor="phone" className="block text-xs font-bold text-[#14361F] uppercase tracking-wider">
+          Phone Number <span className="text-[#E07B0C]">*</span>
         </label>
         <div className="mt-1.5">
           <input
@@ -86,7 +86,7 @@ export function ProfileForm({
             defaultValue={initialPhone}
             required
             placeholder="10-digit mobile number"
-            className="block w-full rounded-xl border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#2A1612] focus:outline-none focus:ring-2 focus:ring-[#7B111A]/30 focus:border-[#7B111A] text-xs sm:text-sm shadow-xs transition-all"
+            className="block w-full rounded-xl border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#14361F] focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-xs sm:text-sm shadow-xs transition-all"
           />
         </div>
       </div>
@@ -95,7 +95,7 @@ export function ProfileForm({
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex justify-center items-center gap-2 rounded-full bg-gradient-to-r from-[#7B111A] to-[#8A131E] hover:from-[#520C12] hover:to-[#7B111A] px-8 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#7B111A]/20 disabled:opacity-60 transition-all cursor-pointer"
+          className="inline-flex justify-center items-center gap-2 rounded-full bg-gradient-to-r from-[#E07B0C] to-[#D1491B] hover:from-[#2D1409] hover:to-[#E07B0C] px-8 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#E07B0C]/20 disabled:opacity-60 transition-all cursor-pointer"
         >
           {isPending ? (
             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

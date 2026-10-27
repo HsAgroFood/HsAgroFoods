@@ -34,8 +34,8 @@ export function ProductImageGallery({ images, featuredImage }: ProductImageGalle
               onClick={() => setActiveImage(img)}
               className={`relative w-12 h-12 sm:w-full sm:aspect-square shrink-0 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                 activeImage === img
-                  ? 'border-[#7B111A] ring-2 ring-[#C89B65]/40 shadow-xs scale-95'
-                  : 'border-[#E8DFD5] hover:border-[#C89B65] opacity-75 hover:opacity-100 bg-white'
+                  ? 'border-[#E07B0C] ring-2 ring-[#F09819]/40 shadow-xs scale-95'
+                  : 'border-[#E8DFD5] hover:border-[#F09819] opacity-75 hover:opacity-100 bg-white'
               }`}
             >
               <Image
@@ -51,7 +51,7 @@ export function ProductImageGallery({ images, featuredImage }: ProductImageGalle
       )}
 
       {/* Main Image Stage - Always explicitly full width and aspect-ratio */}
-      <div className="relative w-full aspect-square max-h-[280px] sm:max-h-none rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-b from-[#FAF6F2] to-[#F2E8DC] border border-[#E8DFD5] shadow-sm group">
+      <div className="relative w-full aspect-square max-h-[280px] sm:max-h-none rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-b from-[#FDF9F3] to-[#F2E8DC] border border-[#E8DFD5] shadow-sm group">
         {activeImage && (
           <Image
             src={activeImage}
@@ -65,8 +65,8 @@ export function ProductImageGallery({ images, featuredImage }: ProductImageGalle
         
         {/* Subtle Luxury Corner Badges */}
         <div className="absolute top-3 left-3 pointer-events-none z-10">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-[10px] sm:text-[11px] font-bold text-[#7B111A] border border-[#E8DFD5] shadow-xs uppercase tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C89B65]" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/90 backdrop-blur-md text-[10px] sm:text-[11px] font-bold text-[#E07B0C] border border-[#E8DFD5] shadow-xs uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F09819]" />
             100% Pure
           </span>
         </div>

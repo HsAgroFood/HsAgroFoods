@@ -63,10 +63,10 @@ export default function AdminSidebar() {
         {/* Brand & Mobile Close */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-stone-800/50 shrink-0">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="relative w-9 h-9 rounded-full overflow-hidden border border-orange-500/40 shrink-0 shadow-md bg-[#FAF6F2]">
+            <div className="relative w-9 h-9 rounded-full overflow-hidden border border-orange-500/40 shrink-0 shadow-md bg-[#FDF9F3]">
               <Image
-                src="/images/logo.jpeg"
-                alt="Jaandaar Masale Logo"
+                src="/images/logo.png"
+                alt="HS AgroFoods Logo"
                 fill
                 className="object-contain p-0.5"
                 sizes="36px"
@@ -75,7 +75,7 @@ export default function AdminSidebar() {
             {(!collapsed || mobileOpen) && (
               <div className="overflow-hidden">
                 <p className="text-white font-semibold text-sm leading-tight truncate">
-                  Jaandaar Masale
+                  HS AgroFoods
                 </p>
                 <p className="text-stone-500 text-xs truncate">Admin Panel</p>
               </div>

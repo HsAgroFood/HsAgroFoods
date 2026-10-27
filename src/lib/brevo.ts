@@ -19,13 +19,13 @@ export async function sendBrevoEmail({
 }: SendEmailPayload): Promise<{ success: boolean; messageId?: string; error?: string; simulated?: boolean }> {
   const apiKey = process.env.BREVO_API_KEY?.trim()
   let senderEmail = process.env.BREVO_SENDER_EMAIL?.trim() || ''
-  let senderName = process.env.BREVO_SENDER_NAME?.trim() || 'Jaandaar Masale'
+  let senderName = process.env.BREVO_SENDER_NAME?.trim() || 'HS AgroFoods'
 
   // Clean sender email if formatted as "Name <email@domain.com>"
   const angleMatch = senderEmail.match(/<([^>]+)>/)
   if (angleMatch) {
     const extractedName = senderEmail.replace(/<[^>]+>/, '').trim()
-    if (extractedName && (!process.env.BREVO_SENDER_NAME || process.env.BREVO_SENDER_NAME === 'Jaandaar Masale')) {
+    if (extractedName && (!process.env.BREVO_SENDER_NAME || process.env.BREVO_SENDER_NAME === 'HS AgroFoods')) {
       senderName = extractedName
     }
     senderEmail = angleMatch[1].trim()
@@ -101,7 +101,7 @@ export async function sendSignupOtpEmail({
   name: string
   otp: string
 }) {
-  const subject = `Your Jaandaar Masale Verification Code: ${otp}`
+  const subject = `Your HS AgroFoods Verification Code: ${otp}`
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -111,19 +111,19 @@ export async function sendSignupOtpEmail({
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${subject}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FAF6F2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2A1612;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FAF6F2; padding: 40px 15px;">
+<body style="margin: 0; padding: 0; background-color: #FDF9F3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #14361F;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FDF9F3; padding: 40px 15px;">
     <tr>
       <td align="center">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 540px; background-color: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(123, 17, 26, 0.08); border: 1px solid #E8DFD5;">
           <!-- Header Banner -->
           <tr>
-            <td style="background: linear-gradient(135deg, #7B111A 0%, #4D0910 100%); padding: 32px 24px; text-align: center;">
+            <td style="background: linear-gradient(135deg, #E07B0C 0%, #231007 100%); padding: 32px 24px; text-align: center;">
               <div style="font-size: 26px; font-weight: 800; color: #FFFFFF; letter-spacing: 2px; text-transform: uppercase;">
-                JAANDAAR MASALE
+                HS AGROFOODS
               </div>
               <div style="font-size: 11px; color: #D4AF37; letter-spacing: 3px; margin-top: 4px; text-transform: uppercase; font-weight: 600;">
-                Pure Spices · Royal Heritage
+                Pure Spices · Dehydrated Veg &amp; Fruit Powders
               </div>
             </td>
           </tr>
@@ -131,22 +131,22 @@ export async function sendSignupOtpEmail({
           <!-- Content Body -->
           <tr>
             <td style="padding: 36px 32px 28px 32px;">
-              <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 700; color: #2A1612;">
+              <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 700; color: #14361F;">
                 Verify Your Account
               </h2>
               <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #6E5951;">
                 Namaste <strong>${name || 'Customer'}</strong>,
               </p>
               <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #6E5951;">
-                Thank you for choosing Jaandaar Masale. Please enter the following 6-digit verification code to complete your registration and activate your account:
+                Thank you for choosing HS AgroFoods. Please enter the following 6-digit verification code to complete your registration and activate your account:
               </p>
 
               <!-- OTP Code Display Card -->
-              <div style="background-color: #FAF6F2; border: 2px dashed #C89B65; border-radius: 14px; padding: 22px 16px; text-align: center; margin: 24px 0;">
+              <div style="background-color: #FDF9F3; border: 2px dashed #F09819; border-radius: 14px; padding: 22px 16px; text-align: center; margin: 24px 0;">
                 <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8C7567; margin-bottom: 8px;">
                   Your Verification OTP
                 </div>
-                <div style="font-size: 36px; font-weight: 800; letter-spacing: 10px; color: #7B111A; font-family: monospace; line-height: 1;">
+                <div style="font-size: 36px; font-weight: 800; letter-spacing: 10px; color: #E07B0C; font-family: monospace; line-height: 1;">
                   ${otp}
                 </div>
                 <div style="font-size: 12px; color: #A68B7C; margin-top: 10px;">
@@ -162,12 +162,12 @@ export async function sendSignupOtpEmail({
 
           <!-- Footer -->
           <tr>
-            <td style="background-color: #FAF6F2; border-top: 1px solid #E8DFD5; padding: 24px 32px; text-align: center;">
+            <td style="background-color: #FDF9F3; border-top: 1px solid #E8DFD5; padding: 24px 32px; text-align: center;">
               <div style="font-size: 12px; font-weight: 600; color: #6E5951;">
-                Jaandaar Masale · Handcrafted Indian Spices
+                HS AgroFoods · Pure Spices &amp; Dehydrated Powders
               </div>
               <div style="font-size: 11px; color: #A68B7C; margin-top: 6px;">
-                © ${new Date().getFullYear()} Jaandaar Masale. All rights reserved.
+                © ${new Date().getFullYear()} HS AgroFoods. All rights reserved.
               </div>
             </td>
           </tr>
@@ -199,7 +199,7 @@ export async function sendPasswordResetEmail({
   name?: string
   resetUrl: string
 }) {
-  const subject = 'Reset Your Jaandaar Masale Password'
+  const subject = 'Reset Your HS AgroFoods Password'
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -209,19 +209,19 @@ export async function sendPasswordResetEmail({
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${subject}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FAF6F2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2A1612;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FAF6F2; padding: 40px 15px;">
+<body style="margin: 0; padding: 0; background-color: #FDF9F3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #14361F;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FDF9F3; padding: 40px 15px;">
     <tr>
       <td align="center">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 540px; background-color: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(123, 17, 26, 0.08); border: 1px solid #E8DFD5;">
           <!-- Header Banner -->
           <tr>
-            <td style="background: linear-gradient(135deg, #7B111A 0%, #4D0910 100%); padding: 32px 24px; text-align: center;">
+            <td style="background: linear-gradient(135deg, #E07B0C 0%, #231007 100%); padding: 32px 24px; text-align: center;">
               <div style="font-size: 26px; font-weight: 800; color: #FFFFFF; letter-spacing: 2px; text-transform: uppercase;">
-                JAANDAAR MASALE
+                HS AGROFOODS
               </div>
               <div style="font-size: 11px; color: #D4AF37; letter-spacing: 3px; margin-top: 4px; text-transform: uppercase; font-weight: 600;">
-                Pure Spices · Royal Heritage
+                Pure Spices · Dehydrated Veg &amp; Fruit Powders
               </div>
             </td>
           </tr>
@@ -229,32 +229,32 @@ export async function sendPasswordResetEmail({
           <!-- Content Body -->
           <tr>
             <td style="padding: 36px 32px 28px 32px;">
-              <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 700; color: #2A1612;">
+              <h2 style="margin: 0 0 16px 0; font-size: 20px; font-weight: 700; color: #14361F;">
                 Password Reset Request
               </h2>
               <p style="margin: 0 0 18px 0; font-size: 14px; line-height: 1.6; color: #6E5951;">
                 Namaste <strong>${name || 'Customer'}</strong>,
               </p>
               <p style="margin: 0 0 24px 0; font-size: 14px; line-height: 1.6; color: #6E5951;">
-                We received a request to reset your Jaandaar Masale account password. Click the button below to choose a new password:
+                We received a request to reset your HS AgroFoods account password. Click the button below to choose a new password:
               </p>
 
               <!-- CTA Button -->
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${resetUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #7B111A 0%, #8A131E 100%); color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 15px 36px; border-radius: 50px; box-shadow: 0 6px 18px rgba(123, 17, 26, 0.25); letter-spacing: 0.5px;">
+                <a href="${resetUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #E07B0C 0%, #D1491B 100%); color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 15px 36px; border-radius: 50px; box-shadow: 0 6px 18px rgba(123, 17, 26, 0.25); letter-spacing: 0.5px;">
                   Reset My Password
                 </a>
               </div>
 
-              <div style="background-color: #FAF6F2; border-radius: 10px; padding: 14px 18px; margin: 24px 0; font-size: 12px; color: #6E5951; line-height: 1.5;">
+              <div style="background-color: #FDF9F3; border-radius: 10px; padding: 14px 18px; margin: 24px 0; font-size: 12px; color: #6E5951; line-height: 1.5;">
                 ⏰ <strong>Note:</strong> This link is secure and valid for <strong>15 minutes</strong>. It can only be used once.
               </div>
 
               <p style="margin: 20px 0 8px 0; font-size: 12px; color: #8C7567;">
                 If the button above does not work, copy and paste this link into your browser:
               </p>
-              <div style="word-break: break-all; font-size: 11px; color: #7B111A; background-color: #F8F5F2; padding: 10px; border-radius: 6px; border: 1px solid #E8DFD5;">
-                <a href="${resetUrl}" style="color: #7B111A; text-decoration: underline;">${resetUrl}</a>
+              <div style="word-break: break-all; font-size: 11px; color: #E07B0C; background-color: #F8F5F2; padding: 10px; border-radius: 6px; border: 1px solid #E8DFD5;">
+                <a href="${resetUrl}" style="color: #E07B0C; text-decoration: underline;">${resetUrl}</a>
               </div>
 
               <p style="margin: 24px 0 0 0; font-size: 12px; line-height: 1.5; color: #8C7567;">
@@ -265,12 +265,12 @@ export async function sendPasswordResetEmail({
 
           <!-- Footer -->
           <tr>
-            <td style="background-color: #FAF6F2; border-top: 1px solid #E8DFD5; padding: 24px 32px; text-align: center;">
+            <td style="background-color: #FDF9F3; border-top: 1px solid #E8DFD5; padding: 24px 32px; text-align: center;">
               <div style="font-size: 12px; font-weight: 600; color: #6E5951;">
-                Jaandaar Masale · Handcrafted Indian Spices
+                HS AgroFoods · Pure Spices &amp; Dehydrated Powders
               </div>
               <div style="font-size: 11px; color: #A68B7C; margin-top: 6px;">
-                © ${new Date().getFullYear()} Jaandaar Masale. All rights reserved.
+                © ${new Date().getFullYear()} HS AgroFoods. All rights reserved.
               </div>
             </td>
           </tr>
@@ -325,7 +325,7 @@ export type OrderEmailData = {
 
 export async function sendOrderConfirmationEmail(data: OrderEmailData) {
   const isPaidOnline = data.paymentStatus === 'paid'
-  const subject = `Order Confirmed: #${data.orderNumber} - Jaandaar Masale`
+  const subject = `Order Confirmed: #${data.orderNumber} - HS AgroFoods`
   const formattedDate = data.orderDate || new Date().toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'short',
@@ -343,8 +343,8 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
   // Generate table rows for items
   const itemRowsHtml = data.items.map(item => `
     <tr style="border-bottom: 1px solid #F0E8DF;">
-      <td style="padding: 14px 10px; font-size: 13px; color: #2A1612; vertical-align: top;">
-        <strong style="color: #2A1612;">${item.product_name}</strong>
+      <td style="padding: 14px 10px; font-size: 13px; color: #14361F; vertical-align: top;">
+        <strong style="color: #14361F;">${item.product_name}</strong>
         ${item.variant_name ? `<br><span style="font-size: 11px; color: #8C7567;">Weight / Pack: ${item.variant_name}</span>` : ''}
       </td>
       <td style="padding: 14px 10px; font-size: 13px; color: #6E5951; text-align: center; vertical-align: top;">
@@ -353,7 +353,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
       <td style="padding: 14px 10px; font-size: 13px; color: #6E5951; text-align: right; vertical-align: top;">
         ₹${Number(item.price_at_purchase).toLocaleString('en-IN')}
       </td>
-      <td style="padding: 14px 10px; font-size: 13px; font-weight: 700; color: #7B111A; text-align: right; vertical-align: top;">
+      <td style="padding: 14px 10px; font-size: 13px; font-weight: 700; color: #E07B0C; text-align: right; vertical-align: top;">
         ₹${Number(item.line_total).toLocaleString('en-IN')}
       </td>
     </tr>
@@ -365,7 +365,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
   const paymentBadgeBorder = isPaidOnline ? '#BBF7D0' : '#FED7AA'
   const rawSender = process.env.BREVO_SENDER_EMAIL?.trim() || ''
   const angleMatch = rawSender.match(/<([^>]+)>/)
-  const supportEmail = angleMatch ? angleMatch[1] : (rawSender || 'info@meagle360.com')
+  const supportEmail = angleMatch ? angleMatch[1] : (rawSender || 'Hs.foodofficial@gmail.com')
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -375,20 +375,20 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${subject}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FAF6F2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2A1612;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FAF6F2; padding: 35px 12px;">
+<body style="margin: 0; padding: 0; background-color: #FDF9F3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #14361F;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FDF9F3; padding: 35px 12px;">
     <tr>
       <td align="center">
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(123, 17, 26, 0.08); border: 1px solid #E8DFD5;">
           
           <!-- Brand Header Banner -->
           <tr>
-            <td style="background: linear-gradient(135deg, #7B111A 0%, #4D0910 100%); padding: 30px 24px; text-align: center;">
+            <td style="background: linear-gradient(135deg, #E07B0C 0%, #231007 100%); padding: 30px 24px; text-align: center;">
               <div style="font-size: 26px; font-weight: 800; color: #FFFFFF; letter-spacing: 2.5px; text-transform: uppercase;">
-                JAANDAAR MASALE
+                HS AGROFOODS
               </div>
               <div style="font-size: 11px; color: #D4AF37; letter-spacing: 3px; margin-top: 4px; text-transform: uppercase; font-weight: 600;">
-                Pure Spices · Royal Heritage
+                Pure Spices · Dehydrated Veg &amp; Fruit Powders
               </div>
             </td>
           </tr>
@@ -399,7 +399,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
               <div style="display: inline-block; background-color: #EAF5EA; border: 1px solid #BBF7D0; color: #166534; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 14px; border-radius: 50px; margin-bottom: 12px;">
                 ✓ Order Confirmed
               </div>
-              <h2 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 800; color: #2A1612;">
+              <h2 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 800; color: #14361F;">
                 Thank You for Your Order!
               </h2>
               <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #6E5951;">
@@ -411,13 +411,13 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
           <!-- Order Summary Meta Box -->
           <tr>
             <td style="padding: 16px 28px;">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FAF6F2; border-radius: 12px; border: 1px solid #E8DFD5; padding: 14px 18px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FDF9F3; border-radius: 12px; border: 1px solid #E8DFD5; padding: 14px 18px;">
                 <tr>
                   <td style="font-size: 12px; color: #8C7567; padding: 4px 0;">
-                    Order Number: <strong style="color: #7B111A; font-family: monospace; font-size: 13px;">#${data.orderNumber}</strong>
+                    Order Number: <strong style="color: #E07B0C; font-family: monospace; font-size: 13px;">#${data.orderNumber}</strong>
                   </td>
                   <td align="right" style="font-size: 12px; color: #8C7567; padding: 4px 0;">
-                    Date: <strong style="color: #2A1612;">${formattedDate}</strong>
+                    Date: <strong style="color: #14361F;">${formattedDate}</strong>
                   </td>
                 </tr>
                 <tr>
@@ -432,7 +432,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
           <!-- Itemized Table -->
           <tr>
             <td style="padding: 10px 28px 16px 28px;">
-              <div style="font-size: 14px; font-weight: 700; color: #2A1612; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
+              <div style="font-size: 14px; font-weight: 700; color: #14361F; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
                 Order Summary
               </div>
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
@@ -453,17 +453,17 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 14px; border-top: 1px solid #E8DFD5; padding-top: 12px;">
                 <tr>
                   <td align="right" style="font-size: 13px; color: #6E5951; padding: 4px 10px;">Subtotal:</td>
-                  <td align="right" width="90" style="font-size: 13px; color: #2A1612; padding: 4px 10px;">₹${Number(data.subtotal).toLocaleString('en-IN')}</td>
+                  <td align="right" width="90" style="font-size: 13px; color: #14361F; padding: 4px 10px;">₹${Number(data.subtotal).toLocaleString('en-IN')}</td>
                 </tr>
                 <tr>
                   <td align="right" style="font-size: 13px; color: #6E5951; padding: 4px 10px;">Shipping:</td>
-                  <td align="right" width="90" style="font-size: 13px; font-weight: 600; color: ${data.shippingCost === 0 ? '#166534' : '#2A1612'}; padding: 4px 10px;">
+                  <td align="right" width="90" style="font-size: 13px; font-weight: 600; color: ${data.shippingCost === 0 ? '#166534' : '#14361F'}; padding: 4px 10px;">
                     ${data.shippingCost === 0 ? 'FREE' : `₹${Number(data.shippingCost).toLocaleString('en-IN')}`}
                   </td>
                 </tr>
-                <tr style="border-top: 2px solid #7B111A;">
-                  <td align="right" style="font-size: 15px; font-weight: 800; color: #7B111A; padding: 10px 10px 4px 10px;">Total Amount:</td>
-                  <td align="right" width="90" style="font-size: 17px; font-weight: 800; color: #7B111A; padding: 10px 10px 4px 10px;">₹${Number(data.totalAmount).toLocaleString('en-IN')}</td>
+                <tr style="border-top: 2px solid #E07B0C;">
+                  <td align="right" style="font-size: 15px; font-weight: 800; color: #E07B0C; padding: 10px 10px 4px 10px;">Total Amount:</td>
+                  <td align="right" width="90" style="font-size: 17px; font-weight: 800; color: #E07B0C; padding: 10px 10px 4px 10px;">₹${Number(data.totalAmount).toLocaleString('en-IN')}</td>
                 </tr>
               </table>
             </td>
@@ -472,14 +472,14 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
           <!-- Delivery Address Box -->
           <tr>
             <td style="padding: 6px 28px 20px 28px;">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FAF6F2; border-radius: 12px; border: 1px solid #E8DFD5; padding: 16px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FDF9F3; border-radius: 12px; border: 1px solid #E8DFD5; padding: 16px;">
                 <tr>
-                  <td style="font-size: 12px; font-weight: 700; color: #7B111A; text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">
+                  <td style="font-size: 12px; font-weight: 700; color: #E07B0C; text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px;">
                     📍 Delivery Address
                   </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 13px; line-height: 1.6; color: #2A1612;">
+                  <td style="font-size: 13px; line-height: 1.6; color: #14361F;">
                     <strong>${data.shippingAddress.address_line_1 ? data.customerName : ''}</strong><br>
                     ${fullAddress}
                     ${data.customerPhone ? `<br><span style="color: #6E5951; font-size: 12px;">📞 Phone: ${data.customerPhone}</span>` : ''}
@@ -492,10 +492,10 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
           <!-- Dispatch Assurance Box -->
           <tr>
             <td style="padding: 0 28px 24px 28px;">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FFF9F2; border-left: 4px solid #C89B65; border-radius: 6px; padding: 12px 16px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #FFF9F2; border-left: 4px solid #F09819; border-radius: 6px; padding: 12px 16px;">
                 <tr>
                   <td style="font-size: 12px; line-height: 1.5; color: #6E5951;">
-                    🌿 <strong>Artisanal Assurance:</strong> All Jaandaar Masale batches are freshly ground from handpicked whole spices, zero preservatives, and sealed in airtight aroma-lock packaging. Your package will be dispatched within 24–48 hours.
+                    🌿 <strong>Artisanal Assurance:</strong> All HS AgroFoods batches are freshly ground from handpicked whole spices, zero preservatives, and sealed in airtight aroma-lock packaging. Your package will be dispatched within 24–48 hours.
                   </td>
                 </tr>
               </table>
@@ -504,15 +504,15 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
 
           <!-- Footer -->
           <tr>
-            <td style="background-color: #FAF6F2; border-top: 1px solid #E8DFD5; padding: 24px 28px; text-align: center;">
+            <td style="background-color: #FDF9F3; border-top: 1px solid #E8DFD5; padding: 24px 28px; text-align: center;">
               <div style="font-size: 12px; font-weight: 600; color: #6E5951;">
-                Jaandaar Masale · Handcrafted Indian Spices
+                HS AgroFoods · Pure Spices &amp; Dehydrated Powders
               </div>
               <div style="font-size: 11px; color: #8C7567; margin-top: 4px;">
-                Questions about your order? Reach us at <a href="mailto:${supportEmail}" style="color: #7B111A; text-decoration: underline;">${supportEmail}</a>
+                Questions about your order? Reach us at <a href="mailto:${supportEmail}" style="color: #E07B0C; text-decoration: underline;">${supportEmail}</a>
               </div>
               <div style="font-size: 10px; color: #A68B7C; margin-top: 8px;">
-                © ${new Date().getFullYear()} Jaandaar Masale. All rights reserved.
+                © ${new Date().getFullYear()} HS AgroFoods. All rights reserved.
               </div>
             </td>
           </tr>

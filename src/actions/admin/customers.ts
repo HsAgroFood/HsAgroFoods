@@ -79,7 +79,7 @@ export async function getCustomers() {
     }
   })
 
-  const defaultAdminEmail = (process.env.ADMIN_EMAIL || 'admin@jaandaarmasale.com').trim().toLowerCase()
+  const defaultAdminEmail = (process.env.ADMIN_EMAIL || 'admin@hsagrofoods.com').trim().toLowerCase()
 
   // Add or augment with order history
   orders?.forEach((o) => {

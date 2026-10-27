@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     const response = await fetch(`https://api.postalpincode.in/pincode/${code}`, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; JaandaarMasale/1.0)',
+        'User-Agent': 'Mozilla/5.0 (compatible; HSAgroFoods/1.0)',
       },
     })
 

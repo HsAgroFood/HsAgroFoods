@@ -33,20 +33,20 @@ export function HeritageSeal({
   return (
     <div
       className={`relative inline-flex items-center justify-center select-none group ${className}`}
-      title="Jaandaar Masale — 100% Pure & Authentic Heritage Seal"
+      title="HS AgroFoods — 100% Pure & Authentic Heritage Seal"
     >
       {/* Outer ambient golden aura glow */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C89B65]/20 via-[#7B111A]/10 to-[#C89B65]/25 blur-xl group-hover:blur-2xl transition-all duration-500 opacity-80 group-hover:opacity-100" />
+      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#F09819]/20 via-[#E07B0C]/10 to-[#F09819]/25 blur-xl group-hover:blur-2xl transition-all duration-500 opacity-80 group-hover:opacity-100" />
 
       {/* Main Container */}
       <div
         className={`relative ${dimensions[size]} rounded-full flex items-center justify-center p-1.5 transition-transform duration-500 ease-out group-hover:scale-105`}
       >
         {/* Scalloped / Vintage Outer Rim Border */}
-        <div className="absolute inset-0 rounded-full border border-[#C89B65]/40 shadow-xl bg-gradient-to-b from-[#FFFDFB] to-[#F7EFE8]" />
+        <div className="absolute inset-0 rounded-full border border-[#F09819]/40 shadow-xl bg-gradient-to-b from-[#FFFDFB] to-[#F7EFE8]" />
 
         {/* Secondary inner delicate ring */}
-        <div className="absolute inset-[5px] sm:inset-[7px] rounded-full border border-dashed border-[#7B111A]/30" />
+        <div className="absolute inset-[5px] sm:inset-[7px] rounded-full border border-dashed border-[#E07B0C]/30" />
 
         {/* Rotating SVG Circular Typography */}
         <svg
@@ -62,22 +62,22 @@ export function HeritageSeal({
 
           {/* Curved Circular Text */}
           <text
-            className="text-[9px] sm:text-[9.5px] font-extrabold uppercase tracking-[0.24em] fill-[#6B1118]"
+            className="text-[9px] sm:text-[9.5px] font-extrabold uppercase tracking-[0.24em] fill-[#431D0D]"
             style={{ letterSpacing: '0.24em' }}
           >
             <textPath href={`#${textPathId}`} startOffset="0%">
-              ★ Jaandaar Masale ★ 100% PURE & NATURAL ★ TRADITIONAL TASTE ★
+              ★ HS AgroFoods ★ 100% PURE & NATURAL ★ TRADITIONAL TASTE ★
             </textPath>
           </text>
         </svg>
 
         {/* Centerpiece: Circular Brand Logo with Double Gold Borders */}
         <div
-          className={`relative ${logoDimensions[size]} rounded-full overflow-hidden shadow-md ring-2 ring-[#C89B65] ring-offset-2 ring-offset-[#F7EFE8] bg-white transform transition-transform duration-500 group-hover:rotate-6`}
+          className={`relative ${logoDimensions[size]} rounded-full overflow-hidden shadow-md ring-2 ring-[#F09819] ring-offset-2 ring-offset-[#F7EFE8] bg-white transform transition-transform duration-500 group-hover:rotate-6`}
         >
           <Image
             src={SPICE_ASSETS.logo}
-            alt="Jaandaar Masale Authentic Seal"
+            alt="HS AgroFoods Authentic Seal"
             fill
             sizes="(max-width: 768px) 120px, 200px"
             className="object-cover"
@@ -91,7 +91,7 @@ export function HeritageSeal({
 
       {/* Optional micro tagline pill below seal */}
       {showTagline && (
-        <div className="absolute -bottom-2 bg-[#7B111A] text-[#FFF4E8] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-md border border-[#C89B65]/40 whitespace-nowrap">
+        <div className="absolute -bottom-2 bg-[#E07B0C] text-[#FFF4E8] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-md border border-[#F09819]/40 whitespace-nowrap">
           Heritage Seal
         </div>
       )}

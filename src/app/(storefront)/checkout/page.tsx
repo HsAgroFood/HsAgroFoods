@@ -6,7 +6,7 @@ import { getShippingConfig } from '@/actions/shipping'
 import { CheckoutClient } from './_components/CheckoutClient'
 
 export const metadata = {
-  title: 'Checkout | Jaandaar Masale',
+  title: 'Checkout | HS AgroFoods',
 }
 
 export const dynamic = 'force-dynamic'
@@ -38,7 +38,7 @@ export default async function CheckoutPage() {
   }
 
   return (
-    <div className="bg-[#FAF6F2] py-8 sm:py-12 min-h-screen">
+    <div className="bg-[#FDF9F3] py-8 sm:py-12 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">

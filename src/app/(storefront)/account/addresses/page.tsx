@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { AddressList } from './_components/AddressList'
 
 export const metadata = {
-  title: 'My Addresses | Jaandaar Masale',
+  title: 'My Addresses | HS AgroFoods',
 }
 
 export const dynamic = 'force-dynamic'

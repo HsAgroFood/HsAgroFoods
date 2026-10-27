@@ -34,11 +34,11 @@ export function AccountNav() {
             href={link.href}
             className={`flex items-center gap-3 px-6 py-4 text-xs sm:text-sm font-bold transition-all ${
               isActive 
-                ? 'bg-[#FAF6F2] text-[#7B111A] border-l-4 border-l-[#7B111A] pl-5' 
-                : 'text-[#5A433B] hover:bg-[#FAF6F2]/60 hover:text-[#7B111A] border-l-4 border-l-transparent pl-5'
+                ? 'bg-[#FDF9F3] text-[#E07B0C] border-l-4 border-l-[#E07B0C] pl-5' 
+                : 'text-[#5A433B] hover:bg-[#FDF9F3]/60 hover:text-[#E07B0C] border-l-4 border-l-transparent pl-5'
             }`}
           >
-            <Icon className={`w-4 h-4 ${isActive ? 'text-[#7B111A]' : 'text-[#8C7567]'}`} />
+            <Icon className={`w-4 h-4 ${isActive ? 'text-[#E07B0C]' : 'text-[#8C7567]'}`} />
             <span>{link.name}</span>
           </Link>
         )

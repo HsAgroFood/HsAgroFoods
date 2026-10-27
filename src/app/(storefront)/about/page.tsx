@@ -54,12 +54,22 @@ const ORIGIN_REGIONS = [
   {
     id: 'kerala',
     state: 'Idukki & Wayanad, Kerala',
-    spice: 'Royal Garam Masala Herbs',
-    tag: '16 Handpicked Spices',
+    spice: 'Shahi Garam Masala & Raw Banana',
+    tag: 'Royal Blends & Fruit Powders',
     badgeColor: 'bg-emerald-500/10 text-emerald-800 border-emerald-500/30',
     image: '/images/about/region-kerala.jpg',
-    desc: 'Nestled in the misty Western Ghats, these spice gardens provide our whole green cardamom, Tellicherry black pepper, cloves, and mace for our royal heritage recipe.',
-    features: ['Single-estate harvest', 'High volatile oil retention', 'Imperial heirloom aroma'],
+    desc: 'Nestled in the misty Western Ghats, these spice gardens provide whole cardamom, cloves, and mace for our Shahi Garam Masala alongside nutrient-rich green bananas for our Raw Banana Powder.',
+    features: ['Single-estate harvest', 'High volatile oil retention', 'Prebiotic & heirloom nutrition'],
+  },
+  {
+    id: 'dehydrated',
+    state: 'Nashik,Pune & North Indian Farms',
+    spice: 'Dehydrated Veg & Fruit Powders',
+    tag: '100% Natural Low-Temp Dehydrated',
+    badgeColor: 'bg-rose-500/10 text-rose-800 border-rose-500/30',
+    image: '/images/products/beetroot-powder.png',
+    desc: 'Farm-fresh red beetroots, vine-ripened tomatoes, crisp carrots, white radishes, and garlic cloves gently dehydrated at low temperatures to lock in natural color, vitamins, and flavor without preservatives.',
+    features: ['Zero artificial colors', 'Instant culinary convenience', 'Peak vitamin & mineral retention'],
   },
 ]
 
@@ -118,7 +128,7 @@ const COMPARISON_POINTS = [
   {
     feature: 'Fillers & Bulking Agents',
     regular: 'Starch, sawdust, spent spices, or salt added for weight',
-    jaandaar: 'Zero fillers, zero additives — 100% pure whole spice powder',
+    jaandaar: 'Zero fillers, zero additives — 100% pure spices & dehydrated veg/fruit powders',
   },
   {
     feature: 'Packaging & Shelf Aroma',
@@ -136,7 +146,7 @@ const COMPARISON_POINTS = [
 const FAQS = [
   {
     q: 'How does Cold-Process Grinding make a difference to my food?',
-    a: 'Normal commercial grinders run at extreme speeds and generate temperatures above 80°C, which evaporates volatile spice oils (responsible for flavor and aroma). Jaandaar Masale uses controlled low-temperature grinding below 40°C, keeping the medicinal curcumin in haldi and the natural capsaicin in chillies fully intact.',
+    a: 'Normal commercial grinders run at extreme speeds and generate temperatures above 80°C, which evaporates volatile spice oils (responsible for flavor and aroma). HS AgroFoods uses controlled low-temperature grinding below 40°C, keeping the medicinal curcumin in haldi and the natural capsaicin in chillies fully intact.',
   },
   {
     q: 'Why does your Red Chilly look naturally deeper rather than fluorescent red?',
@@ -147,7 +157,7 @@ const FAQS = [
     a: 'Yes, absolutely. Every production lot is tested by NABL-accredited laboratories to verify zero adulteration, zero heavy metals (Lead, Cadmium), and zero chemical pesticides before packaging.',
   },
   {
-    q: 'How should I store Jaandaar Masale once opened?',
+    q: 'How should I store HS AgroFoods once opened?',
     a: 'Keep the spices in our resealable aroma-protection pouches or transfer them into clean, dry airtight glass/steel jars away from direct sunlight and stove heat to maintain peak fragrance.',
   },
 ]
@@ -161,39 +171,39 @@ export default function AboutPage() {
   const currentRegion = ORIGIN_REGIONS.find((r) => r.id === activeRegion) || ORIGIN_REGIONS[0]
 
   return (
-    <div className="bg-[#FAF6F2] min-h-screen text-[#2A1612] overflow-hidden">
+    <div className="bg-[#FFF9F0] min-h-screen text-[#14361F] overflow-hidden">
       
-      {/* 1. Hero Header with AI-Generated Cinematic Farm Visual */}
-      <section className="relative bg-gradient-to-b from-[#5C0D13] via-[#701118] to-[#80121A] text-white py-16 sm:py-24 overflow-hidden">
-        {/* Ambient Warm Lighting */}
-        <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-[#D4A373]/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-black/40 rounded-full blur-3xl pointer-events-none" />
+      {/* 1. Hero Header — Warm Cream & Saffron (Tata Sampann / Premium Organic Style) */}
+      <section className="relative bg-gradient-to-br from-[#FFF9F0] via-[#FFEDD2] to-[#FCE0B4] text-[#14361F] py-16 sm:py-24 overflow-hidden border-b border-[#F2DCBA]">
+        {/* Ambient Warm Saffron & Leaf Glow */}
+        <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-[#F09819]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#144D29]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-[#E5AD58]/40 px-4 py-1.5 text-xs font-semibold tracking-widest text-[#F0D5B5] uppercase backdrop-blur-md shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-[#E5AD58]" />
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/90 border border-[#F09819]/50 px-4 py-1.5 text-xs font-bold tracking-widest text-[#B85D0B] uppercase shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-[#E07B0C]" />
                 <span>Our Heritage &amp; Purity Promise</span>
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.15]">
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#144D29] leading-[1.15]">
                 Pure Spice. <br />
-                <span className="text-[#E5AD58]">Real Taste.</span><br />
+                <span className="text-[#E07B0C]">Real Taste.</span><br />
                 Trusted Every Time.
               </h1>
 
-              <p className="text-sm sm:text-base lg:text-lg text-stone-200/90 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
-                Jaandaar Masale was born from a timeless conviction: your family deserves pure, unadulterated spices ground cold with natural oils, rich aroma, and zero shortcuts.
+              <p className="text-sm sm:text-base lg:text-lg text-[#4A3B2C] max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                HS AgroFoods was born from a timeless conviction: your family deserves pure, unadulterated spices and natural dehydrated vegetable &amp; fruit powders — crafted with rich aroma, vibrant nutrition, and zero shortcuts.
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
                 <Link
                   href="/shop"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#E5AD58] hover:bg-[#d99f47] text-[#2A1612] text-xs sm:text-sm font-bold tracking-wider uppercase shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-[#F09819] to-[#E07B0C] hover:from-[#DF870D] hover:to-[#C96B06] text-white text-xs sm:text-sm font-bold tracking-wider uppercase shadow-lg shadow-[#F09819]/25 hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                 >
                   <span>Explore Collection</span>
                   <ArrowRight className="w-4 h-4" />
@@ -201,9 +211,9 @@ export default function AboutPage() {
 
                 <button
                   onClick={() => setLabModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white text-xs sm:text-sm font-semibold tracking-wide backdrop-blur-md transition-all active:scale-95"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-[#FFF9F0] border border-[#E5C9A1] text-[#144D29] text-xs sm:text-sm font-bold tracking-wide shadow-sm transition-all active:scale-95 cursor-pointer"
                 >
-                  <FileCheck className="w-4 h-4 text-[#E5AD58]" />
+                  <FileCheck className="w-4 h-4 text-[#E07B0C]" />
                   <span>View Lab Certificate</span>
                 </button>
               </div>
@@ -211,7 +221,7 @@ export default function AboutPage() {
 
             {/* Right Hero Visual Card */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 bg-white/5 backdrop-blur-sm p-3 group">
+              <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white/80 backdrop-blur-sm p-3 group">
                 <div className="relative w-full h-[320px] sm:h-[380px] rounded-2xl overflow-hidden">
                   <Image
                     src="/images/about/about-hero.jpg"
@@ -221,9 +231,9 @@ export default function AboutPage() {
                     priority
                     sizes="(max-width: 768px) 100vw, 450px"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#2A080B]/80 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 text-white">
-                    <span className="text-[10px] uppercase font-bold tracking-wider bg-[#E5AD58] text-[#2A1612] px-2.5 py-0.5 rounded-full inline-block mb-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider bg-[#F09819] text-white px-2.5 py-0.5 rounded-full inline-block mb-1 shadow-xs">
                       Farm Harvest
                     </span>
                     <h4 className="font-serif text-base font-bold">100% Single Origin Sun-Drying</h4>
@@ -239,26 +249,26 @@ export default function AboutPage() {
       {/* 2. Trust Metrics Counter Bar */}
       <section className="relative z-20 -mt-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-xl border border-[#E8DACB] grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y sm:divide-y-0 sm:divide-x divide-[#EFE5D8]">
+          <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-xl border border-[#F0DEC2] grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y sm:divide-y-0 sm:divide-x divide-[#F5E6CE]">
             <div className="flex flex-col items-center">
-              <span className="font-serif text-3xl sm:text-4xl font-black text-[#80121A]">100%</span>
-              <span className="text-xs font-semibold text-[#2A1612] mt-1">Single Origin Harvests</span>
-              <span className="text-[11px] text-[#8C7567]">Directly farm-sourced</span>
+              <span className="font-serif text-3xl sm:text-4xl font-black text-[#E07B0C]">100%</span>
+              <span className="text-xs font-bold text-[#144D29] mt-1">Single Origin Harvests</span>
+              <span className="text-[11px] text-[#7A6248]">Directly farm-sourced</span>
             </div>
             <div className="flex flex-col items-center pt-4 sm:pt-0">
-              <span className="font-serif text-3xl sm:text-4xl font-black text-[#80121A]">0%</span>
-              <span className="text-xs font-semibold text-[#2A1612] mt-1">Artificial Dyes or Fillers</span>
-              <span className="text-[11px] text-[#8C7567]">Zero Sudan/chemical colors</span>
+              <span className="font-serif text-3xl sm:text-4xl font-black text-[#E07B0C]">0%</span>
+              <span className="text-xs font-bold text-[#144D29] mt-1">Artificial Dyes or Fillers</span>
+              <span className="text-[11px] text-[#7A6248]">Zero Sudan/chemical colors</span>
             </div>
             <div className="flex flex-col items-center pt-4 sm:pt-0">
-              <span className="font-serif text-3xl sm:text-4xl font-black text-[#80121A]">&lt; 40°C</span>
-              <span className="text-xs font-semibold text-[#2A1612] mt-1">Cold-Process Grinding</span>
-              <span className="text-[11px] text-[#8C7567]">Preserves aroma &amp; oils</span>
+              <span className="font-serif text-3xl sm:text-4xl font-black text-[#E07B0C]">&lt; 40°C</span>
+              <span className="text-xs font-bold text-[#144D29] mt-1">Cold-Process Grinding</span>
+              <span className="text-[11px] text-[#7A6248]">Preserves aroma &amp; oils</span>
             </div>
             <div className="flex flex-col items-center pt-4 sm:pt-0">
-              <span className="font-serif text-3xl sm:text-4xl font-black text-[#80121A]">50,000+</span>
-              <span className="text-xs font-semibold text-[#2A1612] mt-1">Happy Kitchens</span>
-              <span className="text-[11px] text-[#8C7567]">Trusted across India</span>
+              <span className="font-serif text-3xl sm:text-4xl font-black text-[#E07B0C]">50,000+</span>
+              <span className="text-xs font-bold text-[#144D29] mt-1">Happy Kitchens</span>
+              <span className="text-[11px] text-[#7A6248]">Trusted across India</span>
             </div>
           </div>
         </div>
@@ -271,50 +281,50 @@ export default function AboutPage() {
             
             {/* Left Story Content */}
             <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#80121A]">
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#E07B0C]">
                 <span>Our Roots &amp; Heritage</span>
               </div>
 
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#2A1612] leading-[1.2]">
-                The Story Behind Our <span className="text-[#80121A]">Purity</span>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#144D29] leading-[1.2]">
+                The Story Behind Our <span className="text-[#E07B0C]">Purity</span>
               </h2>
 
               <div className="flex items-center justify-center lg:justify-start gap-3 py-1">
-                <div className="w-12 h-px bg-[#C89B65]" />
-                <span className="text-xs text-[#C89B65]">✦</span>
-                <div className="w-12 h-px bg-[#C89B65]" />
+                <div className="w-12 h-px bg-[#F09819]" />
+                <span className="text-xs text-[#E07B0C]">✦</span>
+                <div className="w-12 h-px bg-[#F09819]" />
               </div>
 
-              <div className="space-y-4 text-sm sm:text-base text-[#5A433B] leading-relaxed">
+              <div className="space-y-4 text-sm sm:text-base text-[#4A3B2C] leading-relaxed">
                 <p>
                   In traditional Indian households, spices are more than just cooking ingredients — they are the heartbeat of family feasts, ancestral healing remedies, and lifelong memories.
                 </p>
                 <p>
-                  Yet, modern mass-produced powders often lose their natural oils and potency through harsh high-heat pulverization, artificial colors, and added starches. At <strong>Jaandaar Masale</strong>, we set out to restore that lost culinary glory.
+                  Yet, modern mass-produced powders often lose their natural oils and potency through harsh high-heat pulverization, artificial colors, and added starches. At <strong>HS AgroFoods</strong>, we set out to restore that lost culinary glory.
                 </p>
                 <p>
-                  We partner directly with generational farmers in Salem, Guntur, and Saurashtra. Every batch of our Turmeric, Kashmiri Red Chilly, Coriander, and Garam Masala is roasted gently and ground cold, locking in the natural antioxidants and unmistakable aroma.
+                  We partner directly with generational farmers across India. Every batch of our Turmeric, Red Chilli, Coriander, Zeera, Shahi Garam Masala, Chaat Masala, and our Dehydrated Beetroot, Tomato, Banana, Garlic, Carrot &amp; Radish Powders is processed at controlled low temperatures — locking in natural antioxidants, vitamins, and unmistakable aroma.
                 </p>
               </div>
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-[#E8DFD5] shadow-sm">
-                  <div className="w-10 h-10 rounded-full bg-[#80121A]/10 flex items-center justify-center text-[#80121A]">
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-[#F0DEC2] shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#F09819]/15 flex items-center justify-center text-[#E07B0C]">
                     <HeartHandshake className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-[#2A1612]">Direct Farmer Sourcing</p>
-                    <p className="text-[11px] text-[#6E5951]">Fair-trade ethical harvest</p>
+                    <p className="text-xs font-bold text-[#144D29]">Direct Farmer Sourcing</p>
+                    <p className="text-[11px] text-[#7A6248]">Fair-trade ethical harvest</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-[#E8DFD5] shadow-sm">
-                  <div className="w-10 h-10 rounded-full bg-[#80121A]/10 flex items-center justify-center text-[#80121A]">
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white border border-[#F0DEC2] shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#144D29]/10 flex items-center justify-center text-[#144D29]">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-[#2A1612]">FSSAI &amp; AGMARK Certified</p>
-                    <p className="text-[11px] text-[#6E5951]">NABL Lab-Tested Batches</p>
+                    <p className="text-xs font-bold text-[#144D29]">FSSAI &amp; AGMARK Certified</p>
+                    <p className="text-[11px] text-[#7A6248]">NABL Lab-Tested Batches</p>
                   </div>
                 </div>
               </div>
@@ -323,7 +333,7 @@ export default function AboutPage() {
             {/* Right Visual Image Card with Real AI Farmer Photo */}
             <div className="lg:col-span-6 relative">
               <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white group">
-                <div className="relative w-full h-[320px] sm:h-[400px] overflow-hidden bg-[#3B070A]">
+                <div className="relative w-full h-[320px] sm:h-[400px] overflow-hidden bg-[#FFF9F0]">
                   <Image
                     src="/images/about/about-farmers.jpg"
                     alt="Indian farmer holding raw golden turmeric and red chillies"
@@ -331,12 +341,12 @@ export default function AboutPage() {
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#2A1612]/70 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>
 
                 {/* Floating Seal Stamp Pill */}
-                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 rounded-2xl bg-white/95 backdrop-blur-md p-4 border border-[#E8DFD5] shadow-xl flex items-center gap-4">
-                  <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-[#C89B65] shadow-sm bg-[#FAF6F2]">
+                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 rounded-2xl bg-white/95 backdrop-blur-md p-4 border border-[#F0DEC2] shadow-xl flex items-center gap-4">
+                  <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-[#F09819] shadow-sm bg-[#FFF9F0]">
                     <Image
                       src={SPICE_ASSETS.qualitySeal}
                       alt="Quality Seal"
@@ -346,8 +356,8 @@ export default function AboutPage() {
                     />
                   </div>
                   <div>
-                    <h4 className="font-serif text-sm font-bold text-[#2A1612]">100% Raw &amp; Untainted</h4>
-                    <p className="text-xs text-[#6E5951]">Handpicked directly from generational Indian farms.</p>
+                    <h4 className="font-serif text-sm font-bold text-[#144D29]">100% Raw &amp; Untainted</h4>
+                    <p className="text-xs text-[#7A6248]">Handpicked directly from generational Indian farms.</p>
                   </div>
                 </div>
               </div>
@@ -357,23 +367,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4. Interactive Regional Sourcing Explorer with REAL AI REGIONAL HARVEST PHOTOS */}
-      <section className="py-20 sm:py-28 bg-[#F4EDE5] border-y border-[#E8DACB] relative">
+      {/* 4. Interactive Regional Sourcing Explorer */}
+      <section className="py-20 sm:py-28 bg-[#FFF3DF] border-y border-[#F2DCBA] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#80121A]">
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#E07B0C]">
               Farm-to-Pouch Traceability
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#2A1612] tracking-tight">
-              Where Our <span className="text-[#80121A]">Spices</span> Originate
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#144D29] tracking-tight">
+              Where Our <span className="text-[#E07B0C]">Spices</span> Originate
             </h2>
-            <p className="text-sm sm:text-base text-[#6E5951]">
+            <p className="text-sm sm:text-base text-[#5C4934]">
               Select any region to explore its single-origin harvest and artisanal spice profile.
             </p>
           </div>
 
-          {/* Region Tabs with 4 distinct visual thumbnails */}
+          {/* Region Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
             {ORIGIN_REGIONS.map((region) => {
               const isActive = activeRegion === region.id
@@ -381,10 +391,10 @@ export default function AboutPage() {
                 <button
                   key={region.id}
                   onClick={() => setActiveRegion(region.id)}
-                  className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 ${
+                  className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 active:scale-95 cursor-pointer ${
                     isActive
-                      ? 'bg-[#80121A] text-white shadow-lg shadow-red-950/20 ring-2 ring-[#80121A]/30'
-                      : 'bg-white hover:bg-[#FFE8E8] text-[#4A382D] border border-[#E8DACB]'
+                      ? 'bg-gradient-to-r from-[#F09819] to-[#E07B0C] text-white shadow-lg shadow-[#F09819]/25 ring-2 ring-[#F09819]/30'
+                      : 'bg-white hover:bg-[#FFF8EC] text-[#14361F] border border-[#EBCFA6]'
                   }`}
                 >
                   <div className="relative w-6 h-6 rounded-full overflow-hidden border border-white/60 shadow-xs shrink-0">
@@ -402,8 +412,8 @@ export default function AboutPage() {
             })}
           </div>
 
-          {/* Active Region Showcase Card with AI Harvest Photo */}
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#E8DACB] shadow-xl transition-all duration-300">
+          {/* Active Region Showcase Card */}
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#F0DEC2] shadow-xl transition-all duration-300">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
               <div className="lg:col-span-7 space-y-5">
@@ -411,17 +421,17 @@ export default function AboutPage() {
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${currentRegion.badgeColor}`}>
                     {currentRegion.tag}
                   </span>
-                  <div className="flex items-center gap-1.5 text-xs text-[#8C7567] font-medium">
-                    <MapPin className="w-3.5 h-3.5 text-[#80121A]" />
+                  <div className="flex items-center gap-1.5 text-xs text-[#7A6248] font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-[#E07B0C]" />
                     <span>{currentRegion.state}</span>
                   </div>
                 </div>
 
-                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#2A1612]">
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#144D29]">
                   {currentRegion.spice}
                 </h3>
 
-                <p className="text-sm sm:text-base text-[#5A433B] leading-relaxed">
+                <p className="text-sm sm:text-base text-[#4A3B2C] leading-relaxed">
                   {currentRegion.desc}
                 </p>
 
@@ -430,9 +440,9 @@ export default function AboutPage() {
                   {currentRegion.features.map((feat) => (
                     <div
                       key={feat}
-                      className="p-3 rounded-2xl bg-[#FAF6F2] border border-[#EFE5D8] flex items-center gap-2 text-xs font-semibold text-[#2A1612]"
+                      className="p-3 rounded-2xl bg-[#FFF9F0] border border-[#F2DCBA] flex items-center gap-2 text-xs font-semibold text-[#14361F]"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-[#144D29] shrink-0" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -441,7 +451,7 @@ export default function AboutPage() {
                 <div className="pt-3">
                   <Link
                     href="/shop"
-                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#80121A] hover:underline"
+                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#E07B0C] hover:text-[#144D29] hover:underline"
                   >
                     <span>Shop {currentRegion.spice} Collection</span>
                     <ArrowRight className="w-4 h-4" />
@@ -451,7 +461,7 @@ export default function AboutPage() {
 
               {/* AI Regional Harvest Photo Frame */}
               <div className="lg:col-span-5 flex justify-center">
-                <div className="relative w-full max-w-xs sm:max-w-sm h-[260px] sm:h-[320px] rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-[#FAF6F2] group">
+                <div className="relative w-full max-w-xs sm:max-w-sm h-[260px] sm:h-[320px] rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-[#FFF9F0] group">
                   <Image
                     src={currentRegion.image}
                     alt={currentRegion.spice}
@@ -461,7 +471,7 @@ export default function AboutPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 text-center">
-                    <span className="inline-block px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#80121A] text-xs font-bold shadow-md">
+                    <span className="inline-block px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#144D29] text-xs font-bold shadow-md">
                       📍 {currentRegion.state}
                     </span>
                   </div>
@@ -474,18 +484,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 5. Interactive 4-Step Cold-Grinding Process with AI Stone Chakki Photos */}
+      {/* 5. Interactive 4-Step Cold-Grinding Process */}
       <section className="py-20 sm:py-28 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#80121A]">
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#E07B0C]">
               The Culinary Science
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#2A1612] tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#144D29] tracking-tight">
               From Farm To Kitchen
             </h2>
-            <p className="text-sm sm:text-base text-[#6E5951]">
+            <p className="text-sm sm:text-base text-[#5C4934]">
               Click each step to see how traditional slow stone-grinding protects fragile volatile spice oils.
             </p>
           </div>
@@ -498,18 +508,18 @@ export default function AboutPage() {
                 <button
                   key={step.step}
                   onClick={() => setActiveStep(idx)}
-                  className={`p-5 rounded-2xl text-left transition-all duration-200 border flex flex-col justify-between ${
+                  className={`p-5 rounded-2xl text-left transition-all duration-200 border flex flex-col justify-between cursor-pointer ${
                     isActive
-                      ? 'bg-[#80121A] text-white border-[#80121A] shadow-xl -translate-y-1'
-                      : 'bg-white hover:bg-[#FFEAEA] text-[#2A1612] border-[#E8DACB]'
+                      ? 'bg-gradient-to-br from-[#F09819] to-[#E07B0C] text-white border-[#E07B0C] shadow-xl -translate-y-1'
+                      : 'bg-white hover:bg-[#FFF5E4] text-[#14361F] border-[#F0DEC2]'
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
-                    <span className={`font-serif text-2xl font-bold ${isActive ? 'text-[#E5AD58]' : 'text-[#C89B65]'}`}>
+                    <span className={`font-serif text-2xl font-bold ${isActive ? 'text-white' : 'text-[#E07B0C]'}`}>
                       {step.step}
                     </span>
                     <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-[#FAF6F2] text-[#80121A]'
+                      isActive ? 'bg-white/25 text-white' : 'bg-[#FFF9F0] text-[#144D29]'
                     }`}>
                       {step.stat}
                     </span>
@@ -522,20 +532,20 @@ export default function AboutPage() {
             })}
           </div>
 
-          {/* Active Step Detailed Card with AI Photo */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DACB] shadow-lg grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          {/* Active Step Detailed Card */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#F0DEC2] shadow-lg grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
             
             <div className="md:col-span-8 space-y-3">
-              <span className="text-xs font-bold text-[#80121A] uppercase tracking-widest">
+              <span className="text-xs font-bold text-[#E07B0C] uppercase tracking-widest">
                 Step {PROCESS_STEPS[activeStep].step}: {PROCESS_STEPS[activeStep].short}
               </span>
-              <h3 className="font-serif text-2xl font-bold text-[#2A1612]">
+              <h3 className="font-serif text-2xl font-bold text-[#144D29]">
                 {PROCESS_STEPS[activeStep].title}
               </h3>
-              <p className="text-sm text-[#5A433B] leading-relaxed">
+              <p className="text-sm text-[#4A3B2C] leading-relaxed">
                 {PROCESS_STEPS[activeStep].desc}
               </p>
-              <p className="text-xs text-[#8C7567]">
+              <p className="text-xs text-[#7A6248]">
                 ✦ <strong>Culinary Impact:</strong> {PROCESS_STEPS[activeStep].detail}
               </p>
 
@@ -543,14 +553,14 @@ export default function AboutPage() {
                 <button
                   disabled={activeStep === 0}
                   onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
-                  className="px-4 py-2 rounded-full border border-[#E8DACB] text-xs font-bold text-[#2A1612] disabled:opacity-30 hover:bg-[#FAF6F2]"
+                  className="px-4 py-2 rounded-full border border-[#F0DEC2] text-xs font-bold text-[#144D29] disabled:opacity-30 hover:bg-[#FFF9F0] cursor-pointer"
                 >
                   ← Previous
                 </button>
                 <button
                   disabled={activeStep === PROCESS_STEPS.length - 1}
                   onClick={() => setActiveStep((prev) => Math.min(PROCESS_STEPS.length - 1, prev + 1))}
-                  className="px-4 py-2 rounded-full bg-[#80121A] text-white text-xs font-bold disabled:opacity-30 hover:bg-[#680C14]"
+                  className="px-4 py-2 rounded-full bg-[#144D29] text-white text-xs font-bold disabled:opacity-30 hover:bg-[#0E381D] cursor-pointer"
                 >
                   Next Step →
                 </button>
@@ -558,7 +568,7 @@ export default function AboutPage() {
             </div>
 
             <div className="md:col-span-4 flex justify-center">
-              <div className="relative w-full max-w-[260px] h-[200px] rounded-2xl overflow-hidden shadow-md border border-[#E8DACB] bg-[#FAF6F2]">
+              <div className="relative w-full max-w-[260px] h-[200px] rounded-2xl overflow-hidden shadow-md border border-[#F0DEC2] bg-[#FFF9F0]">
                 <Image
                   src={PROCESS_STEPS[activeStep].image}
                   alt={PROCESS_STEPS[activeStep].title}
@@ -574,34 +584,34 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 6. The Purity Showdown: Market Spices vs. Jaandaar Masale */}
-      <section className="py-20 sm:py-28 bg-[#F8ECE7] border-y border-[#E8DACB] relative">
+      {/* 6. The Purity Showdown: Market Spices vs. HS AgroFoods */}
+      <section className="py-20 sm:py-28 bg-[#FFF3DF] border-y border-[#F2DCBA] relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#80121A]">
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#E07B0C]">
               The Honest Comparison
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#2A1612] tracking-tight">
-              Ordinary Spices vs. <span className="text-[#80121A]">Jaandaar</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-[#144D29] tracking-tight">
+              Ordinary Spices vs. <span className="text-[#E07B0C]">HS AgroFoods</span>
             </h2>
-            <p className="text-sm sm:text-base text-[#6E5951]">
+            <p className="text-sm sm:text-base text-[#5C4934]">
               See why switching to honest, cold-ground spices makes every meal healthier and tastier.
             </p>
           </div>
 
           {/* Comparison Table */}
-          <div className="bg-white rounded-3xl overflow-hidden border border-[#E8DACB] shadow-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-12 bg-[#FAF6F2] p-4 sm:p-6 border-b border-[#E8DACB] text-xs font-bold uppercase tracking-wider text-[#8C7567]">
+          <div className="bg-white rounded-3xl overflow-hidden border border-[#F0DEC2] shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-12 bg-[#FFF9F0] p-4 sm:p-6 border-b border-[#F0DEC2] text-xs font-bold uppercase tracking-wider text-[#7A6248]">
               <div className="md:col-span-4 hidden md:block">Quality Parameter</div>
-              <div className="md:col-span-4 text-rose-900 font-bold">Standard Market Brands</div>
-              <div className="md:col-span-4 text-[#80121A] font-black">Jaandaar Masale Guaranteed</div>
+              <div className="md:col-span-4 text-rose-800 font-bold">Standard Market Brands</div>
+              <div className="md:col-span-4 text-[#144D29] font-black">HS AgroFoods Guaranteed</div>
             </div>
 
-            <div className="divide-y divide-[#F0E5D8]">
+            <div className="divide-y divide-[#F5E6CE]">
               {COMPARISON_POINTS.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-1 md:grid-cols-12 p-4 sm:p-6 gap-3 items-center hover:bg-[#FFFDFB] transition-colors">
-                  <div className="md:col-span-4 font-serif font-bold text-sm text-[#2A1612]">
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-12 p-4 sm:p-6 gap-3 items-center hover:bg-[#FFFDF9] transition-colors">
+                  <div className="md:col-span-4 font-serif font-bold text-sm text-[#144D29]">
                     {item.feature}
                   </div>
                   
@@ -610,8 +620,8 @@ export default function AboutPage() {
                     <span>{item.regular}</span>
                   </div>
 
-                  <div className="md:col-span-4 flex items-start gap-2 text-xs text-[#2A1612] bg-[#FAF3EB] p-3 rounded-xl border border-[#E8DACB] font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="md:col-span-4 flex items-start gap-2 text-xs text-[#14361F] bg-[#FFF8EB] p-3 rounded-xl border border-[#F2DCBA] font-medium">
+                    <CheckCircle2 className="w-4 h-4 text-[#144D29] shrink-0 mt-0.5" />
                     <span>{item.jaandaar}</span>
                   </div>
                 </div>
@@ -623,14 +633,14 @@ export default function AboutPage() {
       </section>
 
       {/* 7. Interactive FAQ Section */}
-      <section className="py-20 sm:py-24 bg-[#FAF3EB]">
+      <section className="py-20 sm:py-24 bg-[#FFF9F0]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center space-y-3 mb-12">
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#80121A]">
+            <span className="text-xs uppercase tracking-[0.25em] font-bold text-[#E07B0C]">
               Got Questions?
             </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#2A1612]">
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#144D29]">
               Purity &amp; Quality FAQs
             </h2>
           </div>
@@ -641,18 +651,18 @@ export default function AboutPage() {
               return (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl border border-[#E8DACB] overflow-hidden transition-all shadow-xs"
+                  className="bg-white rounded-2xl border border-[#F0DEC2] overflow-hidden transition-all shadow-xs"
                 >
                   <button
                     onClick={() => setExpandedFaq(isOpen ? null : idx)}
-                    className="w-full flex items-center justify-between p-5 text-left font-serif font-bold text-sm sm:text-base text-[#2A1612] hover:text-[#80121A] transition-colors"
+                    className="w-full flex items-center justify-between p-5 text-left font-serif font-bold text-sm sm:text-base text-[#14361F] hover:text-[#E07B0C] transition-colors cursor-pointer"
                   >
                     <span>{faq.q}</span>
-                    <ChevronDown className={`w-4 h-4 text-[#80121A] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-[#E07B0C] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#5A433B] leading-relaxed border-t border-[#F5EDE1] animate-fade-in">
+                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#4A3B2C] leading-relaxed border-t border-[#F5E6CE] animate-fade-in">
                       {faq.a}
                     </div>
                   )}
@@ -664,27 +674,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 8. Bottom CTA Banner with AI-Generated Spice Harvest Backdrop */}
-      <section className="relative bg-gradient-to-r from-[#4A0B10] via-[#5C0D13] to-[#731118] text-white py-16 sm:py-24 overflow-hidden">
+      {/* 8. Bottom CTA Banner — Warm Saffron & Cream */}
+      <section className="relative bg-gradient-to-r from-[#FFF3DF] via-[#FFE5B8] to-[#FDD89B] text-[#14361F] py-16 sm:py-24 overflow-hidden border-t border-[#F2DCBA]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-            Bring Home The Taste of <span className="text-[#E5AD58]">Purity</span>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#144D29] leading-tight">
+            Bring Home The Taste of <span className="text-[#E07B0C]">Purity</span>
           </h2>
-          <p className="text-sm sm:text-base text-stone-200/90 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-[#4A3B2C] max-w-xl mx-auto leading-relaxed font-medium">
             Taste the honest aroma of generational Indian spices, stone-ground with passion and sealed with integrity.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Link
               href="/shop"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#E5AD58] px-8 py-3.5 text-xs sm:text-sm font-bold tracking-wider uppercase text-[#2A1612] shadow-xl hover:bg-[#d99f47] transition-all transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#F09819] to-[#E07B0C] px-8 py-3.5 text-xs sm:text-sm font-bold tracking-wider uppercase text-white shadow-xl hover:from-[#DF870D] hover:to-[#C96B06] transition-all transform hover:-translate-y-0.5"
             >
-              <span>Shop All Spices</span>
+              <span>Shop All Products</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 backdrop-blur-sm px-8 py-3.5 text-xs sm:text-sm font-semibold tracking-wider uppercase text-white hover:bg-white/20 transition-all"
+              className="inline-flex items-center justify-center rounded-full border border-[#144D29]/30 bg-white px-8 py-3.5 text-xs sm:text-sm font-bold tracking-wider uppercase text-[#144D29] hover:bg-[#FFF9F0] shadow-sm transition-all"
             >
               Contact Our Team
             </Link>
@@ -700,62 +710,62 @@ export default function AboutPage() {
             onClick={() => setLabModalOpen(false)}
           />
 
-          <div className="relative bg-[#FAF6F2] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8DACB] z-10 space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-[#EFE5D8]">
+          <div className="relative bg-[#FFF9F0] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#F0DEC2] z-10 space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-[#F2DCBA]">
               <div className="flex items-center gap-2">
-                <FileCheck className="w-5 h-5 text-[#80121A]" />
-                <h3 className="font-serif text-lg font-bold text-[#2A1612]">
+                <FileCheck className="w-5 h-5 text-[#E07B0C]" />
+                <h3 className="font-serif text-lg font-bold text-[#144D29]">
                   Sample Purity Certificate
                 </h3>
               </div>
               <button
                 onClick={() => setLabModalOpen(false)}
-                className="p-1.5 rounded-full bg-white text-[#8C7567] hover:text-[#80121A] border border-[#E8DACB]"
+                className="p-1.5 rounded-full bg-white text-[#7A6248] hover:text-[#E07B0C] border border-[#F0DEC2]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-[#5A433B]">
-              <div className="p-3 bg-white rounded-xl border border-[#E8DACB] space-y-1.5">
-                <div className="flex justify-between font-semibold text-[#2A1612]">
+            <div className="space-y-3 text-xs text-[#4A3B2C]">
+              <div className="p-3 bg-white rounded-xl border border-[#F0DEC2] space-y-1.5">
+                <div className="flex justify-between font-semibold text-[#144D29]">
                   <span>Batch: AS-SALEM-2026-09</span>
                   <span className="text-emerald-700 font-bold">STATUS: PASSED ✓</span>
                 </div>
-                <p className="text-[11px] text-[#8C7567]">Certified by NABL Accredited Testing Facility</p>
+                <p className="text-[11px] text-[#7A6248]">Certified by NABL Accredited Testing Facility</p>
               </div>
 
-              <div className="bg-white rounded-xl p-4 border border-[#E8DACB] space-y-2.5">
-                <div className="flex justify-between py-1 border-b border-[#F5EDE1]">
+              <div className="bg-white rounded-xl p-4 border border-[#F0DEC2] space-y-2.5">
+                <div className="flex justify-between py-1 border-b border-[#F5E6CE]">
                   <span>Active Curcumin Content</span>
-                  <strong className="text-[#80121A]">5.21% (Grade A+)</strong>
+                  <strong className="text-[#E07B0C]">5.21% (Grade A+)</strong>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#F5EDE1]">
+                <div className="flex justify-between py-1 border-b border-[#F5E6CE]">
                   <span>Volatile Essential Oils</span>
-                  <strong className="text-[#80121A]">4.85 ml / 100g</strong>
+                  <strong className="text-[#E07B0C]">4.85 ml / 100g</strong>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#F5EDE1]">
+                <div className="flex justify-between py-1 border-b border-[#F5E6CE]">
                   <span>Artificial Dyes (Sudan I-IV)</span>
                   <strong className="text-emerald-700">NOT DETECTED (0.00%)</strong>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#F5EDE1]">
+                <div className="flex justify-between py-1 border-b border-[#F5E6CE]">
                   <span>Heavy Metals (Pb, Cd, As)</span>
                   <strong className="text-emerald-700">Below Limits of Detection</strong>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Moisture Level</span>
-                  <strong className="text-[#2A1612]">6.4% (Optimal Purity)</strong>
+                  <strong className="text-[#144D29]">6.4% (Optimal Purity)</strong>
                 </div>
               </div>
 
-              <p className="text-[11px] text-[#8C7567] italic text-center">
-                * Every batch of Jaandaar Masale is tested to exceed stringent FSSAI and AGMARK standards.
+              <p className="text-[11px] text-[#7A6248] italic text-center">
+                * Every batch of HS AgroFoods is tested to exceed stringent FSSAI and AGMARK standards.
               </p>
             </div>
 
             <button
               onClick={() => setLabModalOpen(false)}
-              className="w-full py-3 rounded-full bg-[#80121A] text-white text-xs font-bold uppercase tracking-wider shadow-md active:scale-95"
+              className="w-full py-3 rounded-full bg-gradient-to-r from-[#F09819] to-[#E07B0C] text-white text-xs font-bold uppercase tracking-wider shadow-md active:scale-95 cursor-pointer"
             >
               Close Certificate
             </button>

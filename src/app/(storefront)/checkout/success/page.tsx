@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { CheckCircle2, Package, ArrowRight, Truck } from 'lucide-react'
 
 export const metadata = {
-  title: 'Order Confirmed | Jaandaar Masale',
+  title: 'Order Confirmed | HS AgroFoods',
 }
 
 export default async function CheckoutSuccessPage({
@@ -15,16 +15,16 @@ export default async function CheckoutSuccessPage({
   const orderNumber = resolvedParams.order_number as string
 
   return (
-    <div className="bg-[#FAF6F2] py-16 sm:py-24 min-h-screen flex items-center justify-center">
+    <div className="bg-[#FDF9F3] py-16 sm:py-24 min-h-screen flex items-center justify-center">
       <div className="max-w-xl w-full mx-auto px-4 sm:px-6">
         <div className="bg-white rounded-3xl border border-stone-200/80 p-8 sm:p-12 text-center shadow-xl shadow-stone-200/50">
           
           {/* Brand Logo & Success Badge */}
           <div className="relative mx-auto w-20 h-20 mb-6 flex items-center justify-center">
-            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#E5AD58] bg-[#FAF6F2] shadow-md">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#F09819] bg-[#FDF9F3] shadow-md">
               <Image
-                src="/images/logo.jpeg"
-                alt="Jaandaar Masale Logo"
+                src="/images/logo.png"
+                alt="HS AgroFoods Logo"
                 fill
                 className="object-contain p-1"
                 sizes="80px"
@@ -40,15 +40,15 @@ export default async function CheckoutSuccessPage({
           </h1>
           
           <p className="text-stone-600 text-sm mb-6 leading-relaxed">
-            Thank you for choosing <strong>Jaandaar Masale</strong>. Your order for 100% pure authentic spices has been received and is being prepared with utmost care.
+            Thank you for choosing <strong>HS AgroFoods</strong>. Your order for 100% pure spices &amp; natural dehydrated powders has been received and is being prepared with utmost care.
           </p>
 
           {orderNumber && (
-            <div className="bg-[#FAF6F2] border border-[#E8DFD5] rounded-2xl p-5 mb-6 flex flex-col items-center justify-center">
+            <div className="bg-[#FDF9F3] border border-[#E8DFD5] rounded-2xl p-5 mb-6 flex flex-col items-center justify-center">
               <span className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-1">
                 Order Reference
               </span>
-              <span className="text-xl sm:text-2xl font-mono font-bold text-[#6B1118] tracking-wider">
+              <span className="text-xl sm:text-2xl font-mono font-bold text-[#431D0D] tracking-wider">
                 {orderNumber}
               </span>
             </div>
@@ -66,7 +66,7 @@ export default async function CheckoutSuccessPage({
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link 
               href="/shop"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#6B1118] to-[#80121A] text-white font-bold text-sm rounded-xl hover:from-[#520C12] hover:to-[#6B1118] shadow-md shadow-[#6B1118]/20 transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#431D0D] to-[#E07B0C] text-white font-bold text-sm rounded-xl hover:from-[#2D1409] hover:to-[#431D0D] shadow-md shadow-[#431D0D]/20 transition-all duration-200"
             >
               Continue Shopping
               <ArrowRight className="w-4 h-4" />

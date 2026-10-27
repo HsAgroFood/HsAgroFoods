@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-maroon: #6B1118;
-  --color-brand-maroon-dark: #520C12;
-  --color-brand-maroon-light: #7B111A;
-  --color-brand-cream: #F8ECE7;
-  --color-brand-gold: #C89B65;
-  --color-brand-amber: #D49B4B;
-  --color-brand-espresso: #2A1612;
+  --color-brand-maroon: #D97706;
+  --color-brand-maroon-dark: #B45309;
+  --color-brand-maroon-light: #F09819;
+  --color-brand-cream: #FFF9F0;
+  --color-brand-gold: #F09819;
+  --color-brand-amber: #E07B0C;
+  --color-brand-espresso: #14361F;
   --font-serif: var(--font-serif), Georgia, Cambria, serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
 :root {
-  --color-brand-maroon: #6B1118;
-  --color-brand-cream: #F8ECE7;
-  --color-brand-gold: #C89B65;
+  --color-brand-maroon: #D97706;
+  --color-brand-cream: #FFF9F0;
+  --color-brand-gold: #F09819;
 }
 
 *,
@@ -32,19 +32,19 @@ html {
 
 body {
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  color: #2A1612;
-  background-color: #F8ECE7;
+  color: #1F291E;
+  background-color: #FFF9F0;
   max-width: 100vw;
   overflow-x: hidden;
 }
 
-/* Rich spice-dust background with warm reddish & terracotta undertones */
+/* Warm Cream & Saffron (Haldi-Kesar) organic background */
 .bg-spice-dust {
-  background-color: #F8ECE7;
+  background-color: #FFF9F0;
   background-image: 
-    radial-gradient(circle at 10% 15%, rgba(123, 17, 26, 0.055) 0%, transparent 45%),
-    radial-gradient(circle at 90% 80%, rgba(184, 51, 42, 0.045) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(123, 17, 26, 0.03) 0%, transparent 65%);
+    radial-gradient(circle at 10% 15%, rgba(240, 152, 25, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(20, 77, 41, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(240, 152, 25, 0.05) 0%, transparent 65%);
   background-attachment: fixed;
 }
 
@@ -59,16 +59,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F8ECE7;
+  background: #FFF9F0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C89B65;
+  background: #F09819;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7B111A;
+  background: #144D29;
 }
 
 /* Hide scrollbar utility */
@@ -101,4 +101,3 @@ body {
 .animate-spin-reverse-slow {
   animation: spin-slow 28s linear infinite reverse;
 }
-

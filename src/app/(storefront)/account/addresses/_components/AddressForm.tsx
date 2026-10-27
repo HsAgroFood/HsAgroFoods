@@ -161,7 +161,7 @@ export function AddressForm({
         {/* Modal Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-5 bg-white border-b border-stone-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FAF6F2] border border-[#E8DFD5] text-[#6B1118] flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#FDF9F3] border border-[#E8DFD5] text-[#431D0D] flex items-center justify-center shadow-xs">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
@@ -205,7 +205,7 @@ export function AddressForm({
                 autoComplete="name"
                 required
                 placeholder="e.g. Rahul Sharma"
-                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
               />
             </div>
 
@@ -228,7 +228,7 @@ export function AddressForm({
                   maxLength={10}
                   pattern="[6-9][0-9]{9}"
                   placeholder="9876543210"
-                  className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all tracking-wider font-mono"
+                  className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all tracking-wider font-mono"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export function AddressForm({
                 autoComplete="address-line1"
                 required
                 placeholder="e.g. Flat 104, Sunrise Heights, Mall Road"
-                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
               />
             </div>
 
@@ -261,7 +261,7 @@ export function AddressForm({
                 name="address_line_2"
                 defaultValue={address?.address_line_2 || ''}
                 placeholder="e.g. Near City Bank or Opp. Post Office"
-                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
               />
             </div>
 
@@ -272,7 +272,7 @@ export function AddressForm({
                   6-Digit PIN Code <span className="text-red-500">*</span>
                 </label>
                 {isVerifyingPincode && (
-                  <span className="text-[11px] text-[#6B1118] flex items-center gap-1 font-medium">
+                  <span className="text-[11px] text-[#431D0D] flex items-center gap-1 font-medium">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     Fetching Official Postal Localities...
                   </span>
@@ -302,7 +302,7 @@ export function AddressForm({
                       ? 'border-emerald-400 focus:ring-emerald-500/20 focus:border-emerald-500'
                       : pincodeStatus.status === 'invalid'
                       ? 'border-red-400 focus:ring-red-500/20 focus:border-red-500'
-                      : 'border-stone-200 focus:ring-[#6B1118]/20 focus:border-[#6B1118]'
+                      : 'border-stone-200 focus:ring-[#431D0D]/20 focus:border-[#431D0D]'
                   }`}
                 />
               </div>
@@ -369,7 +369,7 @@ export function AddressForm({
                       : 'Enter 6-digit PIN code above first'
                   }
                   disabled={postalCode.length < 6}
-                  className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               )}
             </div>
@@ -386,7 +386,7 @@ export function AddressForm({
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
                   required
-                  className="w-full appearance-none px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all pr-10 cursor-pointer"
+                  className="w-full appearance-none px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all pr-10 cursor-pointer"
                 >
                   {INDIAN_STATES.map((st) => (
                     <option key={st} value={st}>
@@ -405,7 +405,7 @@ export function AddressForm({
                   type="checkbox"
                   name="is_default"
                   defaultChecked={address?.is_default}
-                  className="h-4 w-4 rounded text-[#6B1118] focus:ring-[#6B1118] border-stone-300 cursor-pointer"
+                  className="h-4 w-4 rounded text-[#431D0D] focus:ring-[#431D0D] border-stone-300 cursor-pointer"
                 />
                 <span className="text-xs sm:text-sm font-medium text-stone-800">
                   Set as my default shipping address for faster checkout
@@ -426,12 +426,12 @@ export function AddressForm({
             <button
               type="submit"
               disabled={isPending}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#6B1118] to-[#80121A] text-white text-xs sm:text-sm font-bold rounded-xl hover:from-[#520C12] hover:to-[#6B1118] shadow-md shadow-[#6B1118]/20 transition-all cursor-pointer disabled:opacity-70"
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#431D0D] to-[#E07B0C] text-white text-xs sm:text-sm font-bold rounded-xl hover:from-[#2D1409] hover:to-[#431D0D] shadow-md shadow-[#431D0D]/20 transition-all cursor-pointer disabled:opacity-70"
             >
               {isPending ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <Save className="w-4 h-4 text-[#E5AD58]" />
+                <Save className="w-4 h-4 text-[#F09819]" />
               )}
               <span>{address ? 'Save Changes' : 'Save Address'}</span>
             </button>

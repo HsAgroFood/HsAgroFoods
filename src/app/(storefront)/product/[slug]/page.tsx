@@ -6,8 +6,15 @@ import { ProductImageGallery } from '@/components/storefront/ProductImageGallery
 import { ProductVariantSelector } from '@/components/storefront/ProductVariantSelector'
 import { ProductTabsSection } from '@/components/storefront/ProductTabsSection'
 import { ProductCard } from '@/components/storefront/ProductCard'
-import { FALLBACK_PRODUCTS, FallbackProduct } from '@/constants/fallbackProducts'
+import { FALLBACK_PRODUCTS, getFallbackProductBySlug } from '@/constants/fallbackProducts'
 import { getEffectiveUser } from '@/lib/userAuth'
+
+function sanitizeBrand(str?: string | null): string | null | undefined {
+  if (!str || typeof str !== 'string') return str
+  return str
+    .replace(/jaandaar\s*masal[ae]?/gi, 'HS AgroFoods')
+    .replace(/jaandaar/gi, 'HS AgroFoods')
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -21,29 +28,29 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     if (product) {
       return {
-        title: product.seo_title || `${product.name} | Jaandaar Masale`,
+        title: sanitizeBrand(product.seo_title) || `${sanitizeBrand(product.name)} | HS AgroFoods`,
         description:
-          product.seo_description ||
-          product.short_description ||
-          `Buy authentic ${product.name} from Jaandaar Masale.`,
+          sanitizeBrand(product.seo_description) ||
+          sanitizeBrand(product.short_description) ||
+          `Buy authentic ${sanitizeBrand(product.name)} from HS AgroFoods.`,
       }
     }
   } catch {
     // Fallback
   }
 
-  const fallback = FALLBACK_PRODUCTS[slug]
+  const fallback = getFallbackProductBySlug(slug)
   if (fallback) {
     return {
-      title: `${fallback.name} | Jaandaar Masale`,
+      title: `${fallback.name} | HS AgroFoods`,
       description: fallback.short_description,
     }
   }
 
   const formattedName = slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
   return {
-    title: `${formattedName} | Jaandaar Masale`,
-    description: `Buy authentic, 100% pure ${formattedName} from Jaandaar Masale.`,
+    title: `${formattedName} | HS AgroFoods`,
+    description: `Buy authentic, 100% pure ${formattedName} from HS AgroFoods.`,
   }
 }
 
@@ -84,7 +91,22 @@ export default async function ProductDetailsPage({
       .single()
 
     if (dbProduct) {
-      product = dbProduct
+      product = {
+        ...dbProduct,
+        name: sanitizeBrand(dbProduct.name),
+        short_description: sanitizeBrand(dbProduct.short_description),
+        description: sanitizeBrand(dbProduct.description),
+        product_information: (dbProduct.product_information || []).map((info: any) => ({
+          ...info,
+          label: sanitizeBrand(info.label),
+          value: sanitizeBrand(info.value),
+        })),
+        product_faqs: (dbProduct.product_faqs || []).map((faq: any) => ({
+          ...faq,
+          question: sanitizeBrand(faq.question),
+          answer: sanitizeBrand(faq.answer),
+        })),
+      }
     }
 
     // If db product exists, fetch reviews & related products
@@ -99,7 +121,11 @@ export default async function ProductDetailsPage({
           .order('display_order', { ascending: true })
 
         if (faqsData && faqsData.length > 0) {
-          globalFaqs = faqsData
+          globalFaqs = faqsData.map((faq: any) => ({
+            ...faq,
+            question: sanitizeBrand(faq.question),
+            answer: sanitizeBrand(faq.answer),
+          }))
         }
       }
 
@@ -141,7 +167,7 @@ export default async function ProductDetailsPage({
         reviews = reviewsData.map((r: any) => ({
           id: r.id,
           rating: Number(r.rating) || 5,
-          review_text: r.review_text,
+          review_text: sanitizeBrand(r.review_text),
           created_at: r.created_at,
           user: {
             full_name: profilesMap[r.user_id] || 'Verified Customer',
@@ -179,8 +205,8 @@ export default async function ProductDetailsPage({
           return {
             id: rp.id,
             slug: rp.slug,
-            name: rp.name,
-            shortDescription: rp.short_description,
+            name: sanitizeBrand(rp.name) || rp.name,
+            shortDescription: sanitizeBrand(rp.short_description),
             featuredImage: rp.featured_image_url,
             minPrice,
             originalPrice,
@@ -197,7 +223,7 @@ export default async function ProductDetailsPage({
 
   // Graceful fallback to rich static catalog if not in database
   if (!product) {
-    const fallback = FALLBACK_PRODUCTS[slug]
+    const fallback = getFallbackProductBySlug(slug)
     if (fallback) {
       product = fallback
     }
@@ -242,7 +268,7 @@ export default async function ProductDetailsPage({
   const displayedFaqs = product.use_global_faqs && globalFaqs.length > 0 ? globalFaqs : sortedFaqs
 
   return (
-    <div className="bg-[#F8ECE7] min-h-screen py-4 sm:py-8 lg:py-12 text-[#2A1612]">
+    <div className="bg-[#FBF5EE] min-h-screen py-4 sm:py-8 lg:py-12 text-[#14361F]">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* Product Hero Grid (Direct Content) */}
@@ -262,7 +288,7 @@ export default async function ProductDetailsPage({
               {/* Category Badge & Rating */}
               <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
                 {product.categories && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/90 border border-[#E8DFD5] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#7B111A]">
+                  <span className="px-2.5 py-0.5 rounded-full bg-white/90 border border-[#E8DFD5] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#E07B0C]">
                     {product.categories.name}
                   </span>
                 )}
@@ -284,12 +310,12 @@ export default async function ProductDetailsPage({
                   >
                     <span className="text-amber-500 font-bold">★</span>
                     <span>New</span>
-                    <span className="text-[#7B111A] font-semibold hover:underline">(Write a review)</span>
+                    <span className="text-[#E07B0C] font-semibold hover:underline">(Write a review)</span>
                   </a>
                 )}
               </div>
 
-              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2A1612] mb-2 sm:mb-3 leading-tight">
+              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#14361F] mb-2 sm:mb-3 leading-tight">
                 {product.name}
               </h1>
 
@@ -322,12 +348,12 @@ export default async function ProductDetailsPage({
         {relatedProducts.length > 0 && (
           <div className="mt-12 sm:mt-16 border-t border-[#E8DFD5] pt-8 sm:pt-12">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
                 You May Also Like
               </h3>
               <Link
                 href="/shop"
-                className="text-xs sm:text-sm font-bold text-[#7B111A] hover:underline"
+                className="text-xs sm:text-sm font-bold text-[#E07B0C] hover:underline"
               >
                 View All Spices →
               </Link>

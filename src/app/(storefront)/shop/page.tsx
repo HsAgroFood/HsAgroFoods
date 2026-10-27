@@ -2,13 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import Link from 'next/link'
 import { ShopSidebar } from './_components/ShopSidebar'
-import { Sparkles, X, ChevronRight } from 'lucide-react'
-import { FALLBACK_PRODUCTS } from '@/constants/fallbackProducts'
+import { Sparkles, X } from 'lucide-react'
+import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 import { CartCount } from '@/components/storefront/CartCount'
 
 export const metadata = {
-  title: 'Shop All Spices — Pure Indian Spices | Jaandaar Masale',
-  description: 'Explore our full range of 100% pure, cold-ground Turmeric, Kashmiri Red Chilly, Coriander, Cumin, and Garam Masala.',
+  title: 'Shop Spices & Dehydrated Powders | HS AgroFoods',
+  description: 'Explore our full range of 100% pure ground spices, royal blended masale, and natural dehydrated vegetable & fruit powders (Beetroot, Tomato, Banana, Garlic, Carrot & Radish).',
 }
 
 export const dynamic = 'force-dynamic'
@@ -42,7 +42,8 @@ export default async function ShopPage({
   const categoriesRes = await fetchWithTimeout(
     supabase.from('categories').select('*').eq('is_active', true).order('name')
   )
-  const categories = (categoriesRes as any)?.data || null
+  const dbCategories = (categoriesRes as any)?.data || null
+  const categories = dbCategories && dbCategories.length > 0 ? dbCategories : FALLBACK_CATEGORIES
 
   // Resolve category id if filtered
   const selectedCategory = categoryFilter && categories
@@ -63,14 +64,14 @@ export default async function ShopPage({
         id,
         variant_name,
         price,
-         original_price,
+        original_price,
         stock_quantity,
         is_active
       )
     `, { count: 'exact' })
     .eq('is_active', true)
 
-  if (selectedCategory) {
+  if (selectedCategory && dbCategories && dbCategories.length > 0) {
     query = query.eq('category_id', selectedCategory.id)
   }
 
@@ -109,9 +110,22 @@ export default async function ShopPage({
     }
   })
 
-  // Fallback to static catalog if DB is empty
-  if (formattedProducts.length === 0 && !searchQuery) {
-    formattedProducts = Object.values(FALLBACK_PRODUCTS).map((p) => {
+  // Fallback to static catalog if DB is empty or not yet seeded
+  if (!products || products.length === 0) {
+    let fallbackList = Object.values(FALLBACK_PRODUCTS)
+    if (categoryFilter) {
+      fallbackList = fallbackList.filter((p) => p.categories.slug === categoryFilter)
+    }
+    if (searchQuery) {
+      const qLower = searchQuery.toLowerCase()
+      fallbackList = fallbackList.filter(
+        (p) =>
+          p.name.toLowerCase().includes(qLower) ||
+          p.short_description.toLowerCase().includes(qLower) ||
+          p.slug.toLowerCase().includes(qLower)
+      )
+    }
+    formattedProducts = fallbackList.map((p) => {
       const activeVariants = p.product_variants.filter((v) => v.is_active)
       const prices = activeVariants.map((v) => v.price)
       const minPrice = prices.length > 0 ? Math.min(...prices) : null
@@ -136,24 +150,24 @@ export default async function ShopPage({
     : null
 
   return (
-    <div className="bg-[#F8ECE7] min-h-screen text-[#2A1612] pb-16 pt-6 sm:pt-8">
+    <div className="bg-[#FBF5EE] min-h-screen text-[#14361F] pb-16 pt-6 sm:pt-8">
       {/* Main Content Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Page Heading */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#2A1612]">
-            {currentCategoryName ? currentCategoryName : 'All Spices'}
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#14361F]">
+            {currentCategoryName ? currentCategoryName : 'All Spices & Dehydrated Powders'}
           </h1>
           <p className="text-xs sm:text-sm text-[#6E5951]">
-            100% Pure, Stone-Ground Indian Spices
+            100% Pure Indian Spices &amp; Natural Dehydrated Veg &amp; Fruit Powders
           </p>
         </div>
 
         {/* Active Filter Strip */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#E8DFD5]">
           <div className="text-xs sm:text-sm text-[#5A433B]">
-            Showing <strong className="text-[#2A1612] font-bold">{formattedProducts.length}</strong> {formattedProducts.length === 1 ? 'spice product' : 'spice products'}
+            Showing <strong className="text-[#14361F] font-bold">{formattedProducts.length}</strong> {formattedProducts.length === 1 ? 'product' : 'products'}
             {searchQuery && <span> for &ldquo;<strong>{searchQuery}</strong>&rdquo;</span>}
           </div>
 
@@ -163,24 +177,24 @@ export default async function ShopPage({
               {categoryFilter && (
                 <Link
                   href={`/shop${searchQuery ? `?q=${searchQuery}` : ''}`}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#C89B65]/60 px-3 py-1 text-xs font-semibold text-[#7B111A] hover:bg-[#FAF3EB] transition-colors shadow-sm"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#F09819]/60 px-3 py-1 text-xs font-semibold text-[#E07B0C] hover:bg-[#FAF3EB] transition-colors shadow-sm"
                 >
                   <span>Category: {currentCategoryName || categoryFilter}</span>
-                  <X className="w-3.5 h-3.5 text-[#7B111A]" />
+                  <X className="w-3.5 h-3.5 text-[#E07B0C]" />
                 </Link>
               )}
               {searchQuery && (
                 <Link
                   href={`/shop${categoryFilter ? `?category=${categoryFilter}` : ''}`}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#C89B65]/60 px-3 py-1 text-xs font-semibold text-[#7B111A] hover:bg-[#FAF3EB] transition-colors shadow-sm"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#F09819]/60 px-3 py-1 text-xs font-semibold text-[#E07B0C] hover:bg-[#FAF3EB] transition-colors shadow-sm"
                 >
                   <span>Search: &ldquo;{searchQuery}&rdquo;</span>
-                  <X className="w-3.5 h-3.5 text-[#7B111A]" />
+                  <X className="w-3.5 h-3.5 text-[#E07B0C]" />
                 </Link>
               )}
               <Link
                 href="/shop"
-                className="text-xs font-bold text-[#8C766E] hover:text-[#7B111A] underline transition-colors"
+                className="text-xs font-bold text-[#8C766E] hover:text-[#E07B0C] underline transition-colors"
               >
                 Clear all
               </Link>
@@ -204,19 +218,19 @@ export default async function ShopPage({
           <div className="flex-1 w-full">
             {formattedProducts.length === 0 ? (
               <div className="text-center py-16 px-6 bg-white rounded-3xl border border-[#E8DFD5] shadow-sm space-y-4">
-                <div className="w-14 h-14 rounded-full bg-[#FAF3EB] border border-[#C89B65]/40 flex items-center justify-center text-[#7B111A] mx-auto shadow-sm">
+                <div className="w-14 h-14 rounded-full bg-[#FAF3EB] border border-[#F09819]/40 flex items-center justify-center text-[#E07B0C] mx-auto shadow-sm">
                   <Sparkles className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#2A1612]">No spices found</h3>
+                <h3 className="font-serif text-xl font-bold text-[#14361F]">No products found</h3>
                 <p className="text-xs sm:text-sm text-[#6E5951] max-w-sm mx-auto">
                   We couldn&apos;t find any products matching your criteria. Try adjusting your search or category filter.
                 </p>
                 {(searchQuery || categoryFilter) && (
                   <Link
                     href="/shop"
-                    className="inline-flex items-center justify-center rounded-full bg-[#7B111A] px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#520C12] transition-colors"
+                    className="inline-flex items-center justify-center rounded-full bg-[#E07B0C] px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#2D1409] transition-colors"
                   >
-                    View All Spices
+                    View All Products
                   </Link>
                 )}
               </div>
@@ -235,7 +249,7 @@ export default async function ShopPage({
                     {page > 1 && (
                       <Link
                         href={`/shop?page=${page - 1}${categoryFilter ? `&category=${categoryFilter}` : ''}${searchQuery ? `&q=${searchQuery}` : ''}`}
-                        className="px-4 py-2 bg-white border border-[#E8DFD5] rounded-full text-xs font-bold text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#7B111A] transition-colors shadow-sm"
+                        className="px-4 py-2 bg-white border border-[#E8DFD5] rounded-full text-xs font-bold text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#E07B0C] transition-colors shadow-sm"
                       >
                         Previous
                       </Link>
@@ -245,7 +259,7 @@ export default async function ShopPage({
                         key={p}
                         href={`/shop?page=${p}${categoryFilter ? `&category=${categoryFilter}` : ''}${searchQuery ? `&q=${searchQuery}` : ''}`}
                         className={`w-9 h-9 flex items-center justify-center rounded-full text-xs font-bold transition-all ${p === page
-                            ? 'bg-[#7B111A] text-white shadow-md'
+                            ? 'bg-[#E07B0C] text-white shadow-md'
                             : 'bg-white border border-[#E8DFD5] text-[#5A433B] hover:bg-[#FAF3EB]'
                           }`}
                       >
@@ -255,7 +269,7 @@ export default async function ShopPage({
                     {page < totalPages && (
                       <Link
                         href={`/shop?page=${page + 1}${categoryFilter ? `&category=${categoryFilter}` : ''}${searchQuery ? `&q=${searchQuery}` : ''}`}
-                        className="px-4 py-2 bg-white border border-[#E8DFD5] rounded-full text-xs font-bold text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#7B111A] transition-colors shadow-sm"
+                        className="px-4 py-2 bg-white border border-[#E8DFD5] rounded-full text-xs font-bold text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#E07B0C] transition-colors shadow-sm"
                       >
                         Next
                       </Link>

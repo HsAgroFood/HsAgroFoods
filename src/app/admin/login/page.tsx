@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import { adminLogin, type AuthResult } from '@/actions/auth'
 import { Eye, EyeOff, Shield } from 'lucide-react'
 import { useState } from 'react'
+import Image from 'next/image'
 
 export default function AdminLoginPage() {
   const [state, formAction, pending] = useActionState<AuthResult, FormData>(
@@ -23,12 +24,19 @@ export default function AdminLoginPage() {
         <div className="bg-stone-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-stone-800/50 p-8">
           {/* Admin branding */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl mb-4 shadow-lg shadow-orange-500/20">
-              <Shield className="w-7 h-7 text-white" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full p-1 mb-4 shadow-lg shadow-orange-500/20 overflow-hidden">
+              <Image
+                src="/images/logo.png"
+                alt="HS AgroFoods Logo"
+                width={60}
+                height={60}
+                className="w-full h-full object-contain rounded-full"
+                priority
+              />
             </div>
             <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
             <p className="text-stone-400 mt-1 text-sm">
-              Jaandaar Masale — Management Portal
+              HS AgroFoods — Management Portal
             </p>
           </div>
 

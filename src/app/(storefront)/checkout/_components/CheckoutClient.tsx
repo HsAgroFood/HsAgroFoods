@@ -269,7 +269,7 @@ export function CheckoutClient({
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
           amount: result.amount,
           currency: 'INR',
-          name: 'Jaandaar Masale',
+          name: 'HS AgroFoods',
           description: 'Pure Spices Order',
           order_id: result.razorpayOrderId,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -296,7 +296,7 @@ export function CheckoutClient({
             email: formData.email || userEmail || '',
           },
           theme: {
-            color: '#6B1118',
+            color: '#431D0D',
           },
         }
 
@@ -349,7 +349,7 @@ export function CheckoutClient({
           <div className="bg-white rounded-2xl border border-stone-200/80 p-6 sm:p-8 shadow-sm">
             <div className="flex items-center justify-between pb-5 border-b border-stone-100 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#6B1118] text-[#E5AD58] font-bold text-sm flex items-center justify-center shadow-sm">
+                <div className="w-8 h-8 rounded-full bg-[#431D0D] text-[#F09819] font-bold text-sm flex items-center justify-center shadow-sm">
                   1
                 </div>
                 <div>
@@ -363,7 +363,7 @@ export function CheckoutClient({
                 <button
                   type="button"
                   onClick={() => setUseSavedAddress((prev) => !prev)}
-                  className="text-xs font-semibold text-[#6B1118] hover:text-[#8B1E28] hover:underline"
+                  className="text-xs font-semibold text-[#431D0D] hover:text-[#D1491B] hover:underline"
                 >
                   {useSavedAddress ? '+ Enter New Address' : 'Use Saved Address'}
                 </button>
@@ -378,7 +378,7 @@ export function CheckoutClient({
                     key={address.id}
                     className={`relative flex cursor-pointer rounded-xl border p-4 transition-all ${
                       selectedAddressId === address.id
-                        ? 'border-[#6B1118] bg-[#FAF6F2] ring-1 ring-[#6B1118]'
+                        ? 'border-[#431D0D] bg-[#FDF9F3] ring-1 ring-[#431D0D]'
                         : 'border-stone-200 bg-white hover:border-stone-300'
                     }`}
                   >
@@ -388,13 +388,13 @@ export function CheckoutClient({
                       value={address.id}
                       checked={selectedAddressId === address.id}
                       onChange={() => setSelectedAddressId(address.id)}
-                      className="h-4 w-4 text-[#6B1118] focus:ring-[#6B1118] mt-1"
+                      className="h-4 w-4 text-[#431D0D] focus:ring-[#431D0D] mt-1"
                     />
                     <div className="ml-3.5 flex-1">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-bold text-stone-900">{address.full_name}</span>
                         {address.is_default && (
-                          <span className="bg-[#6B1118] text-[#E5AD58] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          <span className="bg-[#431D0D] text-[#F09819] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                             Default
                           </span>
                         )}
@@ -426,7 +426,7 @@ export function CheckoutClient({
                     value={formData.full_name}
                     onChange={handleInputChange}
                     placeholder="e.g. Ramesh Kumar"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
                   />
                 </div>
 
@@ -449,7 +449,7 @@ export function CheckoutClient({
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="9876543210"
-                      className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all tracking-wider font-mono"
+                      className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all tracking-wider font-mono"
                     />
                   </div>
                 </div>
@@ -467,7 +467,7 @@ export function CheckoutClient({
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="yourname@gmail.com"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
                   />
                 </div>
 
@@ -485,7 +485,7 @@ export function CheckoutClient({
                     value={formData.address_line_1}
                     onChange={handleInputChange}
                     placeholder="e.g. Flat 402, Royal Residency, M.G. Road"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
                   />
                 </div>
 
@@ -501,7 +501,7 @@ export function CheckoutClient({
                     value={formData.address_line_2 || ''}
                     onChange={handleInputChange}
                     placeholder="e.g. Near City Hospital or Metro Pillar 45"
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
                   />
                 </div>
 
@@ -512,7 +512,7 @@ export function CheckoutClient({
                       6-Digit PIN Code <span className="text-red-500">*</span>
                     </label>
                     {isVerifyingPincode && (
-                      <span className="text-[11px] text-[#6B1118] flex items-center gap-1 font-medium">
+                      <span className="text-[11px] text-[#431D0D] flex items-center gap-1 font-medium">
                         <Loader2 className="w-3 h-3 animate-spin" />
                         Fetching Official Postal Localities...
                       </span>
@@ -533,7 +533,7 @@ export function CheckoutClient({
                           ? 'border-emerald-400 focus:ring-emerald-500/20 focus:border-emerald-500'
                           : pincodeStatus.status === 'invalid'
                           ? 'border-red-400 focus:ring-red-500/20 focus:border-red-500'
-                          : 'border-stone-200 focus:ring-[#6B1118]/20 focus:border-[#6B1118]'
+                          : 'border-stone-200 focus:ring-[#431D0D]/20 focus:border-[#431D0D]'
                       }`}
                     />
                   </div>
@@ -600,7 +600,7 @@ export function CheckoutClient({
                           : 'Enter 6-digit PIN code above first'
                       }
                       disabled={formData.postal_code.length < 6}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                   )}
                   {availableLocalities.length === 0 && formData.postal_code.length < 6 && (
@@ -621,7 +621,7 @@ export function CheckoutClient({
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className="w-full appearance-none px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B1118]/20 focus:border-[#6B1118] focus:bg-white transition-all pr-10 cursor-pointer"
+                      className="w-full appearance-none px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all pr-10 cursor-pointer"
                     >
                       {INDIAN_STATES.map((state) => (
                         <option key={state} value={state}>
@@ -639,7 +639,7 @@ export function CheckoutClient({
           {/* Section 2: Payment Method */}
           <div className="bg-white rounded-2xl border border-stone-200/80 p-6 sm:p-8 shadow-sm">
             <div className="flex items-center gap-3 pb-5 border-b border-stone-100 mb-6">
-              <div className="w-8 h-8 rounded-full bg-[#6B1118] text-[#E5AD58] font-bold text-sm flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-[#431D0D] text-[#F09819] font-bold text-sm flex items-center justify-center shadow-sm">
                 2
               </div>
               <div>
@@ -653,7 +653,7 @@ export function CheckoutClient({
               <label
                 className={`relative flex cursor-pointer rounded-2xl border p-4 sm:p-5 transition-all ${
                   paymentMethod === 'COD'
-                    ? 'border-[#6B1118] bg-[#FAF6F2] ring-2 ring-[#6B1118]/20 shadow-sm'
+                    ? 'border-[#431D0D] bg-[#FDF9F3] ring-2 ring-[#431D0D]/20 shadow-sm'
                     : 'border-stone-200 bg-white hover:border-stone-300'
                 }`}
               >
@@ -663,12 +663,12 @@ export function CheckoutClient({
                   value="COD"
                   checked={paymentMethod === 'COD'}
                   onChange={() => setPaymentMethod('COD')}
-                  className="h-4 w-4 text-[#6B1118] focus:ring-[#6B1118] mt-1"
+                  className="h-4 w-4 text-[#431D0D] focus:ring-[#431D0D] mt-1"
                 />
                 <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Truck className="w-5 h-5 text-[#6B1118]" />
+                      <Truck className="w-5 h-5 text-[#431D0D]" />
                       <span className="font-bold text-stone-900 text-sm">Cash on Delivery (COD)</span>
                     </div>
                     <span className="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
@@ -685,7 +685,7 @@ export function CheckoutClient({
               <label
                 className={`relative flex cursor-pointer rounded-2xl border p-4 sm:p-5 transition-all ${
                   paymentMethod === 'RAZORPAY'
-                    ? 'border-[#6B1118] bg-[#FAF6F2] ring-2 ring-[#6B1118]/20 shadow-sm'
+                    ? 'border-[#431D0D] bg-[#FDF9F3] ring-2 ring-[#431D0D]/20 shadow-sm'
                     : 'border-stone-200 bg-white hover:border-stone-300'
                 }`}
               >
@@ -695,7 +695,7 @@ export function CheckoutClient({
                   value="RAZORPAY"
                   checked={paymentMethod === 'RAZORPAY'}
                   onChange={() => setPaymentMethod('RAZORPAY')}
-                  className="h-4 w-4 text-[#6B1118] focus:ring-[#6B1118] mt-1"
+                  className="h-4 w-4 text-[#431D0D] focus:ring-[#431D0D] mt-1"
                 />
                 <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">
@@ -749,7 +749,7 @@ export function CheckoutClient({
             {initialItems.map((item) => {
               const variant = item.product_variants
               const product = variant?.products
-              const imageUrl = product?.featured_image_url || '/images/logo.jpeg'
+              const imageUrl = product?.featured_image_url || '/images/logo.png'
 
               return (
                 <div key={item.id} className="py-3 flex items-center gap-3">
@@ -797,7 +797,7 @@ export function CheckoutClient({
                 <span className="text-sm font-bold text-stone-900">Total Amount</span>
                 <p className="text-[10px] text-stone-400">Inclusive of all taxes</p>
               </div>
-              <span className="text-2xl font-bold text-[#6B1118]">
+              <span className="text-2xl font-bold text-[#431D0D]">
                 ₹{total.toLocaleString('en-IN')}
               </span>
             </div>
@@ -808,7 +808,7 @@ export function CheckoutClient({
             type="submit"
             form="checkout-form"
             disabled={isPlacingOrder}
-            className="w-full py-4 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-[#6B1118] to-[#80121A] hover:from-[#520C12] hover:to-[#6B1118] shadow-lg shadow-[#6B1118]/25 hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+            className="w-full py-4 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-[#431D0D] to-[#E07B0C] hover:from-[#2D1409] hover:to-[#431D0D] shadow-lg shadow-[#431D0D]/25 hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
           >
             {isPlacingOrder ? (
               <>
@@ -817,7 +817,7 @@ export function CheckoutClient({
               </>
             ) : (
               <>
-                <Lock className="w-4 h-4 text-[#E5AD58]" />
+                <Lock className="w-4 h-4 text-[#F09819]" />
                 <span>
                   {paymentMethod === 'COD'
                     ? `Confirm Order (COD) • ₹${total.toLocaleString('en-IN')}`
@@ -835,7 +835,7 @@ export function CheckoutClient({
               <span>100% Pure, Stone Ground, Chemical-Free Spices</span>
             </div>
             <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[#6B1118] shrink-0" />
+              <Truck className="w-4 h-4 text-[#431D0D] shrink-0" />
               <span>Cash on Delivery Available Across India</span>
             </div>
             <div className="flex items-center gap-2">

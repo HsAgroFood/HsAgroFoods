@@ -1,7 +1,7 @@
 'use client'
 
 export function FloatingContact() {
-  const waNumber = '919540048786'
+  const waNumber = '919493184110'
 
   return (
     <div className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-40 flex flex-col gap-3">

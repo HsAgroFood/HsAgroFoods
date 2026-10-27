@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Package, Clock, Truck, CheckCircle2, XCircle, MapPin, MessageCircle, ArrowRight, ShieldCheck } from 'lucide-react'
 
 export const metadata = {
-  title: 'My Orders & Live Tracking | Jaandaar Masale',
+  title: 'My Orders & Live Tracking | HS AgroFoods',
 }
 
 export const dynamic = 'force-dynamic'
@@ -117,7 +117,7 @@ export default async function AccountOrdersPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xl">📦</span>
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#2A1612]">My Orders & Tracking</h1>
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#14361F]">My Orders & Tracking</h1>
             </div>
             <p className="text-xs sm:text-sm text-[#8C7567]">
               Track your spice deliveries in real-time from our facility to your kitchen.
@@ -125,7 +125,7 @@ export default async function AccountOrdersPage() {
           </div>
           <Link
             href="/shop"
-            className="inline-flex items-center gap-1.5 self-start sm:self-center px-5 py-2.5 rounded-full bg-[#7B111A] text-white text-xs font-bold hover:bg-[#520C12] transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 self-start sm:self-center px-5 py-2.5 rounded-full bg-[#E07B0C] text-white text-xs font-bold hover:bg-[#2D1409] transition-colors shadow-xs"
           >
             <span>Explore Spices</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -135,16 +135,16 @@ export default async function AccountOrdersPage() {
 
       {!orders || orders.length === 0 ? (
         <div className="text-center py-16 px-4 bg-white rounded-3xl border border-[#E8DFD5] shadow-xs">
-          <div className="w-16 h-16 rounded-full bg-[#FAF6F2] border border-[#E8DFD5] text-[#7B111A] flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-full bg-[#FDF9F3] border border-[#E8DFD5] text-[#E07B0C] flex items-center justify-center mx-auto mb-4">
             <Package className="w-8 h-8 opacity-60" />
           </div>
-          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#2A1612]">No Orders Placed Yet</h3>
+          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#14361F]">No Orders Placed Yet</h3>
           <p className="text-xs sm:text-sm text-[#8C7567] max-w-sm mx-auto mt-1.5 mb-6">
             You haven&rsquo;t ordered any pure spices yet. Add authentic handpicked spices to your kitchen!
           </p>
           <Link 
             href="/shop"
-            className="inline-flex items-center gap-2 px-7 py-3 bg-[#7B111A] text-white text-sm font-bold rounded-full hover:bg-[#520C12] shadow-md shadow-[#7B111A]/20 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 px-7 py-3 bg-[#E07B0C] text-white text-sm font-bold rounded-full hover:bg-[#2D1409] shadow-md shadow-[#E07B0C]/20 transition-all active:scale-95"
           >
             <span>Start Shopping</span>
             <ArrowRight className="w-4 h-4" />
@@ -163,13 +163,13 @@ export default async function AccountOrdersPage() {
                 className="bg-white border border-[#E8DFD5] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-shadow"
               >
                 {/* Order Top Summary Bar */}
-                <div className="bg-[#FAF6F2] p-5 sm:p-6 border-b border-[#E8DFD5] flex flex-wrap items-center justify-between gap-4">
+                <div className="bg-[#FDF9F3] p-5 sm:p-6 border-b border-[#E8DFD5] flex flex-wrap items-center justify-between gap-4">
                   <div className="flex flex-wrap items-center gap-4 sm:gap-8">
                     <div>
                       <span className="text-[10px] uppercase font-bold tracking-widest text-[#8C7567] block mb-0.5">
                         Order Placed
                       </span>
-                      <p className="text-xs sm:text-sm font-bold text-[#2A1612]">
+                      <p className="text-xs sm:text-sm font-bold text-[#14361F]">
                         {new Date(order.created_at).toLocaleDateString('en-IN', {
                           day: 'numeric', month: 'short', year: 'numeric'
                         })}
@@ -180,7 +180,7 @@ export default async function AccountOrdersPage() {
                       <span className="text-[10px] uppercase font-bold tracking-widest text-[#8C7567] block mb-0.5">
                         Total Amount
                       </span>
-                      <p className="text-xs sm:text-sm font-extrabold text-[#7B111A]">
+                      <p className="text-xs sm:text-sm font-extrabold text-[#E07B0C]">
                         ₹{order.total_amount}
                       </p>
                     </div>
@@ -189,7 +189,7 @@ export default async function AccountOrdersPage() {
                       <span className="text-[10px] uppercase font-bold tracking-widest text-[#8C7567] block mb-0.5">
                         Order Number
                       </span>
-                      <p className="text-xs sm:text-sm font-mono font-bold text-[#2A1612]">
+                      <p className="text-xs sm:text-sm font-mono font-bold text-[#14361F]">
                         {order.order_number}
                       </p>
                     </div>
@@ -216,11 +216,11 @@ export default async function AccountOrdersPage() {
                 {!isCancelled && (
                   <div className="p-5 sm:p-6 bg-white border-b border-[#E8DFD5]/80">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2A1612] flex items-center gap-2">
-                        <Truck className="w-4 h-4 text-[#7B111A]" />
+                      <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#14361F] flex items-center gap-2">
+                        <Truck className="w-4 h-4 text-[#E07B0C]" />
                         <span>Live Delivery Tracker</span>
                       </h4>
-                      <span className="text-xs font-semibold text-[#7B111A]">
+                      <span className="text-xs font-semibold text-[#E07B0C]">
                         {order.order_status === 'delivered' 
                           ? 'Delivered to your doorstep' 
                           : order.order_status === 'shipped' 
@@ -235,7 +235,7 @@ export default async function AccountOrdersPage() {
                       <div className="absolute top-6 left-6 right-6 h-1 bg-stone-200 rounded-full" />
                       {/* Active filled connecting bar */}
                       <div
-                        className="absolute top-6 left-6 h-1 bg-[#7B111A] rounded-full transition-all duration-500"
+                        className="absolute top-6 left-6 h-1 bg-[#E07B0C] rounded-full transition-all duration-500"
                         style={{ width: `${(currentStep / (ORDER_STEPS.length - 1)) * 100}%` }}
                       />
 
@@ -249,9 +249,9 @@ export default async function AccountOrdersPage() {
                               <div
                                 className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all z-10 ${
                                   isDone
-                                    ? 'bg-[#7B111A] text-white shadow-md shadow-[#7B111A]/25'
+                                    ? 'bg-[#E07B0C] text-white shadow-md shadow-[#E07B0C]/25'
                                     : 'bg-white border-2 border-stone-300 text-stone-400'
-                                } ${isCurrent ? 'ring-4 ring-[#C89B65]/30' : ''}`}
+                                } ${isCurrent ? 'ring-4 ring-[#F09819]/30' : ''}`}
                               >
                                 {isDone ? (
                                   <CheckCircle2 className="w-5 h-5" />
@@ -259,7 +259,7 @@ export default async function AccountOrdersPage() {
                                   <span>{idx + 1}</span>
                                 )}
                               </div>
-                              <span className={`text-[11px] sm:text-xs font-bold mt-2 leading-tight ${isDone ? 'text-[#2A1612]' : 'text-stone-400'}`}>
+                              <span className={`text-[11px] sm:text-xs font-bold mt-2 leading-tight ${isDone ? 'text-[#14361F]' : 'text-stone-400'}`}>
                                 {step.label}
                               </span>
                               <span className="text-[10px] text-[#8C7567] hidden sm:block mt-0.5">
@@ -282,19 +282,19 @@ export default async function AccountOrdersPage() {
                       Items in Package ({order.order_items?.length || 0})
                     </span>
 
-                    <div className="divide-y divide-[#F2E8DC] border border-[#E8DFD5] rounded-2xl overflow-hidden bg-[#FAF6F2]/40">
+                    <div className="divide-y divide-[#F2E8DC] border border-[#E8DFD5] rounded-2xl overflow-hidden bg-[#FDF9F3]/40">
                       {order.order_items?.map((item: any) => (
                         <div key={item.id} className="p-3.5 flex items-center justify-between gap-3">
                           <div className="flex-1 min-w-0">
-                            <h5 className="text-xs sm:text-sm font-bold text-[#2A1612] truncate">
+                            <h5 className="text-xs sm:text-sm font-bold text-[#14361F] truncate">
                               {item.product_name}
                             </h5>
                             <p className="text-xs text-[#8C7567] mt-0.5 font-medium">
-                              Pack: <span className="text-[#2A1612]">{item.variant_name}</span> · Qty: {item.quantity}
+                              Pack: <span className="text-[#14361F]">{item.variant_name}</span> · Qty: {item.quantity}
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-xs sm:text-sm font-extrabold text-[#7B111A]">
+                            <span className="text-xs sm:text-sm font-extrabold text-[#E07B0C]">
                               ₹{item.line_total}
                             </span>
                           </div>
@@ -306,18 +306,18 @@ export default async function AccountOrdersPage() {
                   {/* Right: Shipping Address & WhatsApp Help (5 cols) */}
                   <div className="lg:col-span-5 space-y-4">
                     {/* Shipping Address Box */}
-                    <div className="p-4 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5]">
+                    <div className="p-4 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5]">
                       <div className="flex items-center gap-1.5 text-xs uppercase font-bold tracking-wider text-[#8C7567] mb-2">
-                        <MapPin className="w-3.5 h-3.5 text-[#7B111A]" />
+                        <MapPin className="w-3.5 h-3.5 text-[#E07B0C]" />
                         <span>Delivery Destination</span>
                       </div>
                       {shippingAddr ? (
                         <div className="text-xs text-[#5A433B] space-y-0.5">
-                          <p className="font-bold text-[#2A1612] text-sm">{shippingAddr.full_name}</p>
+                          <p className="font-bold text-[#14361F] text-sm">{shippingAddr.full_name}</p>
                           <p>{shippingAddr.address_line_1}</p>
                           {shippingAddr.address_line_2 && <p>{shippingAddr.address_line_2}</p>}
                           <p>{shippingAddr.city}, {shippingAddr.state} - {shippingAddr.postal_code}</p>
-                          <p className="pt-1.5 font-semibold text-[#2A1612]">Phone: {shippingAddr.phone}</p>
+                          <p className="pt-1.5 font-semibold text-[#14361F]">Phone: {shippingAddr.phone}</p>
                         </div>
                       ) : (
                         <p className="text-xs text-[#8C7567] italic">Address registered on file.</p>
@@ -326,7 +326,7 @@ export default async function AccountOrdersPage() {
 
                     {/* WhatsApp Help / Support Button */}
                     <a
-                      href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi Jaandaar Masale, I need an update on my order #${order.order_number}.`)}`}
+                      href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi HS AgroFoods, I need an update on my order #${order.order_number}.`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-2xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-emerald-800 text-xs font-bold transition-colors cursor-pointer"

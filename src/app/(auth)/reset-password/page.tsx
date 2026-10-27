@@ -5,6 +5,7 @@ import { resetPasswordWithToken } from '@/actions/auth'
 import { Lock, ArrowLeft, ShieldCheck, AlertCircle, Key } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams()
@@ -21,7 +22,7 @@ function ResetPasswordForm() {
         <div className="w-14 h-14 bg-red-100 text-red-700 rounded-full flex items-center justify-center mx-auto shadow-inner">
           <AlertCircle className="w-7 h-7" />
         </div>
-        <h1 className="font-serif text-xl font-bold text-[#2A1612]">
+        <h1 className="font-serif text-xl font-bold text-[#14361F]">
           Invalid Password Reset Link
         </h1>
         <p className="text-xs sm:text-sm text-[#6E5951]">
@@ -30,7 +31,7 @@ function ResetPasswordForm() {
         <div className="pt-2">
           <Link
             href="/forgot-password"
-            className="inline-flex items-center justify-center gap-2 py-3 px-6 bg-[#7B111A] hover:bg-[#520C12] text-white font-bold text-xs rounded-full shadow-lg shadow-[#7B111A]/20 transition-all cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 py-3 px-6 bg-[#E07B0C] hover:bg-[#2D1409] text-white font-bold text-xs rounded-full shadow-lg shadow-[#E07B0C]/20 transition-all cursor-pointer"
           >
             <span>Request a New Reset Link</span>
           </Link>
@@ -70,18 +71,23 @@ function ResetPasswordForm() {
     <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-[#E8DFD5] p-6 sm:p-10">
       {/* Brand Header */}
       <div className="text-center mb-6">
-        <Link href="/" className="inline-flex flex-col items-center gap-1.5 group mb-3">
-          <div className="w-12 h-12 rounded-full bg-[#7B111A]/10 border border-[#7B111A]/25 flex items-center justify-center text-[#7B111A] group-hover:scale-105 transition-transform">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" aria-hidden="true">
-              <path d="M12 2C6.5 2 2 6.5 2 12c0 3.8 2.2 7.1 5.4 8.7-.2-.8-.4-1.8-.4-2.7 0-4.2 3.4-7.6 7.6-7.6 1.1 0 2.2.2 3.1.7.9-1.3 1.3-2.9 1.3-4.5 0-2.5-1.1-4.6-2.9-5.9C15 2.2 13.5 2 12 2zm6.6 8.4c-.9-.4-1.9-.6-3-.6-3.1 0-5.6 2.5-5.6 5.6 0 1.2.4 2.3 1 3.2 3.7-.8 6.6-3.8 7.6-8.2z" />
-            </svg>
+        <Link href="/" className="inline-flex flex-col items-center gap-2 group mb-3">
+          <div className="relative w-16 h-16 rounded-full bg-white shadow-md border border-[#E8DFD5] p-1 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
+            <Image
+              src="/images/logo.png"
+              alt="HS AgroFoods Logo"
+              width={60}
+              height={60}
+              className="w-full h-full object-contain rounded-full"
+              priority
+            />
           </div>
-          <span className="font-serif text-2xl font-bold tracking-tight text-[#7B111A]">
-            Jaandaar Masale
+          <span className="font-serif text-2xl font-bold tracking-tight text-[#E07B0C]">
+            HS AgroFoods
           </span>
         </Link>
 
-        <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+        <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
           Set a New Password
         </h1>
         <p className="text-[#6E5951] mt-1 text-xs sm:text-sm">
@@ -98,7 +104,7 @@ function ResetPasswordForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="new-password" className="block text-xs font-semibold text-[#2A1612] uppercase tracking-wider mb-1.5">
+          <label htmlFor="new-password" className="block text-xs font-semibold text-[#14361F] uppercase tracking-wider mb-1.5">
             New Password <span className="text-[#8C7567] font-normal lowercase">(min 6 chars)</span>
           </label>
           <div className="relative">
@@ -111,14 +117,14 @@ function ResetPasswordForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               autoFocus
-              className="w-full px-4 py-3 pl-11 rounded-xl border border-[#D4C7BA] bg-white text-[#2A1612] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#7B111A]/30 focus:border-[#7B111A] text-sm transition-all shadow-inner"
+              className="w-full px-4 py-3 pl-11 rounded-xl border border-[#D4C7BA] bg-white text-[#14361F] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-sm transition-all shadow-inner"
             />
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
           </div>
         </div>
 
         <div>
-          <label htmlFor="confirm-password" className="block text-xs font-semibold text-[#2A1612] uppercase tracking-wider mb-1.5">
+          <label htmlFor="confirm-password" className="block text-xs font-semibold text-[#14361F] uppercase tracking-wider mb-1.5">
             Confirm New Password
           </label>
           <div className="relative">
@@ -130,7 +136,7 @@ function ResetPasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 pl-11 rounded-xl border border-[#D4C7BA] bg-white text-[#2A1612] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#7B111A]/30 focus:border-[#7B111A] text-sm transition-all shadow-inner"
+              className="w-full px-4 py-3 pl-11 rounded-xl border border-[#D4C7BA] bg-white text-[#14361F] placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-sm transition-all shadow-inner"
             />
             <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
           </div>
@@ -139,7 +145,7 @@ function ResetPasswordForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-[#7B111A] to-[#8A131E] hover:from-[#520C12] hover:to-[#7B111A] text-white font-bold rounded-full shadow-lg shadow-[#7B111A]/20 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:scale-98 cursor-pointer mt-2"
+          className="w-full py-3.5 px-4 bg-gradient-to-r from-[#E07B0C] to-[#D1491B] hover:from-[#2D1409] hover:to-[#E07B0C] text-white font-bold rounded-full shadow-lg shadow-[#E07B0C]/20 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:scale-98 cursor-pointer mt-2"
         >
           {isPending ? (
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -154,7 +160,7 @@ function ResetPasswordForm() {
         <div className="text-center pt-2">
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7B111A] hover:text-[#520C12] hover:underline"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E07B0C] hover:text-[#2D1409] hover:underline"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Cancel & Back to Sign In</span>

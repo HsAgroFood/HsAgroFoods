@@ -3,46 +3,96 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { SPICE_ASSETS } from '@/constants/assets'
 
-const defaultSpiceRange = [
+const defaultSpiceRange: LiveSpiceItem[] = [
   {
     id: 'turmeric',
-    name: 'Turmeric Powder',
+    name: 'Turmeric Powder (Haldi)',
+    slug: 'turmeric-powder',
     image: SPICE_ASSETS.turmeric,
-    tag: null,
+    tag: 'Pure Curcumin',
     href: '/product/turmeric-powder',
-    priceText: 'From ₹120',
+    priceText: 'From ₹55',
   },
   {
-    id: 'red-chilly',
-    name: 'Red Chilly Powder',
+    id: 'red-chilli',
+    name: 'Red Chilli Powder',
+    slug: 'red-chilli-powder',
     image: SPICE_ASSETS.redChilly,
     tag: 'Best Seller',
-    href: '/product/red-chilly-powder',
-    priceText: 'From ₹145',
+    href: '/product/red-chilli-powder',
+    priceText: 'From ₹65',
   },
   {
     id: 'coriander',
     name: 'Coriander Powder',
+    slug: 'coriander-powder',
     image: SPICE_ASSETS.coriander,
     tag: null,
     href: '/product/coriander-powder',
-    priceText: 'From ₹110',
+    priceText: 'From ₹50',
   },
   {
-    id: 'cumin',
-    name: 'Cumin Powder',
+    id: 'zeera',
+    name: 'Zeera Powder (Cumin)',
+    slug: 'zeera-powder',
     image: SPICE_ASSETS.cumin,
     tag: null,
-    href: '/product/cumin-powder',
-    priceText: 'From ₹160',
+    href: '/product/zeera-powder',
+    priceText: 'From ₹75',
   },
   {
-    id: 'garam-masala',
-    name: 'Garam Masala',
+    id: 'shahi-garam-masala',
+    name: 'Shahi Garam Masala',
+    slug: 'shahi-garam-masala',
     image: SPICE_ASSETS.garamMasala,
-    tag: 'Authentic Blend',
-    href: '/product/garam-masala',
-    priceText: 'From ₹180',
+    tag: 'Royal Blend',
+    href: '/product/shahi-garam-masala',
+    priceText: 'From ₹85',
+  },
+  {
+    id: 'chat-masala',
+    name: 'Tangy Chaat Masala',
+    slug: 'chat-masala',
+    image: SPICE_ASSETS.chatMasala,
+    tag: 'Chatpata Blend',
+    href: '/product/chat-masala',
+    priceText: 'From ₹65',
+  },
+  {
+    id: 'beetroot-powder',
+    name: 'Beetroot Powder',
+    slug: 'beetroot-powder',
+    image: SPICE_ASSETS.beetrootPowder,
+    tag: 'Dehydrated Veg',
+    href: '/product/beetroot-powder',
+    priceText: 'From ₹95',
+  },
+  {
+    id: 'tomato-powder',
+    name: 'Tomato Powder',
+    slug: 'tomato-powder',
+    image: SPICE_ASSETS.tomatoPowder,
+    tag: 'Dehydrated Veg',
+    href: '/product/tomato-powder',
+    priceText: 'From ₹90',
+  },
+  {
+    id: 'banana-powder',
+    name: 'Raw Banana Powder',
+    slug: 'banana-powder',
+    image: SPICE_ASSETS.bananaPowder,
+    tag: 'Dehydrated Fruit',
+    href: '/product/banana-powder',
+    priceText: 'From ₹95',
+  },
+  {
+    id: 'mango-powder',
+    name: 'Dry Mango (Amchur)',
+    slug: 'mango-powder',
+    image: SPICE_ASSETS.mangoPowder,
+    tag: null,
+    href: '/product/mango-powder',
+    priceText: 'From ₹70',
   },
 ]
 
@@ -61,14 +111,10 @@ export function SpiceRangeSection({
 }: {
   products?: LiveSpiceItem[]
 }) {
-  const spiceRange = products
-
-  if (spiceRange.length === 0) {
-    return null
-  }
+  const spiceRange = products.length > 0 ? products : defaultSpiceRange
 
   return (
-    <section className="py-12 sm:py-16 bg-[#F8ECE7] relative overflow-hidden">
+    <section className="py-12 sm:py-16 bg-[#FBF5EE] relative overflow-hidden">
 
       {/* Decorative Corner Asset: Top Right Bay Leaves & Spice Dust (100% Transparent Blend) */}
       <div className="absolute top-0 right-0 w-40 h-40 sm:w-56 sm:h-56 pointer-events-none hidden md:block select-none mix-blend-multiply opacity-90">
@@ -96,43 +142,43 @@ export function SpiceRangeSection({
 
         {/* Section Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto mb-12 sm:mb-14">
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-4xl font-bold tracking-tight text-[#2A1612]">
-            Our <span className="text-[#7B111A]">Spice</span> Range
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-4xl font-bold tracking-tight text-[#14361F]">
+            Our <span className="text-[#E07B0C]">Spices &amp; Dehydrated</span> Range
           </h2>
 
           {/* Ornamental Divider with Floral Motif */}
           <div className="flex items-center justify-center gap-3 py-1">
-            <div className="w-12 h-px bg-gradient-to-r from-transparent to-[#C89B65]" />
-            <div className="flex items-center gap-1 text-[#C89B65]">
+            <div className="w-12 h-px bg-gradient-to-r from-transparent to-[#F09819]" />
+            <div className="flex items-center gap-1 text-[#F09819]">
               <span className="text-xs">✦</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#7B111A]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E07B0C]" />
               <span className="text-xs">✦</span>
             </div>
-            <div className="w-12 h-px bg-gradient-to-l from-transparent to-[#C89B65]" />
+            <div className="w-12 h-px bg-gradient-to-l from-transparent to-[#F09819]" />
           </div>
 
           <p className="text-sm sm:text-base text-[#5A433B]">
-            From everyday cooking to specialty recipes, we have the perfect spice for every dish.
+            From pure ground &amp; blended Indian masale to 100% natural dehydrated vegetable and fruit powders.
           </p>
         </div>
 
-        {/* 5 Product Cards */}
+        {/* Product Cards Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6">
           {spiceRange.map((product) => (
             <div
               key={product.id}
               className="group relative rounded-xl sm:rounded-2xl bg-white border border-[#E8DFD5] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden p-3 sm:p-5 transform hover:-translate-y-1.5"
             >
-              {/* Best Seller Pill Badge (Red Chilly Card) */}
+              {/* Badge Pill */}
               {product.tag && (
                 <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-10">
-                  <span className="inline-flex items-center rounded-full bg-[#7B111A] px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
+                  <span className="inline-flex items-center rounded-full bg-[#E07B0C] px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
                     {product.tag}
                   </span>
                 </div>
               )}
 
-              {/* Product Bowl Image */}
+              {/* Product Bowl Image (1:1 Square) */}
               <div className="relative aspect-square w-full rounded-lg sm:rounded-xl overflow-hidden bg-[#FAF6F0] mb-3 sm:mb-4 flex items-center justify-center">
                 <Image
                   src={product.image}
@@ -145,13 +191,13 @@ export function SpiceRangeSection({
 
               {/* Product Title & Link */}
               <div className="text-center space-y-1.5 sm:space-y-2 mt-auto">
-                <h3 className="font-serif text-sm sm:text-base lg:text-lg font-bold text-[#2A1612] group-hover:text-[#7B111A] transition-colors leading-snug line-clamp-2">
+                <h3 className="font-serif text-sm sm:text-base lg:text-lg font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors leading-snug line-clamp-2">
                   {product.name}
                 </h3>
 
                 <Link
                   href={product.href}
-                  className="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-semibold text-[#7B111A] hover:text-[#520C12] hover:gap-2 transition-all pt-0.5"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-semibold text-[#E07B0C] hover:text-[#2D1409] hover:gap-2 transition-all pt-0.5"
                 >
                   Shop Now
                   <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
@@ -165,9 +211,9 @@ export function SpiceRangeSection({
         <div className="mt-8 sm:mt-12 text-center">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center rounded-full bg-[#7B111A] px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-md hover:bg-[#520C12] hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-[#E07B0C] px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white shadow-md hover:bg-[#2D1409] hover:shadow-lg transition-all transform hover:-translate-y-0.5"
           >
-            View All Products
+            View All 14 Products
           </Link>
         </div>
 

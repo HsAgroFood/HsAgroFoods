@@ -33,7 +33,7 @@ export function HeroSlideList({
   const [newSlide, setNewSlide] = useState({
     image_url: '',
     title: 'Pure Spice. Real Taste. Trusted Every Time.',
-    subtitle: "Jaandaar Masale brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
+    subtitle: "HS AgroFoods brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
     button_text: 'Shop Now',
     button_link: '/shop',
   })

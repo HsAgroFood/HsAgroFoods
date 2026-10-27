@@ -1,32 +1,32 @@
-import { Mail, Phone, MapPin, Clock, MessageSquare, PackageCheck, Truck, ShieldCheck } from 'lucide-react'
+import { Mail, Phone, MapPin, Clock, PackageCheck, Truck, ShieldCheck } from 'lucide-react'
 import { ContactForm } from '@/components/storefront/ContactForm'
 
 export const metadata = {
-  title: 'Contact Us — We Are Here To Help | Jaandaar Masale',
-  description: 'Get in touch with the Jaandaar Masale customer care team for product queries, wholesale & bulk orders, or shipping assistance.',
+  title: 'Contact Us — We Are Here To Help | HS AgroFoods',
+  description: 'Get in touch with the HS AgroFoods customer care team for product queries, wholesale & bulk orders, or shipping assistance.',
 }
 
 export default function ContactPage() {
   const contactDetails = [
     {
       title: 'Our Store & Experience Hub',
-      desc: 'T891 A/1 Aulia Masjid, Ward No 8 Mehrauli, New Delhi 110030',
+      desc: '4-11-92/3/A, M.M. Pahadi, Attapur, Hyderabad, Telangana 500048',
       actionText: 'Get Directions',
-      actionHref: 'https://maps.google.com/?q=Mehrauli+New+Delhi+110030',
+      actionHref: 'https://maps.google.com/?q=4-11-92/3/A+M.M.pahadi+Attapur+Hyderabad+Telangana+500048',
       icon: <MapPin className="w-5 h-5" />,
     },
     {
       title: 'Call & WhatsApp Support',
-      desc: '+91 9540048786 (Mon – Sat, 9:00 AM – 7:00 PM IST)',
+      desc: '+91 94931 84110 / +91 91009 39110 (Mon – Sat, 9:00 AM – 7:00 PM IST)',
       actionText: 'Chat on WhatsApp',
-      actionHref: 'https://wa.me/919540048786',
+      actionHref: 'https://wa.me/919493184110',
       icon: <Phone className="w-5 h-5" />,
     },
     {
       title: 'Email Inquiries',
-      desc: 'info@jaandaarmasale.com (We respond within 24 business hours)',
+      desc: 'Hs.foodofficial@gmail.com (We respond within 24 business hours)',
       actionText: 'Send an Email',
-      actionHref: 'mailto:info@jaandaarmasale.com',
+      actionHref: 'mailto:Hs.foodofficial@gmail.com',
       icon: <Mail className="w-5 h-5" />,
     },
     {
@@ -35,6 +35,45 @@ export default function ContactPage() {
       actionText: null,
       actionHref: null,
       icon: <Clock className="w-5 h-5" />,
+    },
+  ]
+
+  const socialLinks = [
+    {
+      name: 'Instagram',
+      handle: '@hs_agro_foods',
+      href: 'https://www.instagram.com/hs_agro_foods?srtk=eXNkaGNxb2gxYWZr',
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+        </svg>
+      ),
+      color: 'hover:bg-pink-600 hover:text-white hover:border-pink-600',
+    },
+    {
+      name: 'YouTube',
+      handle: '@hsagrofoods',
+      href: 'https://youtube.com/@hsagrofoods?si=KEc9fwnvsNcZ7778',
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+          <path d="m10 15 5-3-5-3z" />
+        </svg>
+      ),
+      color: 'hover:bg-red-600 hover:text-white hover:border-red-600',
+    },
+    {
+      name: 'Facebook',
+      handle: 'HS AgroFoods',
+      href: 'https://www.facebook.com/share/1A5kcJC8iR/',
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+        </svg>
+      ),
+      color: 'hover:bg-blue-600 hover:text-white hover:border-blue-600',
     },
   ]
 
@@ -51,34 +90,29 @@ export default function ContactPage() {
     },
     {
       title: '100% Purity Guarantee',
-      desc: 'Every spice batch is lab tested and sealed fresh for authentic aroma and taste.',
+      desc: 'Every spice and dehydrated powder batch is lab tested and sealed fresh for authentic aroma and nutrition.',
       icon: <ShieldCheck className="w-6 h-6" />,
     },
   ]
 
   return (
-    <div className="bg-[#F8ECE7] min-h-screen text-[#2A1612] overflow-hidden">
+    <div className="bg-[#FFF9F0] min-h-screen text-[#14361F] overflow-hidden">
       
-      {/* 1. Hero Header */}
-      <section className="relative bg-[#6B1118] text-white py-14 sm:py-20 lg:py-24 overflow-hidden">
-        {/* Ambient Glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(200,155,101,0.25),transparent_70%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(0,0,0,0.5),transparent_60%)] pointer-events-none" />
-
+      {/* 1. Hero Header — Warm Cream & Saffron */}
+      <section className="relative bg-gradient-to-br from-[#FFF9F0] via-[#FFEDD2] to-[#FCE0B4] text-[#14361F] py-14 sm:py-20 lg:py-24 overflow-hidden border-b border-[#F2DCBA]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
-          {/* Eyebrow Pill */}
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-[#E5AD58]/30 px-4 py-1 text-xs sm:text-sm font-semibold tracking-wider text-[#E5AD58] uppercase">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/90 border border-[#F09819]/50 px-4 py-1 text-xs sm:text-sm font-bold tracking-wider text-[#B85D0B] uppercase shadow-2xs">
             <span>✦</span>
             <span>We&apos;re Here For You</span>
             <span>✦</span>
           </div>
 
-          <h1 className="font-serif text-3xl xs:text-4xl sm:text-5xl font-bold tracking-tight text-white leading-[1.15]">
-            Get In <span className="text-[#D4A373]">Touch</span>
+          <h1 className="font-serif text-3xl xs:text-4xl sm:text-5xl font-extrabold tracking-tight text-[#144D29] leading-[1.15]">
+            Get In <span className="text-[#E07B0C]">Touch</span>
           </h1>
 
-          <p className="text-sm sm:text-base lg:text-lg text-stone-200/90 max-w-xl mx-auto leading-relaxed font-normal">
-            Have a question about our spices, bulk orders, or custom blends? We would love to hear from you.
+          <p className="text-sm sm:text-base lg:text-lg text-[#4A3B2C] max-w-xl mx-auto leading-relaxed font-medium">
+            Have a question about our pure spices, dehydrated vegetable &amp; fruit powders, or bulk wholesale orders? We would love to hear from you.
           </p>
         </div>
       </section>
@@ -91,11 +125,11 @@ export default function ContactPage() {
             {/* Left: Contact Info Cards */}
             <div className="lg:col-span-5 space-y-6">
               <div className="space-y-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#7B111A]">Contact Channels</span>
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2A1612]">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#E07B0C]">Contact Channels</span>
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#144D29]">
                   How Can We Help You?
                 </h2>
-                <p className="text-xs sm:text-sm text-[#5A433B] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#4A3B2C] leading-relaxed">
                   Reach out to us through any of the channels below or fill out the form, and our team will get in touch promptly.
                 </p>
               </div>
@@ -104,16 +138,16 @@ export default function ContactPage() {
                 {contactDetails.map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-2xl bg-white p-5 border border-[#E8DFD5] shadow-sm hover:shadow-md transition-shadow flex items-start gap-4"
+                    className="rounded-2xl bg-white p-5 border border-[#F0DEC2] shadow-sm hover:shadow-md transition-shadow flex items-start gap-4"
                   >
-                    <div className="w-11 h-11 rounded-full bg-[#FAF3EB] border border-[#C89B65]/40 flex items-center justify-center text-[#7B111A] shrink-0 mt-0.5 shadow-sm">
+                    <div className="w-11 h-11 rounded-full bg-[#FFF8EB] border border-[#F09819]/40 flex items-center justify-center text-[#E07B0C] shrink-0 mt-0.5 shadow-xs">
                       {item.icon}
                     </div>
                     <div className="space-y-1 min-w-0">
-                      <h3 className="font-serif text-sm sm:text-base font-bold text-[#2A1612]">
+                      <h3 className="font-serif text-sm sm:text-base font-bold text-[#144D29]">
                         {item.title}
                       </h3>
-                      <p className="text-xs sm:text-sm text-[#6E5951] leading-relaxed">
+                      <p className="text-xs sm:text-sm text-[#5C4934] leading-relaxed break-words">
                         {item.desc}
                       </p>
                       {item.actionText && item.actionHref && (
@@ -121,7 +155,7 @@ export default function ContactPage() {
                           href={item.actionHref}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block text-xs font-bold text-[#7B111A] hover:text-[#520C12] hover:underline pt-1 transition-colors"
+                          className="inline-block text-xs font-bold text-[#E07B0C] hover:text-[#144D29] hover:underline pt-1 transition-colors"
                         >
                           {item.actionText} →
                         </a>
@@ -129,6 +163,27 @@ export default function ContactPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Official Social Media Accounts */}
+              <div className="rounded-2xl bg-white p-5 border border-[#F0DEC2] shadow-sm space-y-3">
+                <h3 className="font-serif text-sm sm:text-base font-bold text-[#144D29]">
+                  Follow HS AgroFoods On Social Media
+                </h3>
+                <div className="flex flex-wrap gap-2.5">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#FFF8EB] border border-[#F09819]/40 text-xs font-bold text-[#144D29] transition-all ${social.color}`}
+                    >
+                      {social.icon}
+                      <span>{social.name}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -142,19 +197,19 @@ export default function ContactPage() {
       </section>
 
       {/* 3. Three Quick Support Pillars */}
-      <section className="py-12 sm:py-16 bg-[#FAF3EB] border-t border-[#E8DFD5]">
+      <section className="py-12 sm:py-16 bg-[#FFF3DF] border-t border-[#F2DCBA]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {supportCards.map((c) => (
               <div
                 key={c.title}
-                className="rounded-2xl bg-white p-6 border border-[#E8DFD5] shadow-sm flex flex-col items-center text-center space-y-3"
+                className="rounded-2xl bg-white p-6 border border-[#F0DEC2] shadow-sm flex flex-col items-center text-center space-y-3"
               >
-                <div className="w-12 h-12 rounded-full bg-[#FAF3EB] border border-[#C89B65]/40 flex items-center justify-center text-[#7B111A] shadow-sm">
+                <div className="w-12 h-12 rounded-full bg-[#FFF8EB] border border-[#F09819]/40 flex items-center justify-center text-[#E07B0C] shadow-xs">
                   {c.icon}
                 </div>
-                <h3 className="font-serif text-base font-bold text-[#2A1612]">{c.title}</h3>
-                <p className="text-xs text-[#6E5951] leading-relaxed">{c.desc}</p>
+                <h3 className="font-serif text-base font-bold text-[#144D29]">{c.title}</h3>
+                <p className="text-xs text-[#5C4934] leading-relaxed">{c.desc}</p>
               </div>
             ))}
           </div>

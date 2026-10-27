@@ -8,9 +8,9 @@ import { BottomBanner } from '@/components/storefront/BottomBanner'
 import { SPICE_ASSETS } from '@/constants/assets'
 
 export const metadata = {
-  title: 'Jaandaar Masle — Pure Spice. Real Taste. Trusted Every Time.',
+  title: 'HS AgroFoods — Pure Spices & Natural Dehydrated Veg & Fruit Powders',
   description:
-    "Jaandaar Masle brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
+    "HS AgroFoods brings India's finest cold-ground spices and 100% natural dehydrated vegetable & fruit powders to your kitchen.",
 }
 
 export const dynamic = 'force-dynamic'

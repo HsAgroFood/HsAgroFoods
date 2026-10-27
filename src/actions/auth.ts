@@ -541,7 +541,7 @@ export async function adminLogin(
     return { error: 'Email and password are required' }
   }
 
-  const defaultAdminEmail = (process.env.ADMIN_EMAIL || 'admin@jaandaarmasale.com').trim().toLowerCase()
+  const defaultAdminEmail = (process.env.ADMIN_EMAIL || 'admin@hsagrofoods.com').trim().toLowerCase()
   const defaultAdminPassword = process.env.ADMIN_PASSWORD || 'admin@123'
 
   const isDefaultAdmin = email === defaultAdminEmail && password === defaultAdminPassword

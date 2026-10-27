@@ -15,15 +15,47 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "Jaandaar Masale — Pure Spice. Real Taste. Trusted Every Time.",
-    template: "%s | Jaandaar Masale",
+    default: "HS AgroFoods — Pure Spices & Dehydrated Veg & Fruit Powders",
+    template: "%s | HS AgroFoods",
   },
   description:
-    "Jaandaar Masale brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
+    "HS AgroFoods (Hyderabad) brings India's finest cold-ground spices (Turmeric, Red Chilli, Coriander, Zeera, Shahi Garam Masala, Chaat Masala) and 100% natural dehydrated vegetable & fruit powders (Beetroot, Tomato, Raw Banana, Garlic, Carrot, Radish) straight to your kitchen.",
+  keywords: [
+    "HS AgroFoods",
+    "HS Agro Foods Hyderabad",
+    "pure Indian spices",
+    "dehydrated vegetable powders",
+    "dehydrated fruit powders",
+    "beetroot powder",
+    "tomato powder",
+    "raw banana powder",
+    "garlic powder",
+    "carrot powder",
+    "radish powder",
+    "turmeric powder",
+    "red chilli powder",
+    "coriander powder",
+    "zeera powder",
+    "shahi garam masala",
+    "chaat masala",
+    "fruit chaat masala",
+    "amchur mango powder",
+  ],
+  openGraph: {
+    title: "HS AgroFoods — Pure Spices & Dehydrated Veg & Fruit Powders",
+    description:
+      "100% pure cold-ground Indian spices and natural low-temperature dehydrated fruit & vegetable powders. Zero artificial colors, zero preservatives.",
+    siteName: "HS AgroFoods",
+    locale: "en_IN",
+    type: "website",
+  },
   icons: {
     icon: [
-      { url: '/images/logo.jpeg', sizes: 'any' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/images/logo.png?v=2', type: 'image/png', sizes: 'any' },
+    ],
+    shortcut: ['/images/logo.png?v=2'],
+    apple: [
+      { url: '/images/logo.png?v=2', type: 'image/png' },
     ],
   },
 };
@@ -37,7 +69,7 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col font-sans bg-[#FAF6F2] text-[#2A1612] selection:bg-[#6B1118] selection:text-white"
+        className="min-h-full flex flex-col font-sans bg-[#FDF9F3] text-[#14361F] selection:bg-[#431D0D] selection:text-white"
       >
         {children}
       </body>

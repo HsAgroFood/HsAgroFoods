@@ -189,15 +189,15 @@ export function ImageKitUpload({
         onClick={open}
         className={`w-full border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
           dragOver
-            ? 'border-[#7B111A] bg-[#7B111A]/5'
+            ? 'border-[#E07B0C] bg-[#E07B0C]/5'
             : 'border-stone-300 bg-stone-50 hover:bg-stone-100/80 hover:border-stone-400'
         } ${isUploading ? 'opacity-60 pointer-events-none' : ''}`}
       >
         <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-stone-200 flex items-center justify-center text-stone-600">
           {isUploading ? (
-            <Loader2 className="w-6 h-6 animate-spin text-[#7B111A]" />
+            <Loader2 className="w-6 h-6 animate-spin text-[#E07B0C]" />
           ) : (
-            <ImagePlus className="w-6 h-6 text-[#7B111A]" />
+            <ImagePlus className="w-6 h-6 text-[#E07B0C]" />
           )}
         </div>
 

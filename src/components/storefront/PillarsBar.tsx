@@ -58,12 +58,12 @@ export function PillarsBar() {
               } px-1 sm:px-2`}
             >
               {/* Circular Emblem Icon */}
-              <div className="w-10 h-10 sm:w-13 sm:h-13 rounded-full bg-[#FAF3EB] border border-[#E8DFD5] flex items-center justify-center text-[#6B111A] shadow-xs shrink-0">
+              <div className="w-10 h-10 sm:w-13 sm:h-13 rounded-full bg-[#FAF3EB] border border-[#E8DFD5] flex items-center justify-center text-[#431D0D] shadow-xs shrink-0">
                 {item.icon}
               </div>
 
               {/* Title & Description */}
-              <h3 className="font-serif text-xs sm:text-base lg:text-lg font-bold text-[#2A1612] tracking-tight leading-snug">
+              <h3 className="font-serif text-xs sm:text-base lg:text-lg font-bold text-[#14361F] tracking-tight leading-snug">
                 {item.title}
               </h3>
               <p className="text-[10px] sm:text-xs lg:text-sm text-[#6E5951] leading-relaxed max-w-[200px]">

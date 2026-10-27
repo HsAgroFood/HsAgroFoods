@@ -14,20 +14,20 @@ import {
 } from 'lucide-react'
 
 export const metadata = {
-  title: 'Terms of Service | Jaandaar Masale',
-  description: 'Understand the terms, shipping conditions, and return guarantees for purchasing pure spices from Jaandaar Masale.',
+  title: 'Terms of Service | HS AgroFoods',
+  description: 'Understand the terms, shipping conditions, and return guarantees for purchasing pure spices and dehydrated vegetable & fruit powders from HS AgroFoods.',
 }
 
 export default function TermsOfServicePage() {
   return (
-    <div className="bg-[#FAF6F2] min-h-screen text-[#2A1612] pb-20">
+    <div className="bg-[#FDF9F3] min-h-screen text-[#14361F] pb-20">
       
       {/* ─── 1. Luxury Header Hero ────────────────────────────────────────── */}
-      <div className="relative bg-gradient-to-b from-[#520C12] via-[#6B1118] to-[#7B111A] text-white pt-16 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(#E5AD58_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+      <div className="relative bg-gradient-to-b from-[#2D1409] via-[#431D0D] to-[#E07B0C] text-white pt-16 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(#F09819_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
         
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#E5AD58] text-xs font-bold uppercase tracking-widest shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#F09819] text-xs font-bold uppercase tracking-widest shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Fair Commerce &amp; Quality Pact</span>
           </div>
@@ -40,8 +40,8 @@ export default function TermsOfServicePage() {
             Clear, transparent policies for all orders, doorstep delivery timelines, and our 100% authentic quality replacement promise.
           </p>
 
-          <p className="text-xs text-[#E5AD58] font-semibold pt-1">
-            Last Updated: September 2026 • Jaandaar Masale
+          <p className="text-xs text-[#F09819] font-semibold pt-1">
+            Last Updated: September 2026 • HS AgroFoods
           </p>
         </div>
       </div>
@@ -54,7 +54,7 @@ export default function TermsOfServicePage() {
             <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mb-3">
               <Truck className="w-5 h-5" />
             </div>
-            <h2 className="font-bold text-sm text-[#2A1612]">Free Shipping ₹500+</h2>
+            <h2 className="font-bold text-sm text-[#14361F]">Free Shipping ₹500+</h2>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
               Standard 2–4 business days delivery across India. Free shipping on ₹500+ orders.
             </p>
@@ -64,7 +64,7 @@ export default function TermsOfServicePage() {
             <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mb-3">
               <RefreshCw className="w-5 h-5" />
             </div>
-            <h2 className="font-bold text-sm text-[#2A1612]">48-Hour Replacement</h2>
+            <h2 className="font-bold text-sm text-[#14361F]">48-Hour Replacement</h2>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
               Damaged, broken seal, or incorrect parcel? We replace it free or issue 100% refund.
             </p>
@@ -74,7 +74,7 @@ export default function TermsOfServicePage() {
             <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-700 border border-rose-200 flex items-center justify-center mb-3">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h2 className="font-bold text-sm text-[#2A1612]">FSSAI Authenticity</h2>
+            <h2 className="font-bold text-sm text-[#14361F]">FSSAI Authenticity</h2>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
               Zero artificial food colorings, zero starches, and 100% cold-ground pure spices.
             </p>
@@ -90,33 +90,33 @@ export default function TermsOfServicePage() {
           {/* Section 1 */}
           <section className="space-y-3">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#7B111A] font-serif font-bold text-sm flex items-center justify-center border border-[#C89B65]/40">
+              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#E07B0C] font-serif font-bold text-sm flex items-center justify-center border border-[#F09819]/40">
                 1
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
                 Customer Agreement
               </h2>
             </div>
             <p className="text-sm sm:text-base text-[#5A433B] leading-relaxed pl-11">
-              By accessing our website or placing an order with <strong>Jaandaar Masale</strong>, you agree to be bound by these Terms of Service. These terms apply to all visitors, registered customers, and merchant buyers. If you disagree with any part of these terms, please contact our team before placing an order.
+              By accessing our website or placing an order with <strong>HS AgroFoods</strong>, you agree to be bound by these Terms of Service. These terms apply to all visitors, registered customers, and merchant buyers. If you disagree with any part of these terms, please contact our team before placing an order.
             </p>
           </section>
 
           {/* Section 2 */}
           <section className="space-y-4 border-t border-[#F2ECE6] pt-8">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#7B111A] font-serif font-bold text-sm flex items-center justify-center border border-[#C89B65]/40">
+              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#E07B0C] font-serif font-bold text-sm flex items-center justify-center border border-[#F09819]/40">
                 2
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
                 Shipping Timelines &amp; Doorstep Delivery
               </h2>
             </div>
             <div className="pl-11 space-y-3 text-sm sm:text-base text-[#5A433B] leading-relaxed">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="p-4 rounded-xl bg-[#FAF6F2] border border-[#E8DFD5]/80 space-y-1">
-                  <div className="flex items-center gap-2 font-bold text-sm text-[#2A1612]">
-                    <Clock className="w-4 h-4 text-[#7B111A]" />
+                <div className="p-4 rounded-xl bg-[#FDF9F3] border border-[#E8DFD5]/80 space-y-1">
+                  <div className="flex items-center gap-2 font-bold text-sm text-[#14361F]">
+                    <Clock className="w-4 h-4 text-[#E07B0C]" />
                     <span>Metro Cities (2–3 Days)</span>
                   </div>
                   <p className="text-xs text-stone-600">
@@ -124,9 +124,9 @@ export default function TermsOfServicePage() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#FAF6F2] border border-[#E8DFD5]/80 space-y-1">
-                  <div className="flex items-center gap-2 font-bold text-sm text-[#2A1612]">
-                    <Clock className="w-4 h-4 text-[#7B111A]" />
+                <div className="p-4 rounded-xl bg-[#FDF9F3] border border-[#E8DFD5]/80 space-y-1">
+                  <div className="flex items-center gap-2 font-bold text-sm text-[#14361F]">
+                    <Clock className="w-4 h-4 text-[#E07B0C]" />
                     <span>Rest of India (3–5 Days)</span>
                   </div>
                   <p className="text-xs text-stone-600">
@@ -144,10 +144,10 @@ export default function TermsOfServicePage() {
           {/* Section 3: Return & Refund Policy */}
           <section className="space-y-3 border-t border-[#F2ECE6] pt-8">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#7B111A] font-serif font-bold text-sm flex items-center justify-center border border-[#C89B65]/40">
+              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#E07B0C] font-serif font-bold text-sm flex items-center justify-center border border-[#F09819]/40">
                 3
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
                 Replacement &amp; Refund Policy
               </h2>
             </div>
@@ -180,43 +180,43 @@ export default function TermsOfServicePage() {
           {/* Section 4 */}
           <section className="space-y-3 border-t border-[#F2ECE6] pt-8">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#7B111A] font-serif font-bold text-sm flex items-center justify-center border border-[#C89B65]/40">
+              <span className="w-8 h-8 rounded-xl bg-[#FAF3EB] text-[#E07B0C] font-serif font-bold text-sm flex items-center justify-center border border-[#F09819]/40">
                 4
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#2A1612]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
                 Pricing &amp; FSSAI Standards
               </h2>
             </div>
             <div className="pl-11 space-y-2 text-sm sm:text-base text-[#5A433B] leading-relaxed">
               <p>
-                All prices are stated in Indian Rupees (INR) and are inclusive of applicable GST. We reserve the right to revise spice pricing based on seasonal harvest yields and agricultural commodity costs. All Jaandaar Masale products meet rigorous FSSAI quality benchmarks.
+                All prices are stated in Indian Rupees (INR) and are inclusive of applicable GST. We reserve the right to revise spice pricing based on seasonal harvest yields and agricultural commodity costs. All HS AgroFoods products meet rigorous FSSAI quality benchmarks.
               </p>
             </div>
           </section>
 
           {/* Section 5: Support Desk */}
           <section className="border-t border-[#F2ECE6] pt-8">
-            <div className="p-6 rounded-2xl bg-[#FAF6F2] border border-[#E8DFD5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="p-6 rounded-2xl bg-[#FDF9F3] border border-[#E8DFD5] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
-                <h3 className="font-serif font-bold text-base text-[#2A1612]">
+                <h3 className="font-serif font-bold text-base text-[#14361F]">
                   Need Help with an Order?
                 </h3>
                 <p className="text-xs text-[#6E5951]">
                   Our customer care team is available Monday to Saturday, 9 AM to 7 PM:
                 </p>
-                <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#7B111A] pt-1">
+                <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#E07B0C] pt-1">
                   <span className="flex items-center gap-1">
-                    <Phone className="w-3.5 h-3.5" /> +91 9540048786
+                    <Phone className="w-3.5 h-3.5" /> +91 94931 84110 / +91 91009 39110
                   </span>
                   <span className="flex items-center gap-1">
-                    <Mail className="w-3.5 h-3.5" /> support@jaandaarmasale.com
+                    <Mail className="w-3.5 h-3.5" /> Hs.foodofficial@gmail.com
                   </span>
                 </div>
               </div>
 
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#7B111A] text-white text-xs font-bold hover:bg-[#5E0D14] shadow-sm transition-all shrink-0"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#E07B0C] text-white text-xs font-bold hover:bg-[#2D1409] shadow-sm transition-all shrink-0"
               >
                 <span>Contact Desk</span>
                 <ArrowRight className="w-3.5 h-3.5" />

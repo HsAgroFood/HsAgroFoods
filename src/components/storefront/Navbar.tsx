@@ -16,10 +16,10 @@ type NavLink = {
 }
 
 const defaultCategoryItems = [
-  { name: 'All Spices', href: '/shop' },
+  { name: 'All Products', href: '/shop' },
   { name: 'Ground Spices', href: '/shop?category=ground-spices' },
-  { name: 'Blended Spices', href: '/shop?category=blended-spices' },
-  { name: 'Whole Spices (Khade Masale)', href: '/shop?category=whole-spices' },
+  { name: 'Blended Masale', href: '/shop?category=blended-spices' },
+  { name: 'Dehydrated Veg & Fruit Powders', href: '/shop?category=dehydrated-powders' },
 ]
 
 export function Navbar({
@@ -33,7 +33,7 @@ export function Navbar({
 }) {
   const dynamicSubItems = categories.length > 0
     ? [
-        { name: 'All Spices', href: '/shop' },
+        { name: 'All Products', href: '/shop' },
         ...categories.map((c) => ({ name: c.name, href: `/shop?category=${c.slug}` })),
       ]
     : defaultCategoryItems
@@ -46,7 +46,7 @@ export function Navbar({
       hasDropdown: true,
       subItems: dynamicSubItems,
     },
-    { name: 'All Spices', href: '/shop' },
+    { name: 'Shop All', href: '/shop' },
     { name: 'About Us', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ]
@@ -151,29 +151,37 @@ export function Navbar({
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-[#6B1118] text-white shadow-lg border-b border-[#520C12] transition-all">
+      <header className="sticky top-0 z-40 w-full bg-[#FFF9F0]/95 backdrop-blur-md text-[#14361F] shadow-sm border-b border-[#F2DEC0] transition-all">
         <nav className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div className="flex h-16 sm:h-20 items-center justify-between">
 
-            {/* Brand Logo (Full Left on Mobile, Left on Desktop) */}
+            {/* Brand Logo (Transparent PNG on Warm Cream Header + Brand Name) */}
             <div className="flex items-center">
-              <Link href="/" onClick={handleHomeClick} className="group flex items-center" aria-label="Jaandaar Masale">
-                {/* Official Brand Logo */}
-                <div className="relative w-12 h-12 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] rounded-full overflow-hidden border border-[#E5AD58]/60 group-hover:scale-105 transition-transform shadow-md shrink-0 bg-[#FAF6F2]">
+              <Link href="/" onClick={handleHomeClick} className="group flex items-center gap-2.5" aria-label="HS AgroFoods">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[72px] lg:h-[72px] group-hover:scale-105 transition-transform shrink-0">
                   <Image
-                    src="/images/logo.jpeg"
-                    alt="Jaandaar Masale Logo"
+                    src="/images/logo.png"
+                    alt="HS AgroFoods Logo"
                     fill
                     priority
-                    className="object-contain p-0.5"
-                    sizes="(max-width: 640px) 48px, (max-width: 1024px) 64px, 68px"
+                    unoptimized
+                    className="object-contain drop-shadow-xs"
+                    sizes="(max-width: 640px) 56px, (max-width: 1024px) 64px, 72px"
                   />
+                </div>
+                <div className="hidden sm:flex flex-col leading-none whitespace-nowrap shrink-0">
+                  <span className="font-serif text-lg lg:text-xl font-extrabold tracking-tight text-[#144D29]">
+                    HS <span className="text-[#E07B0C]">AgroFoods</span>
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7A6248] mt-0.5">
+                    100% Pure &amp; Natural
+                  </span>
                 </div>
               </Link>
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex lg:items-center lg:gap-7">
+            <div className="hidden lg:flex lg:items-center lg:gap-5 xl:gap-7 shrink-0">
               {navLinks.map((link) => {
                 if (link.hasDropdown) {
                   return (
@@ -187,19 +195,19 @@ export function Navbar({
                       <button
                         type="button"
                         onClick={() => setCategoriesDropdownOpen(!categoriesDropdownOpen)}
-                        className="flex items-center gap-1.5 text-[15px] font-medium text-stone-100 hover:text-[#E5AD58] transition-colors py-1 cursor-pointer"
+                        className="flex items-center gap-1.5 text-[15px] font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-1 cursor-pointer whitespace-nowrap"
                       >
                         <span>{link.name}</span>
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-200 ${
-                            categoriesDropdownOpen ? 'rotate-180 text-[#E5AD58]' : 'text-stone-300'
+                            categoriesDropdownOpen ? 'rotate-180 text-[#E07B0C]' : 'text-[#144D29]'
                           }`}
                         />
                       </button>
                       {categoriesDropdownOpen && (
-                        <div className="absolute top-full left-0 mt-0.5 w-60 rounded-2xl bg-white text-[#2A1612] shadow-2xl border border-[#E8DFD5] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
-                          <div className="px-4 py-2 border-b border-[#F4ECE4] bg-[#FAF6F2]/80">
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#8C766E]">
+                        <div className="absolute top-full left-0 mt-0.5 w-60 rounded-2xl bg-[#FFFDF9] text-[#14361F] shadow-2xl border border-[#F0DEC2] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
+                          <div className="px-4 py-2 border-b border-[#F5E6CE] bg-[#FFF6E6]">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#9A6B32]">
                               Spice Categories
                             </span>
                           </div>
@@ -208,10 +216,10 @@ export function Navbar({
                               key={subItem.name}
                               href={subItem.href}
                               onClick={() => setCategoriesDropdownOpen(false)}
-                              className="flex items-center justify-between px-4 py-2.5 text-sm text-[#2A1612] hover:bg-[#FAF6F2] hover:text-[#6B1118] font-medium transition-colors group/item"
+                              className="flex items-center justify-between px-4 py-2.5 text-sm text-[#14361F] hover:bg-[#FFF5E4] hover:text-[#E07B0C] font-medium transition-colors group/item"
                             >
                               <span>{subItem.name}</span>
-                              <ArrowRight className="w-3.5 h-3.5 text-stone-300 group-hover/item:text-[#6B1118] group-hover/item:translate-x-0.5 transition-all" />
+                              <ArrowRight className="w-3.5 h-3.5 text-stone-300 group-hover/item:text-[#E07B0C] group-hover/item:translate-x-0.5 transition-all" />
                             </Link>
                           ))}
                         </div>
@@ -236,7 +244,7 @@ export function Navbar({
                         }
                       }
                     }}
-                    className="text-[15px] font-medium text-stone-100 hover:text-[#E5AD58] transition-colors"
+                    className="text-[15px] font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors whitespace-nowrap"
                   >
                     {link.name}
                   </Link>
@@ -269,12 +277,12 @@ export function Navbar({
                       setShowSuggestions(true)
                     }}
                     onFocus={() => setShowSuggestions(true)}
-                    placeholder="Search pure spices, blends..."
-                    className="w-56 xl:w-72 pl-10 pr-9 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/25 text-sm text-white placeholder-stone-300/80 focus:outline-none focus:ring-2 focus:ring-[#E5AD58] focus:border-[#E5AD58] focus:bg-white/20 focus:w-80 transition-all shadow-inner"
+                    placeholder="Search spices, fruit & veg powders..."
+                    className="w-44 xl:w-60 pl-10 pr-9 py-2 rounded-full bg-white hover:bg-[#FFFCF6] border border-[#EBCFA6] text-sm text-[#14361F] placeholder-[#8A7256] focus:outline-none focus:ring-2 focus:ring-[#F09819]/35 focus:border-[#F09819] focus:bg-white focus:w-64 transition-all shadow-2xs"
                   />
-                  <Search className="w-4 h-4 text-[#E5AD58] group-focus-within:text-white absolute left-3.5 pointer-events-none transition-colors" />
+                  <Search className="w-4 h-4 text-[#E07B0C] group-focus-within:text-[#144D29] absolute left-3.5 pointer-events-none transition-colors" />
                   {isSearching ? (
-                    <Loader2 className="w-3.5 h-3.5 text-[#E5AD58] animate-spin absolute right-3.5" />
+                    <Loader2 className="w-3.5 h-3.5 text-[#E07B0C] animate-spin absolute right-3.5" />
                   ) : desktopSearchQuery && (
                     <button
                       type="button"
@@ -282,7 +290,7 @@ export function Navbar({
                         setDesktopSearchQuery('')
                         setSearchResults([])
                       }}
-                      className="absolute right-3 text-stone-300 hover:text-white"
+                      className="absolute right-3 text-[#8A7256] hover:text-[#14361F]"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -291,28 +299,28 @@ export function Navbar({
 
                 {/* Floating Live Suggestions Dropdown */}
                 {showSuggestions && desktopSearchQuery.trim().length >= 2 && (
-                  <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white text-[#2A1612] shadow-2xl border border-[#E8DFD5] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-4 py-2.5 bg-[#FAF6F2] border-b border-[#E8DFD5] flex items-center justify-between">
-                      <span className="text-[11px] uppercase tracking-wider font-bold text-[#8C7567]">
+                  <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white text-[#14361F] shadow-2xl border border-[#F0DEC2] overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-4 py-2.5 bg-[#FFF6E6] border-b border-[#F0DEC2] flex items-center justify-between">
+                      <span className="text-[11px] uppercase tracking-wider font-bold text-[#9A6B32]">
                         Products ({searchResults.length})
                       </span>
-                      <span className="text-[11px] text-[#A0887A]">Press enter to view all</span>
+                      <span className="text-[11px] text-[#8A7256]">Press enter to view all</span>
                     </div>
 
                     {searchResults.length === 0 && !isSearching ? (
-                      <div className="p-6 text-center text-sm text-[#8C7567]">
-                        No spices found for &ldquo;<span className="font-bold text-[#2A1612]">{desktopSearchQuery}</span>&rdquo;
+                      <div className="p-6 text-center text-sm text-[#8A7256]">
+                        No spices found for &ldquo;<span className="font-bold text-[#14361F]">{desktopSearchQuery}</span>&rdquo;
                       </div>
                     ) : (
-                      <div className="divide-y divide-[#F2E8DC] max-h-80 overflow-y-auto">
+                      <div className="divide-y divide-[#F5E6CE] max-h-80 overflow-y-auto">
                         {searchResults.map((item) => (
                           <Link
                             key={item.id}
                             href={`/product/${item.slug}`}
                             onClick={() => setShowSuggestions(false)}
-                            className="flex items-center gap-3 p-3 hover:bg-[#FAF6F2] transition-colors group"
+                            className="flex items-center gap-3 p-3 hover:bg-[#FFF6E6] transition-colors group"
                           >
-                            <div className="w-11 h-11 relative rounded-xl overflow-hidden bg-[#FAF3EB] shrink-0 border border-[#E8DFD5]">
+                            <div className="w-11 h-11 relative rounded-xl overflow-hidden bg-[#FFF9F0] shrink-0 border border-[#F0DEC2]">
                               <Image
                                 src={item.image}
                                 alt={item.name}
@@ -322,16 +330,16 @@ export function Navbar({
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-xs sm:text-sm font-semibold text-[#2A1612] truncate group-hover:text-[#6B1118] transition-colors">
+                              <h4 className="text-xs sm:text-sm font-semibold text-[#14361F] truncate group-hover:text-[#E07B0C] transition-colors">
                                 {item.name}
                               </h4>
                               {item.price && (
-                                <p className="text-[11px] font-bold text-[#6B1118]">
+                                <p className="text-[11px] font-bold text-[#144D29]">
                                   From ₹{item.price}
                                 </p>
                               )}
                             </div>
-                            <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-[#6B1118] group-hover:translate-x-0.5 transition-all shrink-0" />
+                            <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-[#E07B0C] group-hover:translate-x-0.5 transition-all shrink-0" />
                           </Link>
                         ))}
                       </div>
@@ -341,7 +349,7 @@ export function Navbar({
                       <Link
                         href={`/shop?q=${encodeURIComponent(desktopSearchQuery.trim())}`}
                         onClick={() => setShowSuggestions(false)}
-                        className="block text-center py-2.5 bg-[#FAF6F2] hover:bg-[#F2E8DC] text-xs font-bold text-[#6B1118] border-t border-[#E8DFD5] transition-colors"
+                        className="block text-center py-2.5 bg-[#FFF6E6] hover:bg-[#FDEBC8] text-xs font-bold text-[#144D29] border-t border-[#F0DEC2] transition-colors"
                       >
                         View all results for &ldquo;{desktopSearchQuery}&rdquo; →
                       </Link>
@@ -350,10 +358,10 @@ export function Navbar({
                 )}
               </div>
 
-              {/* Desktop "Shop Now" Pill Button (Left of Cart) */}
+              {/* Desktop "Shop Now" Pill Button (Vibrant Saffron-Orange matching Logo) */}
               <Link
                 href="/shop"
-                className="hidden lg:inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-bold text-[#6B1118] shadow-md hover:bg-[#FAF6F0] hover:text-[#520C12] hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                className="hidden lg:inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#F09819] to-[#E07B0C] px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-[#F09819]/25 hover:from-[#DF870D] hover:to-[#C96B06] hover:shadow-lg transition-all transform hover:-translate-y-0.5 whitespace-nowrap shrink-0"
               >
                 Shop Now
               </Link>
@@ -361,33 +369,30 @@ export function Navbar({
               {/* Cart Icon (Middle - Left of Profile) */}
               <Link
                 href="/cart"
-                className="relative p-2 text-stone-100 hover:text-[#E5AD58] transition-colors hidden lg:block"
+                className="relative p-2 text-[#144D29] hover:text-[#E07B0C] transition-colors hidden lg:block shrink-0"
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute top-0.5 right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#E5AD58] px-1 text-[10px] font-bold text-[#2A1612] shadow-sm">
+                <span className="absolute top-0.5 right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#E07B0C] px-1 text-[10px] font-bold text-white shadow-sm">
                   {itemCount}
                 </span>
               </Link>
 
-              {/* Account Link (Far Right: Avatar with First Name when Logged In) */}
+              {/* Account Link (Far Right: Compact Circular Avatar Badge when Logged In) */}
               {isLoggedIn && user ? (
                 <Link
                   href="/account"
-                  className="flex items-center gap-1.5 py-1 pl-1.5 pr-3 bg-white/10 hover:bg-white/20 border border-[#E5AD58]/60 rounded-full text-white transition-all group shadow-xs hidden lg:flex"
-                  title={`Signed in as ${user.name || user.email}`}
+                  className="relative hidden lg:flex items-center justify-center w-9 h-9 rounded-full bg-[#144D29] hover:bg-[#E07B0C] text-white font-bold text-sm ring-2 ring-[#F09819]/50 hover:ring-[#E07B0C] transition-all shadow-sm shrink-0"
+                  title={`My Account (${user.name || user.email})`}
+                  aria-label="My Account"
                 >
-                  <div className="w-6 h-6 rounded-full bg-[#E5AD58] text-[#2A1612] font-black text-xs flex items-center justify-center shadow-xs">
-                    {(user.name?.trim() ? user.name.trim().split(' ')[0] : 'U').charAt(0).toUpperCase()}
-                  </div>
-                  <span className="text-xs font-bold text-stone-100 group-hover:text-[#E5AD58] max-w-[85px] truncate">
-                    {user.name?.trim() ? user.name.trim().split(' ')[0] : 'Account'}
-                  </span>
+                  {(user.name?.trim() ? user.name.trim().split(' ')[0] : 'U').charAt(0).toUpperCase()}
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#FFF9F0]" />
                 </Link>
               ) : (
                 <Link
                   href="/login"
-                  className="p-2 text-stone-100 hover:text-[#E5AD58] transition-colors rounded-full hover:bg-white/10 hidden lg:block"
+                  className="p-2 text-[#144D29] hover:text-[#E07B0C] transition-colors rounded-full hover:bg-[#FFF3E0] hidden lg:block shrink-0"
                   title="Sign In"
                 >
                   <User className="h-5 w-5" />
@@ -402,7 +407,7 @@ export function Navbar({
                     setMobileSearchOpen(true)
                     setShowSuggestions(true)
                   }}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl text-white hover:text-[#E5AD58] hover:bg-white/10 active:scale-90 transition-all cursor-pointer"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-[#144D29] hover:text-[#E07B0C] hover:bg-[#FFF3E0] active:scale-90 transition-all cursor-pointer"
                   aria-label="Search Spices"
                 >
                   <Search className="h-5 w-5" />
@@ -410,7 +415,7 @@ export function Navbar({
 
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-xl text-white hover:text-[#E5AD58] hover:bg-white/10 active:scale-90 transition-all focus:outline-none cursor-pointer"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-[#144D29] hover:text-[#E07B0C] hover:bg-[#FFF3E0] active:scale-90 transition-all focus:outline-none cursor-pointer"
                   onClick={() => setMobileMenuOpen((prev) => !prev)}
                   aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
                 >
@@ -426,15 +431,15 @@ export function Navbar({
         </nav>
       </header>
 
-      {/* Mobile Live Search Modal (Full Desktop-Grade Search Experience) */}
+      {/* Mobile Live Search Modal */}
       {mounted && mobileSearchOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[99999] lg:hidden animate-in fade-in duration-200">
           <div
-            className="fixed inset-0 bg-black/75 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileSearchOpen(false)}
           />
 
-          <div className="fixed top-0 inset-x-0 bg-[#520C12] text-white p-4 shadow-2xl z-[100000] border-b border-white/15">
+          <div className="fixed top-0 inset-x-0 bg-[#FFF9F0] text-[#14361F] p-4 shadow-2xl z-[100000] border-b border-[#EBCFA6]">
             <div className="flex items-center gap-3">
               <form
                 onSubmit={(e) => {
@@ -446,7 +451,7 @@ export function Navbar({
                 }}
                 className="flex-1 relative flex items-center"
               >
-                <Search className="w-4 h-4 text-[#E5AD58] absolute left-3.5 pointer-events-none" />
+                <Search className="w-4 h-4 text-[#E07B0C] absolute left-3.5 pointer-events-none" />
                 <input
                   type="text"
                   autoFocus
@@ -457,10 +462,10 @@ export function Navbar({
                     setShowSuggestions(true)
                   }}
                   placeholder="Search pure spices, blends..."
-                  className="w-full pl-10 pr-9 py-2.5 rounded-full bg-white/10 border border-white/25 text-sm text-white placeholder-stone-300/80 focus:outline-none focus:ring-2 focus:ring-[#E5AD58] focus:bg-white/20"
+                  className="w-full pl-10 pr-9 py-2.5 rounded-full bg-white border border-[#EBCFA6] text-sm text-[#14361F] placeholder-[#8A7256] focus:outline-none focus:ring-2 focus:ring-[#F09819]"
                 />
                 {isSearching ? (
-                  <Loader2 className="w-4 h-4 text-[#E5AD58] animate-spin absolute right-3" />
+                  <Loader2 className="w-4 h-4 text-[#E07B0C] animate-spin absolute right-3" />
                 ) : desktopSearchQuery && (
                   <button
                     type="button"
@@ -468,7 +473,7 @@ export function Navbar({
                       setDesktopSearchQuery('')
                       setSearchResults([])
                     }}
-                    className="absolute right-3 text-stone-300 hover:text-white"
+                    className="absolute right-3 text-[#8A7256] hover:text-[#14361F]"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -478,7 +483,7 @@ export function Navbar({
               <button
                 type="button"
                 onClick={() => setMobileSearchOpen(false)}
-                className="p-2 text-white/80 hover:text-white text-xs font-semibold uppercase tracking-wider"
+                className="p-2 text-[#144D29] hover:text-[#E07B0C] text-xs font-bold uppercase tracking-wider"
               >
                 Cancel
               </button>
@@ -486,13 +491,13 @@ export function Navbar({
 
             {/* Live Search Suggestions Dropdown */}
             {desktopSearchQuery.trim().length >= 2 && (
-              <div className="mt-3 bg-white rounded-2xl text-[#2A1612] overflow-hidden shadow-xl max-h-72 overflow-y-auto">
+              <div className="mt-3 bg-white rounded-2xl text-[#14361F] overflow-hidden shadow-xl border border-[#F0DEC2] max-h-72 overflow-y-auto">
                 {searchResults.length === 0 && !isSearching ? (
-                  <div className="p-4 text-center text-xs text-[#8C7567]">
+                  <div className="p-4 text-center text-xs text-[#8A7256]">
                     No spices found for &ldquo;<strong>{desktopSearchQuery}</strong>&rdquo;
                   </div>
                 ) : (
-                  <div className="divide-y divide-[#F2E8DC]">
+                  <div className="divide-y divide-[#F5E6CE]">
                     {searchResults.map((item) => (
                       <Link
                         key={item.id}
@@ -501,9 +506,9 @@ export function Navbar({
                           setMobileSearchOpen(false)
                           setDesktopSearchQuery('')
                         }}
-                        className="flex items-center gap-3 p-2.5 hover:bg-[#FAF6F2] transition-colors"
+                        className="flex items-center gap-3 p-2.5 hover:bg-[#FFF6E6] transition-colors"
                       >
-                        <div className="w-10 h-10 relative rounded-xl overflow-hidden bg-[#FAF3EB] shrink-0 border border-[#E8DFD5]">
+                        <div className="w-10 h-10 relative rounded-xl overflow-hidden bg-[#FFF9F0] shrink-0 border border-[#F0DEC2]">
                           <Image
                             src={item.image}
                             alt={item.name}
@@ -513,11 +518,11 @@ export function Navbar({
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-bold text-[#2A1612] truncate">
+                          <h4 className="text-xs font-bold text-[#14361F] truncate">
                             {item.name}
                           </h4>
                           {item.price && (
-                            <p className="text-[11px] font-bold text-[#7B111A]">
+                            <p className="text-[11px] font-bold text-[#144D29]">
                               From ₹{item.price}
                             </p>
                           )}
@@ -539,30 +544,32 @@ export function Navbar({
         <div className="fixed inset-0 z-[99999] lg:hidden">
           {/* Backdrop overlay */}
           <div
-            className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Drawer content (Slides in from the Right) */}
-          <div className="fixed inset-y-0 right-0 z-[100000] w-[85%] max-w-xs bg-[#520C12] text-white p-6 shadow-2xl overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-250 ease-out">
+          {/* Drawer content (Warm Cream & Saffron Drawer) */}
+          <div className="fixed inset-y-0 right-0 z-[100000] w-[85%] max-w-xs bg-[#FFF9F0] text-[#14361F] p-6 shadow-2xl border-l border-[#F0DEC2] overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-250 ease-out">
             <div>
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-white/15 pb-4">
+              <div className="flex items-center justify-between border-b border-[#F0DEC2] pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden border border-[#E5AD58]/50 shrink-0 bg-[#FAF6F2]">
+                  <div className="relative w-12 h-12 shrink-0">
                     <Image
-                      src="/images/logo.jpeg"
-                      alt="Jaandaar Masale Logo"
+                      src="/images/logo.png"
+                      alt="HS AgroFoods Logo"
                       fill
-                      className="object-contain p-0.5"
-                      sizes="40px"
+                      className="object-contain"
+                      sizes="48px"
                     />
                   </div>
-                  <span className="font-serif text-lg font-bold text-white">Jaandaar Masale</span>
+                  <span className="font-serif text-lg font-extrabold text-[#144D29]">
+                    HS <span className="text-[#E07B0C]">AgroFoods</span>
+                  </span>
                 </div>
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-white hover:text-[#E5AD58] hover:bg-white/10 transition-colors focus:outline-none cursor-pointer"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-[#144D29] hover:text-[#E07B0C] hover:bg-[#FFF0D6] transition-colors focus:outline-none cursor-pointer"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Close menu"
                 >
@@ -572,29 +579,28 @@ export function Navbar({
 
               {/* Navigation Links */}
               <div className="mt-6 flex flex-col space-y-2">
-                {/* Home */}
                 <Link
                   href="/"
                   onClick={(e) => {
                     setMobileMenuOpen(false)
                     handleHomeClick(e)
                   }}
-                  className="block text-base font-semibold text-stone-100 hover:text-[#E5AD58] transition-colors py-2"
+                  className="block text-base font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-2"
                 >
                   Home
                 </Link>
 
                 {/* Categories Collapsible Accordion */}
-                <div className="border-y border-white/10 py-1">
+                <div className="border-y border-[#F0DEC2] py-1">
                   <button
                     type="button"
                     onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
-                    className="w-full flex items-center justify-between text-base font-semibold text-stone-100 hover:text-[#E5AD58] transition-colors py-2 cursor-pointer"
+                    className="w-full flex items-center justify-between text-base font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-2 cursor-pointer"
                   >
                     <span>Categories</span>
                     <ChevronDown
-                      className={`w-4 h-4 text-stone-300 transition-transform duration-200 ${
-                        mobileCategoriesOpen ? 'rotate-180 text-[#E5AD58]' : ''
+                      className={`w-4 h-4 text-[#144D29] transition-transform duration-200 ${
+                        mobileCategoriesOpen ? 'rotate-180 text-[#E07B0C]' : ''
                       }`}
                     />
                   </button>
@@ -605,48 +611,44 @@ export function Navbar({
                           key={subItem.name}
                           href={subItem.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-1.5 px-2.5 rounded-lg text-sm text-stone-300 hover:text-[#E5AD58] hover:bg-white/5 transition-colors"
+                          className="flex items-center justify-between py-1.5 px-2.5 rounded-lg text-sm text-[#4A3B2C] hover:text-[#E07B0C] hover:bg-[#FFF0D6] transition-colors"
                         >
                           <span>{subItem.name}</span>
-                          <ArrowRight className="w-3.5 h-3.5 text-stone-400" />
+                          <ArrowRight className="w-3.5 h-3.5 text-[#E07B0C]" />
                         </Link>
                       ))}
                     </div>
                   )}
                 </div>
 
-                {/* All Spices */}
                 <Link
                   href="/shop"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-base font-semibold text-stone-100 hover:text-[#E5AD58] transition-colors py-2"
+                  className="block text-base font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-2"
                 >
                   All Spices
                 </Link>
 
-                {/* Your Orders */}
                 <Link
                   href="/account/orders"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-base font-semibold text-stone-100 hover:text-[#E5AD58] transition-colors py-2"
+                  className="block text-base font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-2"
                 >
                   Your Orders
                 </Link>
 
-                {/* About Us */}
                 <Link
                   href="/about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-base font-semibold text-stone-100 hover:text-[#E5AD58] transition-colors py-2"
+                  className="block text-base font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-2"
                 >
                   About Us
                 </Link>
 
-                {/* Contact */}
                 <Link
                   href="/contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-base font-semibold text-stone-100 hover:text-[#E5AD58] transition-colors py-2"
+                  className="block text-base font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors py-2"
                 >
                   Contact
                 </Link>
@@ -654,29 +656,29 @@ export function Navbar({
             </div>
 
             {/* Bottom CTA Buttons & User Profile */}
-            <div className="mt-8 pt-6 border-t border-white/15 space-y-3">
+            <div className="mt-8 pt-6 border-t border-[#F0DEC2] space-y-3">
               {isLoggedIn && user && (
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/10 border border-white/15 mb-2">
-                  <div className="w-9 h-9 rounded-full bg-[#E5AD58] text-[#2A1612] font-black text-sm flex items-center justify-center shadow-xs shrink-0">
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-[#F0DEC2] mb-2">
+                  <div className="w-9 h-9 rounded-full bg-[#144D29] text-white font-black text-sm flex items-center justify-center shadow-xs shrink-0">
                     {(user.name?.trim() ? user.name.trim().split(' ')[0] : 'U').charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-white truncate">{user.name || 'Customer'}</p>
-                    <p className="text-[11px] text-stone-300 truncate">{user.email}</p>
+                    <p className="text-sm font-bold text-[#14361F] truncate">{user.name || 'Customer'}</p>
+                    <p className="text-[11px] text-[#7A6248] truncate">{user.email}</p>
                   </div>
                 </div>
               )}
               <Link
                 href="/shop"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full block text-center rounded-full bg-[#E5AD58] py-3 text-sm font-bold text-[#2A1612] shadow-md hover:bg-[#d99f47] transition-colors"
+                className="w-full block text-center rounded-full bg-gradient-to-r from-[#F09819] to-[#E07B0C] py-3 text-sm font-bold text-white shadow-md hover:from-[#DF870D] hover:to-[#C96B06] transition-colors"
               >
                 Shop Now
               </Link>
               <Link
                 href={isLoggedIn ? '/account' : '/login'}
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full block text-center rounded-full border border-white/40 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                className="w-full block text-center rounded-full border border-[#144D29]/30 py-2.5 text-sm font-semibold text-[#144D29] hover:bg-[#FFF0D6] transition-colors"
               >
                 {isLoggedIn ? `My Account (${user?.name?.trim() ? user.name.trim().split(' ')[0] : 'Profile'})` : 'Sign In'}
               </Link>

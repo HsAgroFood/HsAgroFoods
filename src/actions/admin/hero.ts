@@ -20,9 +20,15 @@ export type HeroConfig = {
 
 const HERO_CONFIG_SLUG = '__system_hero_config__'
 
+function sanitizeBrandName(text: string): string {
+  return text
+    .replace(/jaandaar\s*masal[ae]?/gi, 'HS AgroFoods')
+    .replace(/jaandaar/gi, 'HS AgroFoods')
+}
+
 const DEFAULT_GLOBAL_TEXT: HeroGlobalText = {
-  title: 'Pure Spice. Real Taste. Trusted Every Time.',
-  subtitle: "Jaandaar Masale brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
+  title: 'Pure Spices & Natural Dehydrated Powders.',
+  subtitle: "HS AgroFoods brings India's finest cold-ground spices and nutrient-rich dehydrated fruit & vegetable powders straight to your kitchen.",
   button_text: 'Shop Now',
   button_link: '/shop',
 }
@@ -50,8 +56,8 @@ async function readHeroConfig(
     return {
       text_mode: parsed?.text_mode === 'global' ? 'global' : 'per_slide',
       global_text: {
-        title: typeof text.title === 'string' ? text.title : DEFAULT_GLOBAL_TEXT.title,
-        subtitle: typeof text.subtitle === 'string' ? text.subtitle : DEFAULT_GLOBAL_TEXT.subtitle,
+        title: typeof text.title === 'string' ? sanitizeBrandName(text.title) : DEFAULT_GLOBAL_TEXT.title,
+        subtitle: typeof text.subtitle === 'string' ? sanitizeBrandName(text.subtitle) : DEFAULT_GLOBAL_TEXT.subtitle,
         button_text: typeof text.button_text === 'string' ? text.button_text : DEFAULT_GLOBAL_TEXT.button_text,
         button_link: typeof text.button_link === 'string' ? text.button_link : DEFAULT_GLOBAL_TEXT.button_link,
       },
@@ -160,7 +166,7 @@ export async function updateHeroSlideText(id: string, data: {
 
 const DEFAULT_HERO_DATA = [
   {
-    image_url: '/images/turmeric-powder.jpeg',
+    image_url: '/images/slides/turmeric-slide.png',
     title: 'Golden Purity. Natural Healing. Rich Curcumin.',
     subtitle: 'Handpicked Salem & Alleppey turmeric roots, cold-ground to preserve natural essential oils and authentic golden warmth.',
     button_text: 'Shop Turmeric Powder',
@@ -169,40 +175,58 @@ const DEFAULT_HERO_DATA = [
     display_order: 0,
   },
   {
-    image_url: '/images/red-chilly-powder.jpeg',
-    title: 'Authentic Fiery Aroma & Rich Natural Color',
-    subtitle: 'Sun-dried whole red chillies ground without artificial colors or seed fillers for appetizing heat and vibrant color.',
-    button_text: 'Shop Red Chilly',
-    button_link: '/product/red-chilly-powder',
+    image_url: '/images/slides/chat-masala-slide.png',
+    title: 'Tangy Chaat Masala — Bursting With Chatpata Flavor',
+    subtitle: 'Crafted from sun-dried raw mango, roasted Gujarat cumin, black rock salt, and mint for irresistible everyday snacks and salads.',
+    button_text: 'Shop Chaat Masala',
+    button_link: '/product/chat-masala',
     is_active: true,
     display_order: 1,
   },
   {
-    image_url: '/images/garam-masala.jpeg',
-    title: 'Master Crafted Royal Garam Masala',
-    subtitle: 'An heirloom recipe of slow-roasted whole spices formulated to transform everyday curries into royal culinary feasts.',
-    button_text: 'Shop Garam Masala',
-    button_link: '/product/garam-masala',
+    image_url: '/images/slides/fruit-chat-slide.png',
+    title: 'Special Fruit Chaat Masala for Fresh Bowls',
+    subtitle: 'A delicate blend of pink Himalayan salt, mild amchur, and cooling herbs that elevates every fresh fruit salad and juice.',
+    button_text: 'Shop Fruit Chaat Masala',
+    button_link: '/product/fruit-chat-masala',
     is_active: true,
     display_order: 2,
   },
   {
-    image_url: '/images/coriander-powder.jpeg',
-    title: 'Freshly Ground Coriander (Dhaniya)',
-    subtitle: 'Selected roasted whole coriander seeds gently ground to lock in fresh citrusy aroma and natural essential oils.',
-    button_text: 'Shop Coriander',
-    button_link: '/product/coriander-powder',
+    image_url: '/images/slides/mango-powder-slide.png',
+    title: 'Pure Dry Mango Powder (Amchur)',
+    subtitle: '100% natural, chemical-free unripe green mango slices finely ground for bright, fruity tang in curries, dals, and chutneys.',
+    button_text: 'Shop Amchur Powder',
+    button_link: '/product/mango-powder',
     is_active: true,
     display_order: 3,
   },
   {
-    image_url: '/images/cumin-powder.jpeg',
-    title: 'Aromatic Cumin (Jeera) Powder',
-    subtitle: 'Premium Gujarat cumin seeds sun-dried and perfectly roasted for rich warm earthy aroma in every single pinch.',
-    button_text: 'Shop Cumin',
-    button_link: '/product/cumin-powder',
+    image_url: '/images/slides/beetroot-slide.png',
+    title: '100% Pure Dehydrated Beetroot Powder',
+    subtitle: 'Low-temperature dehydrated farm beetroots packed with iron, antioxidants, and vibrant natural color for smoothies, rotis, and wellness.',
+    button_text: 'Shop Beetroot Powder',
+    button_link: '/product/beetroot-powder',
     is_active: true,
     display_order: 4,
+  },
+  {
+    image_url: '/images/slides/tomato-powder-slide.png',
+    title: 'Instant Dehydrated Tomato Powder',
+    subtitle: 'Rich, sun-ripened tomatoes gently dehydrated into an instant tangy base for gravies, soups, pasta sauces, and snack seasonings.',
+    button_text: 'Shop Tomato Powder',
+    button_link: '/product/tomato-powder',
+    is_active: true,
+    display_order: 5,
+  },
+  {
+    image_url: '/images/slides/banana-powder-slide.png',
+    title: 'Pure Dehydrated Raw Banana Powder',
+    subtitle: 'Naturally gluten-free raw green banana powder rich in potassium and resistant starch — ideal for healthy porridge, shakes, and baking.',
+    button_text: 'Shop Banana Powder',
+    button_link: '/product/banana-powder',
+    is_active: true,
+    display_order: 6,
   },
 ]
 
@@ -234,7 +258,11 @@ export async function getHeroSlides() {
     }
   }
 
-  return data || []
+  return (data || []).map((slide: any) => ({
+    ...slide,
+    title: typeof slide.title === 'string' ? sanitizeBrandName(slide.title) : slide.title,
+    subtitle: typeof slide.subtitle === 'string' ? sanitizeBrandName(slide.subtitle) : slide.subtitle,
+  }))
 }
 
 export async function saveHeroSlide(slide: {
@@ -313,7 +341,7 @@ export async function createHeroSlide(imageUrl: string, slideData?: any) {
     .insert([{
       image_url: imageUrl,
       title: slideData?.title || 'Pure Spice. Real Taste. Trusted Every Time.',
-      subtitle: slideData?.subtitle || "Jaandaar Masle brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
+      subtitle: slideData?.subtitle || "HS AgroFoods brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
       button_text: slideData?.button_text || 'Shop Now',
       button_link: slideData?.button_link || '/shop',
       is_active: true,

@@ -33,7 +33,7 @@ export default async function AccountLayout({
       .maybeSingle()
     profile = data || {
       full_name: 'Store Administrator',
-      email: 'admin@jaandaarmasale.com',
+      email: 'admin@hsagrofoods.com',
       role: 'admin',
     }
   }
@@ -47,7 +47,7 @@ export default async function AccountLayout({
     .toUpperCase()
 
   return (
-    <div className="bg-[#F8ECE7] min-h-[calc(100vh-80px)] py-8 sm:py-12 text-[#2A1612]">
+    <div className="bg-[#FBF5EE] min-h-[calc(100vh-80px)] py-8 sm:py-12 text-[#14361F]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-10 items-start">
           
@@ -56,15 +56,15 @@ export default async function AccountLayout({
             {/* User Profile Summary Card */}
             <div className="bg-white rounded-3xl border border-[#E8DFD5] p-6 shadow-xs text-center sm:text-left">
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#7B111A] to-[#A01824] text-white flex items-center justify-center font-serif text-xl font-bold shadow-md shadow-[#7B111A]/20 shrink-0 border-2 border-[#C89B65]/40">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#E07B0C] to-[#D1491B] text-white flex items-center justify-center font-serif text-xl font-bold shadow-md shadow-[#E07B0C]/20 shrink-0 border-2 border-[#F09819]/40">
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="font-serif text-lg font-bold text-[#2A1612] truncate">
+                  <h2 className="font-serif text-lg font-bold text-[#14361F] truncate">
                     {profile?.full_name || 'Customer'}
                   </h2>
                   <p className="text-xs text-[#8C7567] truncate mt-0.5">{profile?.email}</p>
-                  <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full bg-[#FAF6F2] border border-[#E8DFD5] text-[10px] font-bold text-[#7B111A] uppercase tracking-wider">
+                  <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full bg-[#FDF9F3] border border-[#E8DFD5] text-[10px] font-bold text-[#E07B0C] uppercase tracking-wider">
                     <span>✦</span>
                     <span>{isAdmin ? 'Store Admin' : 'Verified Member'}</span>
                   </span>

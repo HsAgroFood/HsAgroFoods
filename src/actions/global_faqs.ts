@@ -13,6 +13,12 @@ function revalidateFaqConsumers() {
   revalidatePath('/')
 }
 
+function sanitizeFaqText(text: string): string {
+  return text
+    .replace(/jaandaar\s*masal[ae]?/gi, 'HS AgroFoods')
+    .replace(/jaandaar/gi, 'HS AgroFoods')
+}
+
 export async function getGlobalFaqs() {
   const supabase = await createClient()
   const { data, error } = await supabase
@@ -25,7 +31,13 @@ export async function getGlobalFaqs() {
     return { success: false, error: error.message }
   }
 
-  return { success: true, data }
+  const sanitizedData = (data || []).map((item: any) => ({
+    ...item,
+    question: typeof item.question === 'string' ? sanitizeFaqText(item.question) : item.question,
+    answer: typeof item.answer === 'string' ? sanitizeFaqText(item.answer) : item.answer,
+  }))
+
+  return { success: true, data: sanitizedData }
 }
 
 export async function addGlobalFaq(formData: FormData) {
@@ -125,8 +137,6 @@ export async function updateGlobalFaqOrders(orders: { id: string; display_order:
 
   const supabase = createAdminClient()
 
-  // Supabase doesn't have a built-in bulk update for different values on same query cleanly via RPC without creating one.
-  // We'll update them individually since it's a small array.
   for (const item of orders) {
     const { error } = await supabase
       .from('global_faqs')
