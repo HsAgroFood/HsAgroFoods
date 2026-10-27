@@ -47,7 +47,7 @@ export function PillarsBar() {
   ]
 
   return (
-    <section className="-mt-10 sm:-mt-16 lg:-mt-20 relative z-30 mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 mb-8 sm:mb-12">
+    <section className="mt-4 sm:mt-8 lg:mt-12 relative z-30 mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 mb-8 sm:mb-12">
       <div className="rounded-2xl sm:rounded-3xl bg-white border border-[#E8DFD5] shadow-xl shadow-stone-900/5 p-4 sm:p-6 lg:p-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-6 sm:gap-6 lg:gap-8 lg:divide-x divide-[#E8DFD5]">
           {pillars.map((item, index) => (

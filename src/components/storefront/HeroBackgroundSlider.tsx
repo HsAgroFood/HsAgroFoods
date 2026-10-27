@@ -8,6 +8,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, Leaf, ShieldCheck, Sparkles } fr
 export type HeroSlideItem = {
   id: string
   image_url: string
+  image_mobile_url?: string
   tag?: string
   title?: string
   subtitle?: string
@@ -23,6 +24,9 @@ export type GlobalHeroText = {
   button_text: string
   button_link: string
 }
+
+import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
+export { getDesktopSlideUrl, getMobileSlideUrl }
 
 function normalizeBrandText(text: string): string {
   return text
@@ -102,10 +106,12 @@ export function HeroBackgroundSlider({
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* 🖼️ BACKGROUND IMAGES SLIDER (No white gradient overlay) */}
+      {/* 🖼️ BACKGROUND IMAGES SLIDER (Responsive: 4:5 on mobile, 16:9 on desktop) */}
       <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
         {slides.map((slide, index) => {
           const isActive = index === currentIndex
+          const mobileUrl = getMobileSlideUrl(slide.image_url, slide.image_mobile_url)
+
           return (
             <div
               key={slide.id || index}
@@ -113,23 +119,38 @@ export function HeroBackgroundSlider({
                 isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
             >
-              <Image
-                src={slide.image_url}
-                alt={slide.title || 'HS AgroFoods'}
-                fill
-                priority={index === 0}
-                sizes="100vw"
-                className="object-cover object-right md:object-center"
-              />
+              {/* 📱 Mobile Portrait 4:5 Slide Image */}
+              <div className="relative w-full h-full block md:hidden">
+                <Image
+                  src={mobileUrl}
+                  alt={slide.title || 'HS AgroFoods'}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover object-center"
+                />
+              </div>
+
+              {/* 💻 Desktop Landscape 16:9 Slide Image */}
+              <div className="relative w-full h-full hidden md:block">
+                <Image
+                  src={getDesktopSlideUrl(slide.image_url)}
+                  alt={slide.title || 'HS AgroFoods'}
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover object-right md:object-center"
+                />
+              </div>
             </div>
           )
         })}
-        {/* Subtle dark backdrop on left to make pure white text pop with high contrast */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent z-10 pointer-events-none" />
+        {/* Subtle dark backdrop for maximum legibility on both mobile (bottom-up) and desktop (left-to-right) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/25 md:bg-gradient-to-r md:from-black/65 md:via-black/35 md:to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* 📝 OVERLAID TEXT CONTENT (Pure White for Maximum Legibility) */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 w-full py-16 sm:py-20 lg:py-28 pb-28 sm:pb-36 lg:pb-44">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-20 w-full py-12 sm:py-16 lg:py-20 pb-16 sm:pb-20 lg:pb-24">
         <div className="max-w-xl lg:max-w-2xl space-y-6 sm:space-y-8 text-left">
           
           {/* Animated Headline in Crisp White */}
@@ -202,7 +223,7 @@ export function HeroBackgroundSlider({
 
       {/* 🔘 SLIDE CONTROLS (Moved higher up with comfortable bottom margin) */}
       {slideCount > 1 && (
-        <div className="absolute bottom-20 sm:bottom-24 md:bottom-28 lg:bottom-32 right-4 sm:right-8 lg:right-12 z-30 flex items-center gap-3 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#DCE8DF] shadow-md">
+        <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 right-4 sm:right-8 lg:right-12 z-30 flex items-center gap-3 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#DCE8DF] shadow-md">
           {/* Dots */}
           <div className="flex items-center gap-1.5">
             {slides.map((_, i) => (

@@ -29,7 +29,7 @@ export const SPICE_ASSETS = {
   carrotPowder: '/images/products/carrot-powder.png',
   radishPowder: '/images/products/radish-powder.png',
 
-  // 7 Hero Slider Banners (16:9 Landscape)
+  // 7 Hero Slider Banners (16:9 Landscape - Desktop)
   slides: {
     turmeric: '/images/slides/turmeric-slide.png',
     fruitChat: '/images/slides/fruit-chat-slide.png',
@@ -38,6 +38,17 @@ export const SPICE_ASSETS = {
     beetroot: '/images/slides/beetroot-slide.png',
     tomatoPowder: '/images/slides/tomato-powder-slide.png',
     bananaPowder: '/images/slides/banana-powder-slide.png',
+  },
+
+  // 7 Hero Slider Banners (4:5 Portrait - Mobile Phones)
+  slidesMobile: {
+    turmeric: '/images/slides-mobile/turmeric-slide.jpeg',
+    fruitChat: '/images/slides-mobile/fruit-chat-slide.jpeg',
+    chatMasala: '/images/slides-mobile/chat-masala-slide.jpeg',
+    mangoPowder: '/images/slides-mobile/mango-powder-slide.jpeg',
+    beetroot: '/images/slides-mobile/beetroot-slide.jpeg',
+    tomatoPowder: '/images/slides-mobile/tomato-powder-slide.jpeg',
+    bananaPowder: '/images/slides-mobile/banana-powder-slide.jpeg',
   },
 
   // Bottom Banner Flatlay

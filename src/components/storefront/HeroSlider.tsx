@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { getMobileSlideUrl } from './HeroBackgroundSlider'
 
 export function HeroSlider({ 
   slides, 
@@ -60,13 +61,24 @@ export function HeroSlider({
             }`}
           >
             <div className={`absolute inset-0 transition-opacity duration-1000 ${isActive ? 'opacity-50' : 'opacity-0'}`}>
-              <Image
-                src={slide.image_url}
-                alt={`Hero Background ${index + 1}`}
-                fill
-                className="object-cover"
-                priority={index === 0}
-              />
+              <div className="relative w-full h-full block md:hidden">
+                <Image
+                  src={getMobileSlideUrl(slide.image_url, slide.image_mobile_url)}
+                  alt={`Hero Mobile Background ${index + 1}`}
+                  fill
+                  className="object-cover object-center"
+                  priority={index === 0}
+                />
+              </div>
+              <div className="relative w-full h-full hidden md:block">
+                <Image
+                  src={slide.image_url}
+                  alt={`Hero Background ${index + 1}`}
+                  fill
+                  className="object-cover object-center"
+                  priority={index === 0}
+                />
+              </div>
             </div>
 
             {/* Per-Slide Text (only shown in per_slide mode) */}

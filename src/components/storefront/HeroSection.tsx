@@ -1,5 +1,5 @@
 import { getHeroSlides, getHeroConfig } from '@/actions/admin/hero'
-import { HeroBackgroundSlider, HeroSlideItem, GlobalHeroText } from '@/components/storefront/HeroBackgroundSlider'
+import { HeroBackgroundSlider, HeroSlideItem, GlobalHeroText, getMobileSlideUrl } from '@/components/storefront/HeroBackgroundSlider'
 import { SPICE_ASSETS } from '@/constants/assets'
 
 export const dynamic = 'force-dynamic'
@@ -8,6 +8,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-turmeric',
     image_url: SPICE_ASSETS.slides.turmeric,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.turmeric,
     tag: '✦ 100% Pure Salem Turmeric',
     title: 'Golden Purity. Natural Healing. Rich Curcumin.',
     subtitle: 'Handpicked Salem & Alleppey turmeric roots, cold-ground to preserve natural essential oils and authentic golden warmth.',
@@ -19,6 +20,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-chat-masala',
     image_url: SPICE_ASSETS.slides.chatMasala,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.chatMasala,
     tag: '✦ Authentic Street-Style Zest',
     title: 'Tangy Chaat Masala — Bursting With Chatpata Flavor',
     subtitle: 'Crafted from sun-dried raw mango, roasted Gujarat cumin, black rock salt, and mint for irresistible everyday snacks and salads.',
@@ -30,6 +32,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-fruit-chat',
     image_url: SPICE_ASSETS.slides.fruitChat,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.fruitChat,
     tag: '✦ Sweet & Zesty Fruit Seasoning',
     title: 'Special Fruit Chaat Masala for Fresh Bowls',
     subtitle: 'A delicate blend of pink Himalayan salt, mild amchur, and cooling herbs that elevates every fresh fruit salad and juice.',
@@ -41,6 +44,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-mango-powder',
     image_url: SPICE_ASSETS.slides.mangoPowder,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.mangoPowder,
     tag: '✦ Sun-Cured Raw Green Mangoes',
     title: 'Pure Dry Mango Powder (Amchur)',
     subtitle: '100% natural, chemical-free unripe green mango slices finely ground for bright, fruity tang in curries, dals, and chutneys.',
@@ -52,6 +56,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-beetroot',
     image_url: SPICE_ASSETS.slides.beetroot,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.beetroot,
     tag: '✦ Nutrient-Rich Dehydrated Superfood',
     title: '100% Pure Dehydrated Beetroot Powder',
     subtitle: 'Low-temperature dehydrated farm beetroots packed with iron, antioxidants, and vibrant natural color for smoothies, rotis, and wellness.',
@@ -63,6 +68,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-tomato',
     image_url: SPICE_ASSETS.slides.tomatoPowder,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.tomatoPowder,
     tag: '✦ Vine-Ripened Tang & Lycopene',
     title: 'Instant Dehydrated Tomato Powder',
     subtitle: 'Rich, sun-ripened tomatoes gently dehydrated into an instant tangy base for gravies, soups, pasta sauces, and snack seasonings.',
@@ -74,6 +80,7 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'default-banana',
     image_url: SPICE_ASSETS.slides.bananaPowder,
+    image_mobile_url: SPICE_ASSETS.slidesMobile.bananaPowder,
     tag: '✦ Wholesome Prebiotic Nutrition',
     title: 'Pure Dehydrated Raw Banana Powder',
     subtitle: 'Naturally gluten-free raw green banana powder rich in potassium and resistant starch — ideal for healthy porridge, shakes, and baking.',
@@ -103,7 +110,10 @@ export async function HeroSection() {
     if (slides && slides.length > 0) {
       const filtered = slides.filter((s: any) => s.is_active)
       if (filtered.length > 0) {
-        activeSlides = filtered
+        activeSlides = filtered.map((s: any) => ({
+          ...s,
+          image_mobile_url: s.image_mobile_url || getMobileSlideUrl(s.image_url),
+        }))
       }
     }
   } catch (error) {

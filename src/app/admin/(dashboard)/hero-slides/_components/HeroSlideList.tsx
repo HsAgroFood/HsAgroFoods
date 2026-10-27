@@ -3,8 +3,9 @@
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { saveHeroSlide, deleteHeroSlide, toggleHeroSlideStatus } from '@/actions/admin/hero'
-import { Trash2, Plus, Image as ImageIcon, Loader2, Save, Check, ExternalLink, RefreshCw } from 'lucide-react'
+import { Trash2, Plus, Image as ImageIcon, Loader2, Save, Check, ExternalLink, RefreshCw, Monitor, Smartphone } from 'lucide-react'
 import { ImageKitUpload } from '@/components/admin/ImageKitUpload'
+import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
 
 interface SlideData {
   id: string
@@ -30,6 +31,8 @@ export function HeroSlideList({
   const [isPending, startTransition] = useTransition()
   const [savedId, setSavedId] = useState<string | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [newSlidePreviewMode, setNewSlidePreviewMode] = useState<'desktop' | 'mobile'>('desktop')
+  const [slidePreviewModes, setSlidePreviewModes] = useState<Record<string, 'desktop' | 'mobile'>>({})
   const [newSlide, setNewSlide] = useState({
     image_url: '',
     title: 'Pure Spice. Real Taste. Trusted Every Time.',
@@ -153,11 +156,44 @@ export function HeroSlideList({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Image Preview & Upload */}
             <div className="lg:col-span-4 space-y-3">
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Slide Image (16:9)</label>
-              <div className="relative aspect-video rounded-xl bg-stone-100 border border-stone-200 overflow-hidden flex items-center justify-center">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Slide Image</label>
+                {newSlide.image_url && (
+                  <div className="flex items-center bg-stone-200/70 p-0.5 rounded-lg text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setNewSlidePreviewMode("desktop")}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
+                        newSlidePreviewMode === "desktop"
+                          ? "bg-white text-stone-900 shadow-xs"
+                          : "text-stone-600 hover:text-stone-900"
+                      }`}
+                    >
+                      <Monitor className="w-3 h-3" />
+                      16:9 Desktop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNewSlidePreviewMode("mobile")}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
+                        newSlidePreviewMode === "mobile"
+                          ? "bg-white text-stone-900 shadow-xs"
+                          : "text-stone-600 hover:text-stone-900"
+                      }`}
+                    >
+                      <Smartphone className="w-3 h-3" />
+                      4:5 Phone
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className={`relative rounded-xl bg-stone-100 border border-stone-200 overflow-hidden flex items-center justify-center transition-all ${
+                newSlidePreviewMode === "mobile" ? "aspect-[4/5] max-w-[200px] mx-auto shadow-sm" : "aspect-video w-full"
+              }`}>
                 {newSlide.image_url ? (
                   <Image
-                    src={newSlide.image_url}
+                    src={newSlidePreviewMode === "mobile" ? getMobileSlideUrl(newSlide.image_url) : getDesktopSlideUrl(newSlide.image_url)}
                     alt="Slide preview"
                     fill
                     className="object-cover"
@@ -169,6 +205,9 @@ export function HeroSlideList({
                   </div>
                 )}
               </div>
+              <p className="text-[11px] text-stone-500 text-center font-medium">
+                ⚡ Auto-crops: <strong>16:9</strong> (Desktop) &amp; <strong>4:5</strong> (Phones)
+              </p>
 
               <ImageKitUpload
                 folder="/hero-slides"
@@ -319,11 +358,45 @@ export function HeroSlideList({
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   {/* Left: Image preview and ImageKit change */}
                   <div className="lg:col-span-4 space-y-3">
-                    <div className="relative aspect-video rounded-xl bg-stone-100 border border-stone-200 overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-stone-600 uppercase tracking-wider">Slide Image</span>
+                      {slide.image_url && (
+                        <div className="flex items-center bg-stone-200/70 p-0.5 rounded-lg text-xs">
+                          <button
+                            type="button"
+                            onClick={() => setSlidePreviewModes(prev => ({ ...prev, [slide.id]: "desktop" }))}
+                            className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
+                              (slidePreviewModes[slide.id] || "desktop") === "desktop"
+                                ? "bg-white text-stone-900 shadow-xs"
+                                : "text-stone-600 hover:text-stone-900"
+                            }`}
+                          >
+                            <Monitor className="w-3 h-3" />
+                            16:9
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSlidePreviewModes(prev => ({ ...prev, [slide.id]: "mobile" }))}
+                            className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
+                              slidePreviewModes[slide.id] === "mobile"
+                                ? "bg-white text-stone-900 shadow-xs"
+                                : "text-stone-600 hover:text-stone-900"
+                            }`}
+                          >
+                            <Smartphone className="w-3 h-3" />
+                            4:5 Phone
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={`relative rounded-xl bg-stone-100 border border-stone-200 overflow-hidden transition-all ${
+                      slidePreviewModes[slide.id] === "mobile" ? "aspect-[4/5] max-w-[200px] mx-auto shadow-sm" : "aspect-video w-full"
+                    }`}>
                       {slide.image_url ? (
                         <Image
-                          src={slide.image_url}
-                          alt={slide.title || 'Slide Image'}
+                          src={slidePreviewModes[slide.id] === "mobile" ? getMobileSlideUrl(slide.image_url) : getDesktopSlideUrl(slide.image_url)}
+                          alt={slide.title || "Slide Image"}
                           fill
                           className="object-cover"
                         />
@@ -333,6 +406,9 @@ export function HeroSlideList({
                         </div>
                       )}
                     </div>
+                    <p className="text-[11px] text-stone-500 text-center font-medium">
+                      ⚡ Auto-crops: <strong>16:9</strong> (Desktop) &amp; <strong>4:5</strong> (Phones)
+                    </p>
 
                     <ImageKitUpload
                       folder="/hero-slides"
