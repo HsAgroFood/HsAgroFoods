@@ -43,19 +43,8 @@ export function getMobileSlideUrl(imageUrl?: string, customMobileUrl?: string): 
   }
   if (!imageUrl || imageUrl.trim() === '') return ''
 
-  // 1. ImageKit URL transformation (4:5 aspect ratio, max width 800px, smart subject focus)
-  if (imageUrl.includes('ik.imagekit.io')) {
-    const cleanUrl = removeImageKitTransform(imageUrl)
-    const separator = cleanUrl.includes('?') ? '&' : '?'
-    return `${cleanUrl}${separator}tr=w-800,ar-4-5,fo-auto`
-  }
-
-  // 2. Cloudinary URL transformation (4:5, smart subject focus)
-  if (imageUrl.includes('res.cloudinary.com') && imageUrl.includes('/upload/')) {
-    return imageUrl.replace('/upload/', '/upload/c_fill,ar_4:5,g_auto,w_800/')
-  }
-
-  // 3. Local pre-rendered slides mapping
+  // 1. Dedicated pre-rendered mobile (4:5) slides, matched by file name. These take priority over
+  //    the automatic crop below, so the hand-made mobile banner is what phones actually show.
   const localMap: Record<string, string> = {
     'turmeric-slide': '/images/slides-mobile/turmeric-slide.jpeg',
     'chat-masala-slide': '/images/slides-mobile/chat-masala-slide.jpeg',
@@ -75,6 +64,18 @@ export function getMobileSlideUrl(imageUrl?: string, customMobileUrl?: string): 
   if (imageUrl.includes('/images/slides/')) {
     const filename = imageUrl.split('/').pop()?.replace(/\.(png|jpg|webp)$/i, '.jpeg')
     if (filename) return `/images/slides-mobile/${filename}`
+  }
+
+  // 2. ImageKit URL transformation (4:5 aspect ratio, max width 800px, smart subject focus)
+  if (imageUrl.includes('ik.imagekit.io')) {
+    const cleanUrl = removeImageKitTransform(imageUrl)
+    const separator = cleanUrl.includes('?') ? '&' : '?'
+    return `${cleanUrl}${separator}tr=w-800,ar-4-5,fo-auto`
+  }
+
+  // 3. Cloudinary URL transformation (4:5, smart subject focus)
+  if (imageUrl.includes('res.cloudinary.com') && imageUrl.includes('/upload/')) {
+    return imageUrl.replace('/upload/', '/upload/c_fill,ar_4:5,g_auto,w_800/')
   }
 
   // 4. Unsplash (4:5 crop)

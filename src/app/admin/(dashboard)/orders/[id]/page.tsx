@@ -6,6 +6,8 @@ import { ArrowLeft, User, MapPin, Package, CreditCard, ExternalLink } from 'luci
 import { OrderStatusManager } from '../_components/OrderStatusManager'
 import { ShipmentPanel } from '../_components/ShipmentPanel'
 import { getOrderParcel } from '@/lib/orderParcel'
+import { describeRazorpayMethod } from '@/lib/razorpay'
+import CopyText from '@/components/storefront/CopyText'
 import { isIthinkConfigured, isCodPayment, syncOrderStatusesFromIthink } from '@/lib/ithink'
 
 export const metadata = {
@@ -42,6 +44,9 @@ export default async function AdminOrderDetailsPage({
   Object.assign(order, syncPatches[order.id] || {})
 
   const defaultParcel = await getOrderParcel(order.id)
+
+  // How the customer paid (UPI / card / ...), straight from Razorpay
+  const razorpayMethod = order.razorpay_payment_id ? await describeRazorpayMethod(order.razorpay_payment_id) : null
 
   // Product pictures + links for the order lines (order_items only stores the product id)
   const productIds = [...new Set((order.order_items || []).map((item: any) => item.product_id).filter(Boolean))] as string[]
@@ -87,7 +92,9 @@ export default async function AdminOrderDetailsPage({
                 order.payment_status === 'failed' ? 'bg-red-50 text-red-700 border-red-200' :
                 'bg-stone-100 text-stone-600 border-stone-200'
               }`}>
-                Payment: {order.payment_status}
+                {order.payment_status === 'pending' && !isCodPayment(order.payment_method)
+                  ? 'Payment not completed'
+                  : `Payment: ${order.payment_status}`}
               </span>
             </div>
             <p className="text-sm text-stone-500 mt-1">
@@ -276,6 +283,56 @@ export default async function AdminOrderDetailsPage({
               <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Payment Method</p>
               <p className="text-sm font-medium text-stone-900">{order.payment_method}</p>
             </div>
+
+            {(order.razorpay_payment_id || order.razorpay_order_id) && (
+              <div className="mt-6 pt-6 border-t border-stone-200 space-y-3 text-sm">
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Razorpay details</p>
+
+                {razorpayMethod && (
+                  <div className="flex justify-between gap-3">
+                    <span className="text-stone-500">Paid via</span>
+                    <span className="font-medium text-stone-900 text-right">{razorpayMethod}</span>
+                  </div>
+                )}
+
+                {order.paid_at && (
+                  <div className="flex justify-between gap-3">
+                    <span className="text-stone-500">Paid on</span>
+                    <span className="font-medium text-stone-900 text-right">
+                      {new Date(order.paid_at).toLocaleString('en-IN', {
+                        day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit'
+                      })}
+                    </span>
+                  </div>
+                )}
+
+                {order.razorpay_payment_id && (
+                  <div>
+                    <span className="block text-stone-500 mb-1">Payment ID</span>
+                    <CopyText value={order.razorpay_payment_id} />
+                  </div>
+                )}
+
+                {order.razorpay_order_id && (
+                  <div>
+                    <span className="block text-stone-500 mb-1">Razorpay order ID</span>
+                    <CopyText value={order.razorpay_order_id} />
+                  </div>
+                )}
+
+                {order.razorpay_payment_id && (
+                  <a
+                    href={`https://dashboard.razorpay.com/app/payments/${encodeURIComponent(order.razorpay_payment_id)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 hover:text-orange-700"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Open in Razorpay dashboard
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Timeline Section */}

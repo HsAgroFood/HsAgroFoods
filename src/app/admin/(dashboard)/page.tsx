@@ -1,4 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { REAL_ORDER_FILTER } from '@/lib/orderVisibility'
+import { paymentTag } from '@/lib/paymentTag'
 import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { redirect } from 'next/navigation'
 import {
@@ -28,7 +30,8 @@ async function getStats() {
     await Promise.all([
       supabase
         .from('orders')
-        .select('id, total_amount, order_status, payment_status', { count: 'exact', head: false }),
+        .select('id, total_amount, order_status, payment_status', { count: 'exact', head: false })
+        .or(REAL_ORDER_FILTER),
       supabase
         .from('users')
         .select('id', { count: 'exact', head: true })
@@ -38,7 +41,7 @@ async function getStats() {
         .select('id', { count: 'exact', head: true }),
       supabase
         .from('orders')
-        .select('id, order_number, total_amount, order_status, payment_status, created_at')
+        .select('id, order_number, total_amount, order_status, payment_method, payment_status, created_at')
         .order('created_at', { ascending: false })
         .limit(5),
     ])
@@ -209,10 +212,12 @@ export default async function AdminDashboardPage() {
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-[5px] text-xs font-bold capitalize ${
                           order.payment_status === 'paid'
                             ? 'bg-[#EBF3ED] text-[#144D29] border border-[#CFE3D3]'
-                            : 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : order.payment_status === 'failed'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : 'bg-amber-50 text-amber-800 border border-amber-200'
                         }`}
                       >
-                        {order.payment_status}
+                        {paymentTag(order).label.toLowerCase()}
                       </span>
                     </td>
                     <td className="px-6 py-3.5 text-xs text-[#615147]">

@@ -91,6 +91,8 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: 'Database update failed' }, { status: 500 }) // retry
         }
 
+        // Visible in Vercel > Logs, so you can see the webhook doing its job
+        console.log(`[Razorpay Webhook] ${event}: order #${order.order_number} ${result.applied ? 'marked PAID by webhook' : 'was already paid (browser verify got there first)'}`)
         if (result.applied) refreshOrderPages()
         return NextResponse.json({ received: true, applied: result.applied })
       }
@@ -110,6 +112,7 @@ export async function POST(req: NextRequest) {
               console.error('[Razorpay Webhook] markOrderFailed failed:', error)
               return NextResponse.json({ error: 'Database update failed' }, { status: 500 })
             }
+            console.log(`[Razorpay Webhook] payment.failed: Razorpay order ${payment.order_id} marked failed`)
             refreshOrderPages()
           }
         }

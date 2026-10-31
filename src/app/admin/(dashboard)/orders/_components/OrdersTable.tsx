@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Eye, Search, Filter } from 'lucide-react'
+import { Eye, Search, Filter, AlertTriangle, Clock } from 'lucide-react'
+import { paymentTag, isOnlineOrder, PAYMENT_TAG_CLASSES } from '@/lib/paymentTag'
 
-const ORDER_STATUSES = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled']
+const ORDER_STATUSES = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled', 'payment_failed', 'payment_incomplete']
 
 export function OrdersTable({ orders }: { orders: any[] }) {
   const [query, setQuery] = useState('')
@@ -14,7 +15,11 @@ export function OrdersTable({ orders }: { orders: any[] }) {
     const term = query.trim().toLowerCase()
 
     return orders.filter((order) => {
-      if (statusFilter !== 'all' && order.order_status !== statusFilter) {
+      if (statusFilter === 'payment_failed') {
+        if (order.payment_status !== 'failed') return false
+      } else if (statusFilter === 'payment_incomplete') {
+        if (!(isOnlineOrder(order) && order.payment_status === 'pending')) return false
+      } else if (statusFilter !== 'all' && order.order_status !== statusFilter) {
         return false
       }
 
@@ -58,7 +63,13 @@ export function OrdersTable({ orders }: { orders: any[] }) {
           >
             {ORDER_STATUSES.map((status) => (
               <option key={status} value={status}>
-                {status === 'all' ? 'All Statuses' : status.charAt(0).toUpperCase() + status.slice(1)}
+                {status === 'all'
+                  ? 'All Statuses'
+                  : status === 'payment_failed'
+                    ? 'Payment failed'
+                    : status === 'payment_incomplete'
+                      ? 'Payment not completed'
+                      : status.charAt(0).toUpperCase() + status.slice(1)}
               </option>
             ))}
           </select>
@@ -112,15 +123,16 @@ export function OrdersTable({ orders }: { orders: any[] }) {
                       <span className="font-medium text-stone-900">₹{order.total_amount}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
-                        order.payment_status === 'paid' ? 'bg-green-50 text-green-700 border-green-200' :
-                        order.payment_status === 'failed' ? 'bg-red-50 text-red-700 border-red-200' :
-                        order.payment_status === 'refunded' ? 'bg-stone-100 text-stone-700 border-stone-200' :
-                        'bg-orange-50 text-orange-700 border-orange-200'
-                      }`}>
-                        {order.payment_status.toUpperCase()}
-                      </span>
-                    </td>
+                      {(() => {
+                        const tag = paymentTag(order)
+                        return (
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${PAYMENT_TAG_CLASSES[tag.tone]}`}>
+                            {tag.tone === 'red' && <AlertTriangle className="w-3 h-3 mr-1" />}
+                            {tag.label === 'PAYMENT NOT COMPLETED' && <Clock className="w-3 h-3 mr-1" />}
+                            {tag.label}
+                          </span>
+                        )
+                      })()}                    </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${
                         order.order_status === 'delivered' ? 'bg-green-50 text-green-700 border-green-200' :

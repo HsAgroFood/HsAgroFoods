@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
+import { REAL_ORDER_FILTER } from '@/lib/orderVisibility'
 
 export type AdminActionResult = {
   error?: string
@@ -32,6 +33,7 @@ export async function getCustomers() {
   const { data: orders } = await adminClient
     .from('orders')
     .select('id, user_id, shipping_address, created_at')
+    .or(REAL_ORDER_FILTER)
     .order('created_at', { ascending: false })
 
   const customerMap = new Map<string, any>()

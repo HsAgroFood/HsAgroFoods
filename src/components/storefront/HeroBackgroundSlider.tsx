@@ -18,8 +18,6 @@ import {
 } from 'lucide-react'
 import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
 
-export { getDesktopSlideUrl, getMobileSlideUrl }
-
 export type HeroSlideItem = {
   id: string
   image_url: string

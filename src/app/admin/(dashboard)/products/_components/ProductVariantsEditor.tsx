@@ -20,6 +20,11 @@ type Variant = {
   height_cm?: number | string | null
 }
 
+// The project has no Tailwind forms plugin, so inputs need an explicit border and padding
+const LABEL = 'mb-1 block text-xs font-medium text-gray-600'
+const INPUT =
+  'block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20'
+const PREFIX = 'pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400'
 export function ProductVariantsEditor({
   productId,
   variants,
@@ -138,111 +143,139 @@ export function ProductVariantsEditor({
       </div>
 
       {(isAdding || editingId) && (
-        <form onSubmit={handleSubmit} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5">
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Variant Name (e.g. 100g, Large)</label>
-              <input
-                required
-                type="text"
-                maxLength={100}
-                value={formData.variant_name}
-                onChange={(e) => setFormData({ ...formData, variant_name: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
-              <input
-                required
-                type="number"
-                step="0.01"
-                min="0"
-                max="300000"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Original Price (₹)</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="300000"
-                value={formData.original_price}
-                onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Optional"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Stock Qty</label>
-              <input
-                required
-                type="number"
-                min="0"
-                max="1000"
-                value={formData.stock_quantity}
-                onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div className="md:col-span-5 rounded-md border border-gray-200 bg-white p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Shipping parcel (used for courier booking)</span>
-                <span className="text-xs text-gray-400">Leave blank to auto-fill from the pack size</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {([
-                  ['weight_kg', 'Weight (kg)', '0.01'],
-                  ['length_cm', 'Length (cm)', '0.1'],
-                  ['width_cm', 'Width (cm)', '0.1'],
-                  ['height_cm', 'Height (cm)', '0.1'],
-                ] as const).map(([key, label, step]) => (
-                  <div key={key}>
-                    <label className="block text-xs font-medium text-gray-600">{label}</label>
+        <form onSubmit={handleSubmit} className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-5 py-3">
+            <h4 className="text-sm font-semibold text-gray-900">{editingId ? 'Edit variant' : 'New variant'}</h4>
+            <span className="text-xs text-gray-400">Fields marked * are required</span>
+          </div>
+
+          <div className="space-y-6 px-5 py-5">
+            {/* Pricing & stock */}
+            <section>
+              <h5 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Pricing &amp; stock</h5>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="sm:col-span-2 lg:col-span-1">
+                  <label className={LABEL}>Variant name *</label>
+                  <input
+                    required
+                    type="text"
+                    maxLength={100}
+                    value={formData.variant_name}
+                    onChange={(e) => setFormData({ ...formData, variant_name: e.target.value })}
+                    placeholder="e.g. 100g Pouch"
+                    className={INPUT}
+                  />
+                </div>
+
+                <div>
+                  <label className={LABEL}>Price *</label>
+                  <div className="relative">
+                    <span className={PREFIX}>₹</span>
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="300000"
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      className={`${INPUT} pl-7`}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={LABEL}>Original price</label>
+                  <div className="relative">
+                    <span className={PREFIX}>₹</span>
                     <input
                       type="number"
-                      min="0.01"
-                      step={step}
-                      value={formData[key]}
-                      placeholder={String(defaultParcelFor(formData.variant_name)[key])}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      step="0.01"
+                      min="0"
+                      max="300000"
+                      value={formData.original_price}
+                      onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
+                      placeholder="Optional"
+                      className={`${INPUT} pl-7`}
                     />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={LABEL}>Stock quantity *</label>
+                  <input
+                    required
+                    type="number"
+                    min="0"
+                    max="1000"
+                    value={formData.stock_quantity}
+                    onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
+                    className={INPUT}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Shipping parcel */}
+            <section className="rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-1">
+                <h5 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Shipping parcel</h5>
+                <span className="text-xs text-gray-400">Used for courier booking. Leave blank to auto-fill from the pack size.</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {([
+                  ['weight_kg', 'Weight', 'kg'],
+                  ['length_cm', 'Length', 'cm'],
+                  ['width_cm', 'Width', 'cm'],
+                  ['height_cm', 'Height', 'cm'],
+                ] as const).map(([key, label, unit]) => (
+                  <div key={key}>
+                    <label className={LABEL}>{label}</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0.01"
+                        step="any"
+                        value={formData[key]}
+                        placeholder={String(defaultParcelFor(formData.variant_name)[key])}
+                        onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                        className={`${INPUT} pr-10`}
+                      />
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">{unit}</span>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>            <div className="md:col-span-5 flex items-center justify-between mt-2">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Active</span>
-              </label>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  disabled={isPending}
-                  className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                >
-                  {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  Save Variant
-                </button>
-              </div>
+            </section>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 bg-gray-50 px-5 py-3">
+            <label className="flex cursor-pointer items-center gap-2">
+              <input
+                type="checkbox"
+                checked={formData.is_active}
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span className="text-sm text-gray-700">Active (visible in the shop)</span>
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={resetForm}
+                disabled={isPending}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isPending}
+                className="inline-flex items-center rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+              >
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save variant
+              </button>
             </div>
           </div>
         </form>

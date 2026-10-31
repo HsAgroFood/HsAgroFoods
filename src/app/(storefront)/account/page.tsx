@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAuthUser } from '@/lib/userAuth'
 import { redirect } from 'next/navigation'
+import { REAL_ORDER_FILTER } from '@/lib/orderVisibility'
 import Link from 'next/link'
 import { MapPin, Package, ShieldCheck, ArrowRight, UserCheck, Store } from 'lucide-react'
 import { ProfileForm } from './_components/ProfileForm'
@@ -72,6 +73,7 @@ export default async function AccountProfilePage() {
   const { data: userOrders } = await adminClient
     .from('orders')
     .select('id, user_id, shipping_address')
+    .or(REAL_ORDER_FILTER)
 
   const ordersCount = (userOrders || []).filter(o => 
     (activeUserId && o.user_id === activeUserId) || 

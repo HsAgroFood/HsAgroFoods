@@ -21,7 +21,7 @@ import {
   RotateCcw,
   Check,
 } from 'lucide-react'
-import { createOrder, verifyRazorpayPayment, type ShippingAddressInput } from '@/actions/checkout'
+import { createOrder, verifyRazorpayPayment, reportPaymentFailure, type ShippingAddressInput } from '@/actions/checkout'
 import { useCart } from '@/contexts/CartContext'
 import Script from 'next/script'
 import type { ShippingConfig } from '@/actions/shipping'
@@ -286,7 +286,7 @@ export function CheckoutClient({
 
             if (verifyResult.success) {
               refreshCart()
-              router.push(`/checkout/success?order_number=${result.orderNumber}`)
+              router.push(`/checkout/success?order_number=${result.orderNumber}&t=${encodeURIComponent(verifyResult.receiptToken || '')}`)
             } else {
               setError(verifyResult.error || 'Payment verification failed.')
               setIsPlacingOrder(false)
@@ -314,6 +314,8 @@ export function CheckoutClient({
           const rzp = new window.Razorpay(options)
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           rzp.on('payment.failed', function (response: any) {
+            // Record the failure on the order right away (the webhook confirms it later)
+            void reportPaymentFailure(result.orderId, result.razorpayOrderId)
             setError(`Payment Failed: ${response.error?.description || 'Payment rejected'}`)
             setIsPlacingOrder(false)
           })

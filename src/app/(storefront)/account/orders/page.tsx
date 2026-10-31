@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Package, Truck, CheckCircle2, MapPin, MessageCircle, ArrowRight } from 'lucide-react'
 import { getEffectiveUser } from '@/lib/userAuth'
 import { syncOrderStatusesFromIthink } from '@/lib/ithink'
+import { REAL_ORDER_FILTER } from '@/lib/orderVisibility'
 import TrackShipmentModal from '@/components/shipping/TrackShipmentModal'
 import CopyAwb from '@/components/shipping/CopyAwb'
 import { Suspense } from 'react'
@@ -92,6 +93,7 @@ export default async function AccountOrdersPage({
       *,
       order_items (*)
     `)
+    .or(REAL_ORDER_FILTER)
     .order('created_at', { ascending: false })
 
   const orders = (allOrders || []).filter((order) => {

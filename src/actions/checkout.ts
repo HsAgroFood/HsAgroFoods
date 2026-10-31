@@ -8,7 +8,8 @@ import { cookies } from 'next/headers'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { sendOrderConfirmationEmail } from '@/lib/brevo'
-import { markOrderPaid, expectedAmountPaise } from '@/lib/orderPayment'
+import { markOrderPaid, markOrderFailed, expectedAmountPaise } from '@/lib/orderPayment'
+import { createReceiptToken } from '@/lib/receiptToken'
 
 type StockAdjustment = {
   variantId: string
@@ -500,7 +501,7 @@ export async function verifyRazorpayPayment(
     const adminClient = createAdminClient()
     const { data: order } = await adminClient
       .from('orders')
-      .select('id, total_amount, razorpay_order_id')
+      .select('id, order_number, total_amount, razorpay_order_id')
       .eq('id', internal_order_id)
       .maybeSingle()
 
@@ -546,9 +547,41 @@ export async function verifyRazorpayPayment(
     revalidatePath('/admin/orders')
     revalidatePath('/admin/products')
 
-    return { success: true }
+    // Lets this browser (even a guest) see its own payment details on the success page
+    return { success: true, receiptToken: createReceiptToken(order.order_number) }
   } catch (err: any) {
     console.error('Payment verification error:', err)
     return failure
+  }
+}
+
+/**
+ * Called by the browser when Razorpay reports that a payment attempt FAILED (card declined,
+ * UPI failure, ...). Marks the order "failed" straight away instead of waiting for the webhook.
+ * Needs both ids of the same order, only ever moves pending -> failed, and a later successful
+ * payment still turns the order to paid.
+ */
+export async function reportPaymentFailure(internal_order_id: string, razorpay_order_id: string) {
+  try {
+    if (typeof internal_order_id !== 'string' || typeof razorpay_order_id !== 'string') return { success: false }
+
+    const adminClient = createAdminClient()
+    const { data: order } = await adminClient
+      .from('orders')
+      .select('id, razorpay_order_id')
+      .eq('id', internal_order_id)
+      .maybeSingle()
+
+    if (!order || order.razorpay_order_id !== razorpay_order_id) return { success: false }
+
+    const { error } = await markOrderFailed(adminClient, order.id)
+    if (error) return { success: false }
+
+    revalidatePath('/admin/orders')
+    revalidatePath('/admin')
+    return { success: true }
+  } catch (err) {
+    console.error('reportPaymentFailure error:', err)
+    return { success: false }
   }
 }
