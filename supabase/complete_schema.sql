@@ -47,6 +47,15 @@ CREATE TABLE IF NOT EXISTS public.auth_signup_otps (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS public.auth_login_otps (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) NOT NULL,
+  otp_code VARCHAR(6) NOT NULL,
+  attempts INT DEFAULT 0,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS public.password_reset_tokens (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(255) NOT NULL,
@@ -305,6 +314,7 @@ CREATE INDEX IF NOT EXISTS idx_orders_user ON public.orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_number ON public.orders(order_number);
 CREATE INDEX IF NOT EXISTS idx_reviews_product ON public.reviews(product_id);
 CREATE INDEX IF NOT EXISTS idx_auth_signup_otps_email ON public.auth_signup_otps(email);
+CREATE INDEX IF NOT EXISTS idx_auth_login_otps_email ON public.auth_login_otps(email);
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON public.password_reset_tokens(token);
 
 -- ==============================================================================
@@ -313,6 +323,7 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON public.password_re
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.auth_signup_otps ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.auth_login_otps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.password_reset_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.addresses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;

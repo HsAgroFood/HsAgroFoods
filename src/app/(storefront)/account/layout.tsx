@@ -3,6 +3,8 @@ import { getEffectiveUser } from '@/lib/userAuth'
 import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { redirect } from 'next/navigation'
 import { AccountNav } from '@/components/storefront/AccountNav'
+import { logout } from '@/actions/auth'
+import { LogOut } from 'lucide-react'
 
 export default async function AccountLayout({
   children,
@@ -70,9 +72,20 @@ export default async function AccountLayout({
                     <span>{isAdmin ? 'Store Admin' : 'Verified Member'}</span>
                   </span>
                 </div>
+
+                {/* Mobile only: the desktop sidebar has its own Sign Out row */}
+                <form action={logout} className="lg:hidden shrink-0">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-1.5 rounded-[5px] border border-rose-200 bg-rose-50/70 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Sign Out</span>
+                  </button>
+                </form>
               </div>
             </div>
-            
+
             {/* Account Navigation Tabs */}
             <nav className="bg-white rounded-[5px] border border-[#E8DFD5] shadow-xs">
               <AccountNav />

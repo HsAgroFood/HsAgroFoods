@@ -50,7 +50,7 @@ export function AccountNav() {
       <button
         onClick={handleLogout}
         type="button"
-        className="flex items-center gap-2 sm:gap-3 px-3.5 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-4 text-xs sm:text-sm font-bold text-rose-700 bg-rose-50/70 hover:bg-rose-100 lg:bg-transparent lg:hover:bg-rose-50 transition-colors rounded-[5px] lg:rounded-none lg:border-l-4 lg:border-l-transparent lg:pl-5 shrink-0 ml-auto lg:ml-0 lg:w-full text-left cursor-pointer"
+        className="hidden lg:flex items-center gap-2 sm:gap-3 px-3.5 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-4 text-xs sm:text-sm font-bold text-rose-700 bg-rose-50/70 hover:bg-rose-100 lg:bg-transparent lg:hover:bg-rose-50 transition-colors rounded-[5px] lg:rounded-none lg:border-l-4 lg:border-l-transparent lg:pl-5 shrink-0 ml-auto lg:ml-0 lg:w-full text-left cursor-pointer"
       >
         <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 shrink-0" />
         <span>Sign Out</span>

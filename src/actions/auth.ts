@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { hashPassword, verifyPassword, setUserSession, clearUserSession, getAuthUser, AuthUser } from '@/lib/userAuth'
-import { sendSignupOtpEmail, sendPasswordResetEmail } from '@/lib/brevo'
+import { sendSignupOtpEmail, sendLoginOtpEmail, sendPasswordResetEmail } from '@/lib/brevo'
 import { createAdminSessionValue } from '@/lib/adminSession'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
@@ -13,6 +13,8 @@ import crypto from 'crypto'
 export type AuthResult = {
   error?: string
   success?: boolean
+  /** Seconds until another OTP may be requested */
+  retryAfter?: number
 }
 
 // -------------------------------------------------------------
@@ -56,111 +58,48 @@ async function mergeGuestCart(userId: string) {
   }
 }
 
-// =============================================================
-// 1. DIRECT DATABASE REGISTRATION (Instant Signup in DB)
-// =============================================================
-export async function customerDirectRegister(
-  _prevState: AuthResult,
-  formData: FormData
-): Promise<AuthResult> {
-  const fullName = (formData.get('full_name') as string)?.trim()
-  const email = (formData.get('email') as string)?.trim().toLowerCase()
-  const password = formData.get('password') as string
-  const redirectTo = (formData.get('redirectTo') as string) || '/'
+// -------------------------------------------------------------
+// OTP / Link Helpers
+// -------------------------------------------------------------
+const OTP_TTL_MS = 10 * 60 * 1000 // OTP valid for 10 minutes
+const OTP_RESEND_COOLDOWN_SEC = 60 // resend allowed 60s after the last send
+const OTP_MAX_ATTEMPTS = 5
 
-  if (!fullName || !email || !password) {
-    return { error: 'Full name, email and password are all required.' }
-  }
+function generateOtp() {
+  return crypto.randomInt(100000, 1000000).toString()
+}
 
-  if (fullName.length < 2) {
-    return { error: 'Please enter a valid full name (at least 2 characters).' }
-  }
+function resendWaitSeconds(createdAt?: string | null) {
+  if (!createdAt) return 0
+  const elapsed = Math.floor((Date.now() - new Date(createdAt).getTime()) / 1000)
+  return Math.max(0, OTP_RESEND_COOLDOWN_SEC - elapsed)
+}
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email)) {
-    return { error: 'Please provide a valid email address.' }
-  }
+function safeRedirectPath(path: string | null | undefined) {
+  return path && path.startsWith('/') && !path.startsWith('//') ? path : '/'
+}
 
-  if (password.length < 6) {
-    return { error: 'Password must be at least 6 characters long.' }
-  }
+function getSiteUrl() {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '')
+  if (fromEnv) return fromEnv
+  return process.env.NODE_ENV === 'production' ? 'https://www.hsagrofoods.com' : 'http://localhost:3000'
+}
 
+async function findAccountByEmail(email: string) {
   const adminClient = createAdminClient()
-
-  // 1. Check if user already exists in `users` table or `profiles` table
-  const { data: existingUser } = await adminClient
+  const { data: userRecord } = await adminClient
     .from('users')
-    .select('id, email')
+    .select('id, full_name, email, role, is_active')
     .ilike('email', email)
     .maybeSingle()
+  if (userRecord) return userRecord
 
-  if (existingUser) {
-    return { error: 'An account with this email already exists. Please sign in.' }
-  }
-
-  const { data: existingProfile } = await adminClient
+  const { data: profileRecord } = await adminClient
     .from('profiles')
-    .select('id, email')
+    .select('id, full_name, email, role, is_active')
     .ilike('email', email)
     .maybeSingle()
-
-  if (existingProfile) {
-    return { error: 'An account with this email already exists. Please sign in.' }
-  }
-
-  // 2. Hash password securely
-  const passwordHash = hashPassword(password)
-  const userId = crypto.randomUUID()
-
-  // 3. Insert into `users` table
-  let insertSuccess = false
-  const { error: userInsertError } = await adminClient.from('users').insert([
-    {
-      id: userId,
-      full_name: fullName,
-      email,
-      password_hash: passwordHash,
-      role: 'customer',
-      phone: '',
-      is_active: true,
-    },
-  ])
-
-  if (!userInsertError) {
-    insertSuccess = true
-  }
-
-  // Also sync to `profiles` table
-  await adminClient.from('profiles').upsert([
-    {
-      id: userId,
-      full_name: fullName,
-      email,
-      password_hash: passwordHash,
-      role: 'customer',
-      phone: '',
-      is_active: true,
-    },
-  ])
-
-  if (!insertSuccess && userInsertError) {
-    console.error('Failed to insert into users table:', userInsertError)
-    // If table `users` hasn't been created yet, profile table was upserted above
-  }
-
-  // 4. Set direct session cookie
-  const authUser: AuthUser = {
-    id: userId,
-    email,
-    full_name: fullName,
-    role: 'customer',
-  }
-
-  await setUserSession(authUser)
-  await mergeGuestCart(userId)
-
-  revalidatePath('/', 'layout')
-  redirect(redirectTo)
+  return profileRecord
 }
 
 // =============================================================
@@ -238,7 +177,8 @@ export async function customerPasswordLogin(
 }
 
 // =============================================================
-// 3. SIGN UP FLOW WITH OTP (Brevo Verification Option)
+// 3. SIGN UP FLOW WITH EMAIL OTP (Brevo)
+//    OTP valid 10 min · resend allowed after 60 sec
 // =============================================================
 export async function requestSignupOtp(
   _prevState: AuthResult,
@@ -267,27 +207,32 @@ export async function requestSignupOtp(
 
   const adminClient = createAdminClient()
 
-  // Check if account already exists
-  const { data: existingUser } = await adminClient
-    .from('users')
-    .select('id')
-    .ilike('email', email)
-    .maybeSingle()
-
-  if (existingUser) {
+  // Account already exists?
+  if (await findAccountByEmail(email)) {
     return { error: 'An account with this email already exists. Please sign in.' }
   }
 
-  // Generate 6-digit numeric OTP
-  const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
-  const passwordHash = hashPassword(password)
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  // 60-second resend cooldown
+  const { data: lastOtp } = await adminClient
+    .from('auth_signup_otps')
+    .select('created_at')
+    .ilike('email', email)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
-  // Clean up old OTP records
+  const wait = resendWaitSeconds(lastOtp?.created_at)
+  if (wait > 0) {
+    return { error: `Please wait ${wait}s before requesting a new code.`, retryAfter: wait }
+  }
+
+  const otpCode = generateOtp()
+  const passwordHash = hashPassword(password)
+  const expiresAt = new Date(Date.now() + OTP_TTL_MS).toISOString()
+
   await adminClient.from('auth_signup_otps').delete().ilike('email', email)
 
-  // Insert temporary record
-  await adminClient.from('auth_signup_otps').insert([
+  const { error: insertError } = await adminClient.from('auth_signup_otps').insert([
     {
       email,
       full_name: fullName,
@@ -298,18 +243,19 @@ export async function requestSignupOtp(
     },
   ])
 
-  // Dispatch OTP email via Brevo
-  const emailRes = await sendSignupOtpEmail({
-    email,
-    name: fullName,
-    otp: otpCode,
-  })
+  if (insertError) {
+    console.error('Failed to store signup OTP:', insertError)
+    return { error: 'Could not start verification. Please try again.' }
+  }
+
+  const emailRes = await sendSignupOtpEmail({ email, name: fullName, otp: otpCode })
 
   if (!emailRes.success && !emailRes.simulated) {
+    await adminClient.from('auth_signup_otps').delete().ilike('email', email)
     return { error: emailRes.error || 'Failed to send verification email. Please check your address.' }
   }
 
-  return { success: true }
+  return { success: true, retryAfter: OTP_RESEND_COOLDOWN_SEC }
 }
 
 export async function verifySignupOtp(
@@ -318,7 +264,7 @@ export async function verifySignupOtp(
 ): Promise<AuthResult> {
   const email = (formData.get('email') as string)?.trim().toLowerCase()
   const token = (formData.get('token') as string)?.trim()
-  const redirectTo = (formData.get('redirectTo') as string) || '/'
+  const redirectTo = safeRedirectPath(formData.get('redirectTo') as string)
 
   if (!email || !token) {
     return { error: 'Email and 6-digit verification code are required.' }
@@ -326,7 +272,6 @@ export async function verifySignupOtp(
 
   const adminClient = createAdminClient()
 
-  // Fetch pending OTP record
   const { data: record, error: fetchError } = await adminClient
     .from('auth_signup_otps')
     .select('*')
@@ -340,12 +285,15 @@ export async function verifySignupOtp(
     return { error: 'No pending registration found. Please request a new verification code.' }
   }
 
-  // Check expiry
+  if ((record.attempts || 0) >= OTP_MAX_ATTEMPTS) {
+    await adminClient.from('auth_signup_otps').delete().eq('id', record.id)
+    return { error: 'Too many incorrect attempts. Please request a new code.' }
+  }
+
   if (new Date(record.expires_at) < new Date()) {
     return { error: 'Verification code has expired. Please request a new code.' }
   }
 
-  // Check code match
   if (record.otp_code !== token) {
     await adminClient
       .from('auth_signup_otps')
@@ -355,11 +303,16 @@ export async function verifySignupOtp(
     return { error: 'Invalid verification code. Please enter the 6-digit code sent to your email.' }
   }
 
-  // Store user in direct `users` table
+  // Guard against a parallel signup having created the account meanwhile
+  if (await findAccountByEmail(record.email)) {
+    await adminClient.from('auth_signup_otps').delete().eq('id', record.id)
+    return { error: 'An account with this email already exists. Please sign in.' }
+  }
+
   const userId = crypto.randomUUID()
   const passwordHash = record.encrypted_password
 
-  await adminClient.from('users').insert([
+  const { error: userInsertError } = await adminClient.from('users').insert([
     {
       id: userId,
       full_name: record.full_name,
@@ -370,6 +323,11 @@ export async function verifySignupOtp(
       is_active: true,
     },
   ])
+
+  if (userInsertError) {
+    console.error('Failed to create user after OTP verification:', userInsertError)
+    return { error: 'Could not create your account. Please try again.' }
+  }
 
   await adminClient.from('profiles').upsert([
     {
@@ -383,19 +341,151 @@ export async function verifySignupOtp(
     },
   ])
 
-  // Clean OTP record
   await adminClient.from('auth_signup_otps').delete().eq('id', record.id)
 
-  // Direct Session Login
-  const authUser: AuthUser = {
+  await setUserSession({
     id: userId,
     email: record.email,
     full_name: record.full_name,
     role: 'customer',
+  })
+  await mergeGuestCart(userId)
+
+  revalidatePath('/', 'layout')
+  redirect(redirectTo)
+}
+
+// =============================================================
+// 3b. LOGIN WITH EMAIL OTP (existing accounts only)
+//     OTP valid 10 min · resend allowed after 60 sec
+// =============================================================
+export async function requestLoginOtp(
+  _prevState: AuthResult,
+  formData: FormData
+): Promise<AuthResult> {
+  const email = (formData.get('email') as string)?.trim().toLowerCase()
+
+  if (!email) {
+    return { error: 'Please enter your registered email address.' }
   }
 
-  await setUserSession(authUser)
-  await mergeGuestCart(userId)
+  const account = await findAccountByEmail(email)
+
+  if (!account) {
+    return { error: 'No account found with this email. Please create an account first.' }
+  }
+
+  if (account.is_active === false) {
+    return { error: 'This account has been deactivated. Please contact support.' }
+  }
+
+  const adminClient = createAdminClient()
+
+  const { data: lastOtp } = await adminClient
+    .from('auth_login_otps')
+    .select('created_at')
+    .ilike('email', email)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const wait = resendWaitSeconds(lastOtp?.created_at)
+  if (wait > 0) {
+    return { error: `Please wait ${wait}s before requesting a new code.`, retryAfter: wait }
+  }
+
+  const otpCode = generateOtp()
+  const expiresAt = new Date(Date.now() + OTP_TTL_MS).toISOString()
+
+  await adminClient.from('auth_login_otps').delete().ilike('email', email)
+
+  const { error: insertError } = await adminClient.from('auth_login_otps').insert([
+    { email, otp_code: otpCode, expires_at: expiresAt },
+  ])
+
+  if (insertError) {
+    console.error('Failed to store login OTP:', insertError)
+    return { error: 'Could not send a login code. Please try again.' }
+  }
+
+  const emailRes = await sendLoginOtpEmail({
+    email,
+    name: account.full_name || 'Customer',
+    otp: otpCode,
+  })
+
+  if (!emailRes.success && !emailRes.simulated) {
+    await adminClient.from('auth_login_otps').delete().ilike('email', email)
+    return { error: emailRes.error || 'Failed to send login code. Please try again.' }
+  }
+
+  return { success: true, retryAfter: OTP_RESEND_COOLDOWN_SEC }
+}
+
+export async function verifyLoginOtp(
+  _prevState: AuthResult,
+  formData: FormData
+): Promise<AuthResult> {
+  const email = (formData.get('email') as string)?.trim().toLowerCase()
+  const token = (formData.get('token') as string)?.trim()
+  const redirectTo = safeRedirectPath(formData.get('redirectTo') as string)
+
+  if (!email || !token) {
+    return { error: 'Email and 6-digit login code are required.' }
+  }
+
+  const adminClient = createAdminClient()
+
+  const { data: record } = await adminClient
+    .from('auth_login_otps')
+    .select('*')
+    .ilike('email', email)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (!record) {
+    return { error: 'No login code found. Please request a new code.' }
+  }
+
+  if ((record.attempts || 0) >= OTP_MAX_ATTEMPTS) {
+    await adminClient.from('auth_login_otps').delete().eq('id', record.id)
+    return { error: 'Too many incorrect attempts. Please request a new code.' }
+  }
+
+  if (new Date(record.expires_at) < new Date()) {
+    return { error: 'Login code has expired. Please request a new code.' }
+  }
+
+  if (record.otp_code !== token) {
+    await adminClient
+      .from('auth_login_otps')
+      .update({ attempts: (record.attempts || 0) + 1 })
+      .eq('id', record.id)
+
+    return { error: 'Invalid login code. Please enter the 6-digit code sent to your email.' }
+  }
+
+  const account = await findAccountByEmail(email)
+
+  if (!account) {
+    return { error: 'No account found with this email. Please create an account first.' }
+  }
+
+  if (account.is_active === false) {
+    return { error: 'This account has been deactivated. Please contact support.' }
+  }
+
+  // One-time use
+  await adminClient.from('auth_login_otps').delete().eq('id', record.id)
+
+  await setUserSession({
+    id: account.id,
+    email: account.email,
+    full_name: account.full_name || 'Customer',
+    role: account.role || 'customer',
+  })
+  await mergeGuestCart(account.id)
 
   revalidatePath('/', 'layout')
   redirect(redirectTo)
@@ -444,8 +534,7 @@ export async function requestPasswordReset(
     },
   ])
 
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  const resetUrl = `${origin}/reset-password?token=${resetToken}`
+  const resetUrl = `${getSiteUrl()}/reset-password?token=${resetToken}`
 
   const emailRes = await sendPasswordResetEmail({
     email,

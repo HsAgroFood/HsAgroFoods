@@ -8,6 +8,7 @@ import { cookies } from 'next/headers'
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 import { sendOrderConfirmationEmail } from '@/lib/brevo'
+import { markOrderPaid, expectedAmountPaise } from '@/lib/orderPayment'
 
 type StockAdjustment = {
   variantId: string
@@ -314,9 +315,11 @@ export async function createOrder(
       return { success: false, error: 'Order item processing failed. Please contact support.' }
     }
 
-    // 8. Auto-Deduct Inventory Stock
+    // 8. Auto-Deduct Inventory Stock (COD only). Online orders reserve nothing
+    // until the payment is confirmed, so abandoned/failed payments never hold stock;
+    // markOrderPaid deducts it once Razorpay confirms the payment.
     const stockAdjustments: StockAdjustment[] = []
-    for (const item of items) {
+    for (const item of paymentMethod === 'COD' ? items : []) {
       const variant: any = item.product_variants
       if (!variant?.id) continue
 
@@ -377,6 +380,7 @@ export async function createOrder(
           success: true,
           isRazorpay: true,
           razorpayOrderId: rzpOrder.id,
+          razorpayKeyId: process.env.RAZORPAY_KEY_ID,
           orderId: order.id,
           orderNumber: order.order_number,
           amount: options.amount,
@@ -464,118 +468,87 @@ export async function verifyRazorpayPayment(
   razorpay_signature: string,
   internal_order_id: string
 ) {
-  try {
-    const adminClient = createAdminClient()
+  const failure = { success: false, error: 'Payment verification failed. If money was deducted, your order will be confirmed automatically.' }
 
+  try {
     const secret = process.env.RAZORPAY_KEY_SECRET
     if (!secret) return { success: false, error: 'Razorpay secret not configured' }
 
-    const generated_signature = crypto
+    if (
+      typeof razorpay_payment_id !== 'string' ||
+      typeof razorpay_order_id !== 'string' ||
+      typeof razorpay_signature !== 'string' ||
+      typeof internal_order_id !== 'string'
+    ) {
+      return failure
+    }
+
+    // 1. Signature proves Razorpay issued this payment for this Razorpay order
+    const expected = crypto
       .createHmac('sha256', secret)
-      .update(razorpay_order_id + '|' + razorpay_payment_id)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex')
 
-    if (generated_signature !== razorpay_signature) {
-      return { success: false, error: 'Payment verification failed: Invalid signature' }
+    const sigBuf = Buffer.from(razorpay_signature, 'utf8')
+    const expBuf = Buffer.from(expected, 'utf8')
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      return failure
     }
 
-    // Check current order status
-    const { data: currentOrder } = await adminClient
+    // 2. The Razorpay order must be the one we created for THIS internal order.
+    //    (Stops a valid payment for a cheap order being replayed against another.)
+    const adminClient = createAdminClient()
+    const { data: order } = await adminClient
       .from('orders')
-      .select('*')
+      .select('id, total_amount, razorpay_order_id')
       .eq('id', internal_order_id)
-      .single()
+      .maybeSingle()
 
-    const wasAlreadyPaid = currentOrder?.payment_status === 'paid'
-
-    if (!wasAlreadyPaid) {
-      // Update order status to paid
-      const { error: updateError } = await adminClient
-        .from('orders')
-        .update({
-          payment_status: 'paid',
-          order_status: 'processing',
-          razorpay_payment_id,
-          razorpay_order_id,
-        })
-        .eq('id', internal_order_id)
-
-      if (updateError) {
-        console.error('Failed to update order status:', updateError)
-        return { success: false, error: 'Failed to update order payment status' }
-      }
-
-      // Send Brevo Confirmation Email if not already sent by webhook
-      if (currentOrder) {
-        const { data: orderItems } = await adminClient
-          .from('order_items')
-          .select('*')
-          .eq('order_id', internal_order_id)
-
-        let customerEmail = currentOrder.shipping_address?.email
-        let customerName = currentOrder.shipping_address?.full_name || 'Valued Customer'
-
-        if (!customerEmail && currentOrder.user_id) {
-          const { data: authUser } = await adminClient.auth.admin.getUserById(currentOrder.user_id)
-          if (authUser?.user?.email) {
-            customerEmail = authUser.user.email
-            customerName = authUser.user.user_metadata?.full_name || customerName
-          }
-        }
-
-        if (customerEmail) {
-          try {
-            await sendOrderConfirmationEmail({
-              orderNumber: currentOrder.order_number,
-              customerName,
-              customerEmail,
-              customerPhone: currentOrder.shipping_address?.phone,
-              shippingAddress: currentOrder.shipping_address || {
-                address_line_1: '',
-                city: '',
-                state: '',
-                postal_code: '',
-              },
-              items: (orderItems || []).map((item: any) => ({
-                product_name: item.product_name,
-                variant_name: item.variant_name,
-                quantity: item.quantity,
-                price_at_purchase: item.price_at_purchase,
-                line_total: item.line_total,
-              })),
-              subtotal: Number(currentOrder.subtotal),
-              shippingCost: Number(currentOrder.shipping_cost),
-              totalAmount: Number(currentOrder.total_amount),
-              paymentMethod: 'Online Payment (Razorpay)',
-              paymentStatus: 'paid',
-            })
-          } catch (emailErr) {
-            console.error('Failed to send verified payment confirmation email:', emailErr)
-          }
-        }
-      }
+    if (!order || order.razorpay_order_id !== razorpay_order_id) {
+      return failure
     }
 
-    // Clear user and guest cart
+    // 3. Confirm with Razorpay itself that the payment belongs to this order,
+    //    was for the full amount, and actually succeeded.
+    if (!razorpayInstance) return failure
+    const payment = await razorpayInstance.payments.fetch(razorpay_payment_id).catch(() => null)
+
+    if (
+      !payment ||
+      payment.order_id !== razorpay_order_id ||
+      payment.currency !== 'INR' ||
+      Number(payment.amount) !== expectedAmountPaise(order.total_amount) ||
+      !['captured', 'authorized'].includes(payment.status)
+    ) {
+      return failure
+    }
+
+    // 4. Apply exactly once (the webhook may race us; only one wins)
+    const result = await markOrderPaid(adminClient, order.id, razorpay_payment_id)
+    if (result.error) {
+      console.error('Failed to update order status:', result.error)
+      return { success: false, error: 'Failed to update order payment status' }
+    }
+
+    // Clear the buyer's cart
     const user = await getEffectiveUser()
     if (user) {
-      await adminClient
-        .from('cart_items')
-        .delete()
-        .eq('user_id', user.id)
+      await adminClient.from('cart_items').delete().eq('user_id', user.id)
     }
 
     const cookieStore = await cookies()
     cookieStore.delete('guest_cart')
 
+    revalidatePath('/shop')
     revalidatePath('/cart')
     revalidatePath('/checkout')
     revalidatePath('/account/orders')
     revalidatePath('/admin/orders')
+    revalidatePath('/admin/products')
 
     return { success: true }
   } catch (err: any) {
     console.error('Payment verification error:', err)
-    return { success: false, error: 'Payment verification failed.' }
+    return failure
   }
 }

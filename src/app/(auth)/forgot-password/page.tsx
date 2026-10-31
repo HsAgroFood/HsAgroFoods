@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
               We have sent a secure password reset link to <strong className="text-[#14361F]">{email}</strong>.
             </p>
             <p className="text-xs text-[#8C766E]">
-              ⏳ The link is valid for <strong>15 minutes</strong>. If you do not see it, please check your Spam or Promotions folder.
+              The link is valid for <strong>15 minutes</strong>. If you do not see it, please check your Spam or Promotions folder.
             </p>
           </div>
 

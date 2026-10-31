@@ -1,5 +1,6 @@
 import { getHeroSlides, getHeroConfig } from '@/actions/admin/hero'
-import { HeroBackgroundSlider, HeroSlideItem, GlobalHeroText, getMobileSlideUrl } from '@/components/storefront/HeroBackgroundSlider'
+import { HeroBackgroundSlider, HeroSlideItem, GlobalHeroText } from '@/components/storefront/HeroBackgroundSlider'
+import { getMobileSlideUrl } from '@/lib/imageUtils'
 import { SPICE_ASSETS } from '@/constants/assets'
 
 export const dynamic = 'force-dynamic'

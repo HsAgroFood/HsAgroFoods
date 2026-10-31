@@ -268,7 +268,7 @@ export function CheckoutClient({
       // Handle Razorpay Online Flow
       if (result.isRazorpay && result.razorpayOrderId) {
         const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
+          key: result.razorpayKeyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
           amount: result.amount,
           currency: 'INR',
           name: 'HS AgroFoods',
@@ -296,6 +296,12 @@ export function CheckoutClient({
             name: formData.full_name || addresses.find((a) => a.id === selectedAddressId)?.full_name || '',
             contact: formData.phone || addresses.find((a) => a.id === selectedAddressId)?.phone || '',
             email: formData.email || userEmail || '',
+          },
+          modal: {
+            // Re-enable the button if the customer closes the payment window
+            ondismiss: function () {
+              setIsPlacingOrder(false)
+            },
           },
           theme: {
             color: '#14361F',
@@ -862,7 +868,7 @@ export function CheckoutClient({
               href="/cart"
               className="text-xs font-bold text-[#7A6458] hover:text-[#E07B0C] transition-colors inline-flex items-center gap-1"
             >
-              <span>← Return to cart to modify items</span>
+              <span>Return to cart to modify items</span>
             </Link>
           </div>
 

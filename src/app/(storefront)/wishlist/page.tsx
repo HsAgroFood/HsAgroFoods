@@ -497,7 +497,7 @@ export default function WishlistPage() {
                   href="/shop"
                   className="text-xs font-bold text-[#14361F] hover:text-[#E07B0C] underline transition-colors ml-1 hidden sm:inline"
                 >
-                  Continue Shopping →
+                  Continue Shopping
                 </Link>
               </div>
             </div>

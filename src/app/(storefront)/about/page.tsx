@@ -617,14 +617,14 @@ export default function AboutPage() {
                   onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
                   className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-[5px] border border-[#EDE4D9] bg-white text-xs font-bold text-[#14361F] disabled:opacity-40 hover:bg-[#FAF3EB] cursor-pointer transition-colors shadow-2xs active:scale-95"
                 >
-                  ← Previous
+                  Previous
                 </button>
                 <button
                   disabled={activeStep === PROCESS_STEPS.length - 1}
                   onClick={() => setActiveStep((prev) => Math.min(PROCESS_STEPS.length - 1, prev + 1))}
                   className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-[5px] bg-[#14361F] text-white text-xs font-bold disabled:opacity-40 hover:bg-[#0E2816] cursor-pointer transition-colors shadow-2xs active:scale-95"
                 >
-                  Next Step →
+                  Next Step
                 </button>
               </div>
             </div>

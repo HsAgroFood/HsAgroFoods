@@ -483,7 +483,7 @@ export function Navbar({
                                   onClick={() => setCategoriesDropdownOpen(false)}
                                   className="text-[10px] font-bold text-[#E07B0C] hover:underline"
                                 >
-                                  View All Categories →
+                                  View All Categories
                                 </Link>
                               </div>
 
@@ -716,7 +716,7 @@ export function Navbar({
                         onClick={() => setShowSuggestions(false)}
                         className="block text-center py-2.5 bg-[#FAF7F2] hover:bg-[#FDF0E6] text-xs font-bold text-[#14361F] border-t border-[#EDE4D9] transition-colors"
                       >
-                        View all results for &ldquo;{desktopSearchQuery}&rdquo; →
+                        View all results for &ldquo;{desktopSearchQuery}&rdquo;
                       </Link>
                     )}
                   </div>

@@ -4,6 +4,12 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Package, Truck, CheckCircle2, MapPin, MessageCircle, ArrowRight } from 'lucide-react'
 import { getEffectiveUser } from '@/lib/userAuth'
+import { syncOrderStatusesFromIthink } from '@/lib/ithink'
+import TrackShipmentModal from '@/components/shipping/TrackShipmentModal'
+import CopyAwb from '@/components/shipping/CopyAwb'
+import { Suspense } from 'react'
+import Image from 'next/image'
+import { OrdersFilterBar } from './_components/OrdersFilterBar'
 
 export const metadata = {
   title: 'My Orders & Live Tracking | HS AgroFoods',
@@ -33,7 +39,14 @@ function getStepIndex(status: string) {
   }
 }
 
-export default async function AccountOrdersPage() {
+const VALID_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+
+export default async function AccountOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; q?: string; sort?: string }>
+}) {
+  const filters = await searchParams
   const user = await getEffectiveUser()
   const hasAdminCookie = await isAdminAuthenticated()
 
@@ -104,6 +117,49 @@ export default async function AccountOrdersPage() {
     return false
   })
 
+  // Refresh shipped/delivered status from the courier for the orders being shown (throttled)
+  const syncPatches = await syncOrderStatusesFromIthink(orders, `account:${effectiveUserId || effectiveEmail || 'admin'}`)
+  for (const order of orders) Object.assign(order, syncPatches[order.id] || {})
+
+  // Product pictures for the order lines (order_items only stores the product id)
+  const productIds = [...new Set(orders.flatMap((order) => (order.order_items || []).map((item: any) => item.product_id)).filter(Boolean))]
+  const { data: productRows } = productIds.length
+    ? await adminClient.from('products').select('id, slug, featured_image_url').in('id', productIds)
+    : { data: [] as any[] }
+  const productById = new Map<string, { slug: string | null; image: string | null }>(
+    (productRows || []).map((product: any) => [product.id, { slug: product.slug, image: product.featured_image_url }])
+  )
+
+  // ── Filters (status / search / sort), driven by the URL so they survive refresh and sharing ──
+  const statusFilter = VALID_STATUSES.includes(filters.status || '') ? (filters.status as string) : 'all'
+  const searchTerm = (filters.q || '').trim().toLowerCase().slice(0, 80)
+  const sortKey = ['oldest', 'amount_high', 'amount_low'].includes(filters.sort || '') ? (filters.sort as string) : 'newest'
+
+  const statusCounts: Record<string, number> = { all: orders.length }
+  for (const status of VALID_STATUSES) statusCounts[status] = 0
+  for (const order of orders) {
+    if (statusCounts[order.order_status] !== undefined) statusCounts[order.order_status] += 1
+  }
+
+  const visibleOrders = orders
+    .filter((order) => {
+      if (statusFilter !== 'all' && order.order_status !== statusFilter) return false
+      if (!searchTerm) return true
+      const haystack = [
+        order.order_number,
+        ...(order.order_items || []).flatMap((item: any) => [item.product_name, item.variant_name]),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+      return haystack.includes(searchTerm)
+    })
+    .sort((a, b) => {
+      if (sortKey === 'oldest') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      if (sortKey === 'amount_high') return Number(b.total_amount) - Number(a.total_amount)
+      if (sortKey === 'amount_low') return Number(a.total_amount) - Number(b.total_amount)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header Card */}
@@ -130,6 +186,12 @@ export default async function AccountOrdersPage() {
         </div>
       </div>
 
+      {orders.length > 0 && (
+        <Suspense fallback={null}>
+          <OrdersFilterBar counts={statusCounts} />
+        </Suspense>
+      )}
+
       {!orders || orders.length === 0 ? (
         <div className="text-center py-12 sm:py-16 px-4 bg-white rounded-[5px] border border-[#E8DFD5] shadow-xs">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-[5px] bg-[#FDF9F3] border border-[#E8DFD5] text-[#E07B0C] flex items-center justify-center mx-auto mb-4">
@@ -147,9 +209,23 @@ export default async function AccountOrdersPage() {
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
+      ) : visibleOrders.length === 0 ? (
+        <div className="text-center py-10 sm:py-14 px-4 bg-white rounded-[5px] border border-[#E8DFD5] shadow-xs">
+          <div className="w-12 h-12 rounded-[5px] bg-[#FDF9F3] border border-[#E8DFD5] text-[#E07B0C] flex items-center justify-center mx-auto mb-3">
+            <Package className="w-6 h-6 opacity-60" />
+          </div>
+          <h3 className="font-serif text-base sm:text-lg font-bold text-[#14361F]">No orders match your filters</h3>
+          <p className="text-xs sm:text-sm text-[#8C7567] mt-1.5">Try a different status or search term.</p>
+          <Link
+            href="/account/orders"
+            className="inline-flex items-center gap-2 mt-4 px-5 py-2 border border-[#E07B0C] text-[#E07B0C] text-xs font-bold rounded-[5px] hover:bg-[#E07B0C] hover:text-white transition-colors"
+          >
+            Clear all filters
+          </Link>
+        </div>
       ) : (
         <div className="space-y-4 sm:space-y-6">
-          {orders.map((order) => {
+          {visibleOrders.map((order) => {
             const currentStep = getStepIndex(order.order_status)
             const isCancelled = order.order_status === 'cancelled'
             const shippingAddr = order.shipping_address || order.addresses
@@ -272,6 +348,33 @@ export default async function AccountOrdersPage() {
                   </div>
                 )}
 
+                {/* Courier & live shipment tracking (same view the admin sees) */}
+                {order.awb_number && !isCancelled && (
+                  <div className="p-3.5 sm:p-5 lg:p-6 bg-white border-b border-[#E8DFD5]/80">
+                    <div className="rounded-[5px] border border-[#F2E3CF] bg-[#FFF9F1] p-3.5 sm:p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-[#E07B0C]/10 text-[#E07B0C] flex items-center justify-center shrink-0">
+                          <Truck className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[10px] sm:text-[11px] uppercase font-bold tracking-wider text-[#8C7567] block">
+                            Shipment details
+                          </span>
+                          <h5 className="text-sm sm:text-base font-bold text-[#14361F] mt-0.5">
+                            {order.courier_name
+                              ? `Shipped via ${String(order.courier_name).replace(/\b\w/g, (c: string) => c.toUpperCase())}`
+                              : 'Shipment booked'}
+                          </h5>
+                          <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8C7567]">AWB</span>
+                            <CopyAwb awb={order.awb_number} />
+                          </div>
+                        </div>
+                      </div>
+                      <TrackShipmentModal orderId={order.id} awb={order.awb_number} variant="customer" />
+                    </div>
+                  </div>
+                )}
                 {/* Order Details: Items + Shipping Address */}
                 <div className="p-3.5 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
                   
@@ -282,8 +385,35 @@ export default async function AccountOrdersPage() {
                     </span>
 
                     <div className="divide-y divide-[#F2E8DC] border border-[#E8DFD5] rounded-[5px] overflow-hidden bg-[#FDF9F3]/40">
-                      {order.order_items?.map((item: any) => (
-                        <div key={item.id} className="p-3 sm:p-3.5 flex items-center justify-between gap-2.5">
+                      {order.order_items?.map((item: any) => {
+                        const product = productById.get(item.product_id)
+                        const thumb = (
+                          <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-[5px] overflow-hidden border border-[#E8DFD5] bg-[#FAF6F0]">
+                            {product?.image ? (
+                              <Image
+                                src={product.image}
+                                alt={item.product_name}
+                                fill
+                                sizes="64px"
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-[#C9B8A6]">
+                                <Package className="w-5 h-5" />
+                              </div>
+                            )}
+                          </div>
+                        )
+
+                        return (
+                        <div key={item.id} className="p-3 sm:p-3.5 flex items-center justify-between gap-3">
+                          {product?.slug ? (
+                            <Link href={`/product/${product.slug}`} className="shrink-0" aria-label={item.product_name}>
+                              {thumb}
+                            </Link>
+                          ) : (
+                            thumb
+                          )}
                           <div className="flex-1 min-w-0">
                             <h5 className="text-xs sm:text-sm font-bold text-[#14361F] truncate">
                               {item.product_name}
@@ -298,7 +428,8 @@ export default async function AccountOrdersPage() {
                             </span>
                           </div>
                         </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   </div>
 
@@ -325,7 +456,7 @@ export default async function AccountOrdersPage() {
 
                     {/* WhatsApp Help / Support Button */}
                     <a
-                      href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi HS AgroFoods, I need an update on my order #${order.order_number}.`)}`}
+                      href={`https://wa.me/919493184110?text=${encodeURIComponent(`Hi HS AgroFoods, I need an update on my order #${order.order_number}.`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-[5px] bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-emerald-800 text-xs font-bold transition-colors cursor-pointer"

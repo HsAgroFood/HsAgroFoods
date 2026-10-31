@@ -284,7 +284,6 @@ export function CartItemsList({
             href="/shop" 
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#E07B0C] hover:text-[#14361F] transition-colors group"
           >
-            <span className="group-hover:-translate-x-0.5 transition-transform">←</span>
             <span>Add more freshly ground spices &amp; powders</span>
           </Link>
         </div>

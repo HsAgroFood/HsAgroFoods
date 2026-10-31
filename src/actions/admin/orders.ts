@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
+import { cancelIthinkShipment, isIthinkConfigured } from '@/lib/ithink'
 
 const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
 const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded']
@@ -45,6 +46,27 @@ export async function updateOrderStatus(orderId: string, status: string) {
     return { success: false, error: 'Order not found.' }
   }
 
+  // Cancelling an order that already has a courier booking: cancel it with iThink FIRST.
+  // If iThink refuses (e.g. the parcel is already in transit) the order stays as it is, so we
+  // never end up with a cancelled order whose parcel is still on its way to the customer.
+  let cancelledWithIthink = false
+  if (
+    status === 'cancelled' &&
+    current.order_status !== 'cancelled' &&
+    current.awb_number &&
+    current.shipment_status === 'created' &&
+    isIthinkConfigured()
+  ) {
+    const cancelResult = await cancelIthinkShipment(current.awb_number)
+    if (!cancelResult.ok) {
+      return {
+        success: false,
+        error: `iThink did not cancel the shipment (${cancelResult.error}). The order was NOT cancelled.`
+      }
+    }
+    cancelledWithIthink = true
+  }
+
   const updateData: any = {
     order_status: status,
     updated_at: now,
@@ -60,6 +82,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
     updateData.cancelled_at = null
   } else if (status === 'cancelled') {
     updateData.cancelled_at = now
+    if (cancelledWithIthink) updateData.shipment_status = 'cancelled'
   } else {
     updateData.shipped_at = null
     updateData.delivered_at = null

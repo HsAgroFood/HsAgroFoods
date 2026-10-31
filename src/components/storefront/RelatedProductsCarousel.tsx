@@ -63,7 +63,7 @@ export function RelatedProductsCarousel({ products }: { products: ProductCardPro
             href="/shop"
             className="text-xs sm:text-sm font-bold text-[#E07B0C] hover:text-[#C86A08] hover:underline transition-colors"
           >
-            View All Spices →
+            View All Spices
           </Link>
 
           {/* Carousel Arrow Buttons */}

@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { defaultParcelFor } from '@/lib/shippingDefaults'
 
 export type ActionResult = {
   error?: string
@@ -471,6 +472,32 @@ export async function reorderProductImages(
 
 // ─── Product Variant CRUD ────────────────────────────────
 
+// Shipping parcel (weight kg, size cm) for a variant. Blank fields fall back to the
+// pack-size defaults so every variant always has usable numbers for courier booking.
+function readParcelFields(formData: FormData, variantName: string):
+  | { parcel: { weight_kg: number; length_cm: number; width_cm: number; height_cm: number } }
+  | { error: string } {
+  const defaults = defaultParcelFor(variantName)
+  const read = (key: keyof typeof defaults, max: number) => {
+    const raw = String(formData.get(key) ?? '').trim()
+    if (!raw) return defaults[key]
+    const n = Number(raw)
+    return Number.isFinite(n) && n > 0 && n <= max ? n : NaN
+  }
+
+  const parcel = {
+    weight_kg: read('weight_kg', 100),
+    length_cm: read('length_cm', 200),
+    width_cm: read('width_cm', 200),
+    height_cm: read('height_cm', 200),
+  }
+
+  if (Object.values(parcel).some((n) => Number.isNaN(n))) {
+    return { error: 'Parcel weight must be 0-100 kg and each dimension 0-200 cm.' }
+  }
+  return { parcel }
+}
+
 export async function createProductVariant(
   _prevState: ActionResult,
   formData: FormData
@@ -506,6 +533,9 @@ export async function createProductVariant(
     return { error: 'Stock quantity must be a non-negative whole number.' }
   }
 
+  const parcelResult = readParcelFields(formData, variantName)
+  if ('error' in parcelResult) return { error: parcelResult.error }
+
   const { error } = await supabase.from('product_variants').insert({
     product_id: productId,
     variant_name: variantName,
@@ -513,6 +543,7 @@ export async function createProductVariant(
     original_price: parsedOriginalPrice,
     stock_quantity: parsedStockQuantity,
     is_active: isActive,
+    ...parcelResult.parcel,
   })
 
   if (error) {
@@ -560,6 +591,9 @@ export async function updateProductVariant(
     return { error: 'Stock quantity must be a non-negative whole number.' }
   }
 
+  const parcelResult = readParcelFields(formData, variantName)
+  if ('error' in parcelResult) return { error: parcelResult.error }
+
   const { error } = await supabase
     .from('product_variants')
     .update({
@@ -568,6 +602,7 @@ export async function updateProductVariant(
       original_price: parsedOriginalPrice,
       stock_quantity: parsedStockQuantity,
       is_active: isActive,
+      ...parcelResult.parcel,
     })
     .eq('id', id)
 

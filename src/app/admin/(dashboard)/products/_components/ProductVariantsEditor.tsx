@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus, Trash2, Edit2, Check, X, Loader2 } from 'lucide-react'
 import { createProductVariant, updateProductVariant, deleteProductVariant } from '@/actions/products'
+import { defaultParcelFor } from '@/lib/shippingDefaults'
 
 type Variant = {
   id: string
@@ -13,6 +14,10 @@ type Variant = {
   original_price: number | null
   stock_quantity: number
   is_active: boolean
+  weight_kg?: number | string | null
+  length_cm?: number | string | null
+  width_cm?: number | string | null
+  height_cm?: number | string | null
 }
 
 export function ProductVariantsEditor({
@@ -34,6 +39,10 @@ export function ProductVariantsEditor({
     original_price: '',
     stock_quantity: '0',
     is_active: true,
+    weight_kg: '',
+    length_cm: '',
+    width_cm: '',
+    height_cm: '',
   })
 
   const resetForm = () => {
@@ -43,6 +52,10 @@ export function ProductVariantsEditor({
       original_price: '',
       stock_quantity: '0',
       is_active: true,
+      weight_kg: '',
+      length_cm: '',
+      width_cm: '',
+      height_cm: '',
     })
     setIsAdding(false)
     setEditingId(null)
@@ -55,6 +68,10 @@ export function ProductVariantsEditor({
       original_price: variant.original_price ? variant.original_price.toString() : '',
       stock_quantity: variant.stock_quantity.toString(),
       is_active: variant.is_active,
+      weight_kg: variant.weight_kg != null ? String(variant.weight_kg) : '',
+      length_cm: variant.length_cm != null ? String(variant.length_cm) : '',
+      width_cm: variant.width_cm != null ? String(variant.width_cm) : '',
+      height_cm: variant.height_cm != null ? String(variant.height_cm) : '',
     })
     setEditingId(variant.id)
     setIsAdding(false)
@@ -82,6 +99,10 @@ export function ProductVariantsEditor({
       fd.append('price', formData.price)
       if (formData.original_price) fd.append('original_price', formData.original_price)
       fd.append('stock_quantity', formData.stock_quantity)
+      fd.append('weight_kg', formData.weight_kg)
+      fd.append('length_cm', formData.length_cm)
+      fd.append('width_cm', formData.width_cm)
+      fd.append('height_cm', formData.height_cm)
       if (formData.is_active) fd.append('is_active', 'on')
       if (editingId) fd.append('id', editingId)
 
@@ -168,7 +189,33 @@ export function ProductVariantsEditor({
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
-            <div className="md:col-span-5 flex items-center justify-between mt-2">
+            <div className="md:col-span-5 rounded-md border border-gray-200 bg-white p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Shipping parcel (used for courier booking)</span>
+                <span className="text-xs text-gray-400">Leave blank to auto-fill from the pack size</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {([
+                  ['weight_kg', 'Weight (kg)', '0.01'],
+                  ['length_cm', 'Length (cm)', '0.1'],
+                  ['width_cm', 'Width (cm)', '0.1'],
+                  ['height_cm', 'Height (cm)', '0.1'],
+                ] as const).map(([key, label, step]) => (
+                  <div key={key}>
+                    <label className="block text-xs font-medium text-gray-600">{label}</label>
+                    <input
+                      type="number"
+                      min="0.01"
+                      step={step}
+                      value={formData[key]}
+                      placeholder={String(defaultParcelFor(formData.variant_name)[key])}
+                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>            <div className="md:col-span-5 flex items-center justify-between mt-2">
               <label className="flex items-center">
                 <input
                   type="checkbox"
@@ -209,6 +256,7 @@ export function ProductVariantsEditor({
                 <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Name</th>
                 <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Price</th>
                 <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Stock</th>
+                <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Parcel</th>
                 <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                 <th className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">Actions</span></th>
               </tr>
@@ -229,6 +277,11 @@ export function ProductVariantsEditor({
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     {variant.stock_quantity}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {variant.weight_kg != null
+                      ? `${Number(variant.weight_kg)} kg · ${Number(variant.length_cm)}×${Number(variant.width_cm)}×${Number(variant.height_cm)} cm`
+                      : '-'}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     {variant.is_active ? (

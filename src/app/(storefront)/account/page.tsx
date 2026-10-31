@@ -173,7 +173,7 @@ export default async function AccountProfilePage() {
                 href="/account/addresses"
                 className="text-xs font-bold text-[#E07B0C] hover:underline"
               >
-                Manage →
+                Manage
               </Link>
             </div>
 

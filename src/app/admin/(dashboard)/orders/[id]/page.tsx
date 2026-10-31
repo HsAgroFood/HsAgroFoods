@@ -1,8 +1,12 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, User, MapPin, Package, CreditCard } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowLeft, User, MapPin, Package, CreditCard, ExternalLink } from 'lucide-react'
 import { OrderStatusManager } from '../_components/OrderStatusManager'
+import { ShipmentPanel } from '../_components/ShipmentPanel'
+import { getOrderParcel } from '@/lib/orderParcel'
+import { isIthinkConfigured, isCodPayment, syncOrderStatusesFromIthink } from '@/lib/ithink'
 
 export const metadata = {
   title: 'Order Details | Admin Dashboard',
@@ -31,6 +35,28 @@ export default async function AdminOrderDetailsPage({
 
   if (!order) {
     notFound()
+  }
+
+  // Pull the courier's live status into the order (throttled), then reflect it below
+  const syncPatches = await syncOrderStatusesFromIthink([order], `admin:${orderId}`)
+  Object.assign(order, syncPatches[order.id] || {})
+
+  const defaultParcel = await getOrderParcel(order.id)
+
+  // Product pictures + links for the order lines (order_items only stores the product id)
+  const productIds = [...new Set((order.order_items || []).map((item: any) => item.product_id).filter(Boolean))] as string[]
+  const { data: productRows } = productIds.length
+    ? await supabase.from('products').select('id, slug, featured_image_url').in('id', productIds)
+    : { data: [] as any[] }
+  const productById = new Map<string, { slug: string | null; image: string | null }>(
+    (productRows || []).map((product: any) => [product.id, { slug: product.slug, image: product.featured_image_url }])
+  )
+
+  let shipmentBlockedReason: string | null = null
+  if (order.order_status === 'cancelled') {
+    shipmentBlockedReason = 'This order is cancelled, so no shipment can be created.'
+  } else if (!isCodPayment(order.payment_method) && order.payment_status !== 'paid') {
+    shipmentBlockedReason = 'This is an online order and the payment is not confirmed yet. Create the shipment after it is paid.'
   }
 
   return (
@@ -142,15 +168,48 @@ export default async function AdminOrderDetailsPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {order.order_items?.map((item: any) => (
+                  {order.order_items?.map((item: any) => {
+                    const product = productById.get(item.product_id)
+                    return (
                     <tr key={item.id} className="hover:bg-stone-50/50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-stone-900">{item.product_name}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-12 h-12 shrink-0 rounded-lg overflow-hidden border border-stone-200 bg-stone-100">
+                            {product?.image ? (
+                              <Image src={product.image} alt={item.product_name} fill sizes="48px" className="object-cover" />
+                            ) : (
+                              <div className="absolute inset-0 flex items-center justify-center text-stone-300">
+                                <Package className="w-5 h-5" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-stone-900">{item.product_name}</p>
+                            {item.product_id && (
+                              <div className="mt-0.5 flex items-center gap-3 text-xs">
+                                {product?.slug && (
+                                  <Link
+                                    href={`/product/${product.slug}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 font-medium text-orange-600 hover:text-orange-700"
+                                  >
+                                    <ExternalLink className="w-3 h-3" />
+                                    View on site
+                                  </Link>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
                       <td className="px-6 py-4 text-stone-600">{item.variant_name}</td>
                       <td className="px-6 py-4 text-stone-600">₹{item.price_at_purchase}</td>
                       <td className="px-6 py-4 text-stone-600">{item.quantity}</td>
                       <td className="px-6 py-4 font-medium text-stone-900 text-right">₹{item.line_total}</td>
                     </tr>
-                  ))}
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -165,6 +224,27 @@ export default async function AdminOrderDetailsPage({
             orderId={order.id} 
             initialOrderStatus={order.order_status}
             initialPaymentStatus={order.payment_status}
+          />
+
+          <ShipmentPanel
+            orderId={order.id}
+            defaults={defaultParcel}
+            shipmentStatus={order.shipment_status ?? null}
+            awbNumber={order.awb_number ?? null}
+            courierName={order.courier_name ?? null}
+            shipmentError={order.shipment_error ?? null}
+            booked={
+              order.shipment_weight_kg
+                ? {
+                    weight_kg: Number(order.shipment_weight_kg),
+                    length_cm: Number(order.shipment_length_cm),
+                    width_cm: Number(order.shipment_width_cm),
+                    height_cm: Number(order.shipment_height_cm),
+                  }
+                : null
+            }
+            configured={isIthinkConfigured()}
+            blockedReason={shipmentBlockedReason}
           />
 
           <div className="bg-white rounded-2xl shadow-sm border border-stone-200/60 p-6">

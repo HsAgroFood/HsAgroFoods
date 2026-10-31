@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { OrdersTable } from './_components/OrdersTable'
+import { syncOrderStatusesFromIthink } from '@/lib/ithink'
 
 export const metadata = {
   title: 'Orders | Admin Dashboard',
@@ -19,6 +20,10 @@ export default async function AdminOrdersPage() {
   if (error) {
     console.error('Error fetching admin orders:', error?.message || error)
   }
+
+  // Refresh shipped/delivered status from the courier (throttled to once a minute)
+  const syncPatches = await syncOrderStatusesFromIthink(orders || [], 'admin:all')
+  for (const order of orders || []) Object.assign(order, syncPatches[order.id] || {})
 
   return (
     <div className="space-y-6">
