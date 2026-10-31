@@ -16,7 +16,7 @@ export default async function AdminDashboardLayout({
 
   return (
     <AdminNavProvider>
-      <div className="flex h-screen overflow-hidden bg-stone-50">
+      <div className="flex h-screen overflow-hidden bg-[#FAF7F2]">
         <AdminSidebar />
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <AdminHeader />

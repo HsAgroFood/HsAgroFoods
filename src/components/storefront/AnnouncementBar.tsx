@@ -36,7 +36,7 @@ export async function AnnouncementBar() {
       : [announcement.message]
 
   return (
-    <div className="bg-gradient-to-r from-[#FCE8CE] via-[#FDF1E0] to-[#FCE8CE] text-[#9A4406] py-2 px-2 sm:px-4 text-center border-b border-[#F0D5B4] overflow-hidden">
+    <div className="relative z-40 bg-gradient-to-r from-[#FCE8CE] via-[#FDF1E0] to-[#FCE8CE] text-[#9A4406] py-2 px-2 sm:px-4 text-center border-b border-[#F0D5B4] overflow-hidden">
       {/* Mobile: Seamless Continuous Infinite Marquee */}
       <AnnouncementMobileSlider slides={mobileSlides} />
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useTransition } from 'react'
-import { X, Save, MapPin, Check, ChevronDown, Loader2 } from 'lucide-react'
+import { X, Save, MapPin, ChevronDown, Loader2 } from 'lucide-react'
 import { addAddress, updateAddress } from '@/actions/addresses'
 
 type Address = {
@@ -36,7 +36,7 @@ export function AddressForm({
 
   // Controlled form values for auto-fill
   const [city, setCity] = useState(address?.city || '')
-  const [selectedState, setSelectedState] = useState(address?.state || 'Uttar Pradesh')
+  const [selectedState, setSelectedState] = useState(address?.state || 'Maharashtra')
   const [postalCode, setPostalCode] = useState(address?.postal_code || '')
   const [availableLocalities, setAvailableLocalities] = useState<string[]>(
     address?.city ? [address.city] : []
@@ -70,7 +70,7 @@ export function AddressForm({
       }
 
       // Match state with INDIAN_STATES
-      let matchedState = 'Uttar Pradesh'
+      let matchedState = 'Maharashtra'
       if (data.state) {
         const found = INDIAN_STATES.find(
           (st) =>
@@ -150,33 +150,34 @@ export function AddressForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         className="fixed inset-0"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      <div className="relative bg-white rounded-3xl border border-stone-200/90 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl z-10">
+      <div className="relative bg-white rounded-[5px] border border-[#E8DFD5] w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl z-10 overflow-hidden">
         {/* Modal Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-5 bg-white border-b border-stone-100">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FDF9F3] border border-[#E8DFD5] text-[#431D0D] flex items-center justify-center shadow-xs">
-              <MapPin className="w-5 h-5" />
+        <div className="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 bg-[#FAF3EB] border-b border-[#E8DFD5]">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[5px] bg-white border border-[#E8DFD5] text-[#E07B0C] flex items-center justify-center shadow-2xs">
+              <MapPin className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-lg font-serif font-bold text-stone-900">
+              <h2 className="text-sm sm:text-base font-serif font-bold text-[#14361F]">
                 {address ? 'Edit Delivery Address' : 'Add New Delivery Address'}
               </h2>
-              <p className="text-xs text-stone-500">
-                {address ? 'Update your shipping location' : 'Enter your complete address for accurate delivery'}
+              <p className="text-[11px] text-[#8C7567]">
+                {address ? 'Update your shipping details' : 'Enter complete address for accurate delivery'}
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 text-stone-400 hover:text-stone-700 hover:bg-stone-100 rounded-xl transition-colors cursor-pointer"
+            type="button"
+            className="p-1.5 text-[#8C7567] hover:text-[#14361F] hover:bg-white rounded-[5px] transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -184,18 +185,18 @@ export function AddressForm({
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
           {error && (
-            <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+            <div className="p-3 rounded-[5px] bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
             {/* Full Name */}
             <div className="sm:col-span-2">
-              <label htmlFor="full_name" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                Full Name <span className="text-red-500">*</span>
+              <label htmlFor="full_name" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider mb-1">
+                Full Name <span className="text-[#E07B0C]">*</span>
               </label>
               <input
                 type="text"
@@ -205,17 +206,17 @@ export function AddressForm({
                 autoComplete="name"
                 required
                 placeholder="e.g. Rahul Sharma"
-                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
+                className="w-full px-3.5 py-2 sm:py-2.5 rounded-[5px] border border-[#D4C7BA] bg-white text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] transition-all"
               />
             </div>
 
             {/* Mobile Number */}
             <div className="sm:col-span-2">
-              <label htmlFor="phone" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                10-Digit Mobile Number <span className="text-red-500">*</span>
+              <label htmlFor="phone" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider mb-1">
+                10-Digit Mobile Number <span className="text-[#E07B0C]">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-stone-400">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#8C7567]">
                   +91
                 </span>
                 <input
@@ -228,15 +229,15 @@ export function AddressForm({
                   maxLength={10}
                   pattern="[6-9][0-9]{9}"
                   placeholder="9876543210"
-                  className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all tracking-wider font-mono"
+                  className="w-full pl-11 pr-3.5 py-2 sm:py-2.5 rounded-[5px] border border-[#D4C7BA] bg-white text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] transition-all tracking-wider font-mono"
                 />
               </div>
             </div>
 
             {/* Address Line 1 */}
             <div className="sm:col-span-2">
-              <label htmlFor="address_line_1" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                House / Flat No., Building & Street <span className="text-red-500">*</span>
+              <label htmlFor="address_line_1" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider mb-1">
+                House / Flat No., Building & Street <span className="text-[#E07B0C]">*</span>
               </label>
               <input
                 type="text"
@@ -246,14 +247,14 @@ export function AddressForm({
                 autoComplete="address-line1"
                 required
                 placeholder="e.g. Flat 104, Sunrise Heights, Mall Road"
-                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
+                className="w-full px-3.5 py-2 sm:py-2.5 rounded-[5px] border border-[#D4C7BA] bg-white text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] transition-all"
               />
             </div>
 
             {/* Address Line 2 / Landmark */}
             <div className="sm:col-span-2">
-              <label htmlFor="address_line_2" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                Area / Landmark <span className="text-stone-400 font-normal lowercase">(optional)</span>
+              <label htmlFor="address_line_2" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider mb-1">
+                Area / Landmark <span className="text-[#8C7567] font-normal lowercase">(optional)</span>
               </label>
               <input
                 type="text"
@@ -261,20 +262,20 @@ export function AddressForm({
                 name="address_line_2"
                 defaultValue={address?.address_line_2 || ''}
                 placeholder="e.g. Near City Bank or Opp. Post Office"
-                className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all"
+                className="w-full px-3.5 py-2 sm:py-2.5 rounded-[5px] border border-[#D4C7BA] bg-white text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] transition-all"
               />
             </div>
 
-            {/* PIN Code (First, to drive Area & State selection) */}
+            {/* PIN Code */}
             <div className="sm:col-span-2">
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="postal_code" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider">
-                  6-Digit PIN Code <span className="text-red-500">*</span>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="postal_code" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider">
+                  6-Digit PIN Code <span className="text-[#E07B0C]">*</span>
                 </label>
                 {isVerifyingPincode && (
-                  <span className="text-[11px] text-[#431D0D] flex items-center gap-1 font-medium">
+                  <span className="text-[10px] sm:text-[11px] text-[#E07B0C] flex items-center gap-1 font-medium">
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    Fetching Official Postal Localities...
+                    Fetching Localities...
                   </span>
                 )}
               </div>
@@ -297,40 +298,40 @@ export function AddressForm({
                   required
                   maxLength={6}
                   placeholder="221001"
-                  className={`w-full px-4 py-2.5 rounded-xl border bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 transition-all tracking-widest font-mono ${
+                  className={`w-full px-3.5 py-2 sm:py-2.5 rounded-[5px] border text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 transition-all tracking-widest font-mono ${
                     pincodeStatus.status === 'valid'
-                      ? 'border-emerald-400 focus:ring-emerald-500/20 focus:border-emerald-500'
+                      ? 'border-emerald-400 focus:ring-emerald-500/20 focus:border-emerald-500 bg-emerald-50/20'
                       : pincodeStatus.status === 'invalid'
-                      ? 'border-red-400 focus:ring-red-500/20 focus:border-red-500'
-                      : 'border-stone-200 focus:ring-[#431D0D]/20 focus:border-[#431D0D]'
+                      ? 'border-red-400 focus:ring-red-500/20 focus:border-red-500 bg-red-50/20'
+                      : 'border-[#D4C7BA] focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] bg-white'
                   }`}
                 />
               </div>
 
               {pincodeStatus.status === 'valid' && pincodeStatus.location && (
-                <p className="mt-1.5 text-xs font-medium text-emerald-700 flex items-center gap-1 animate-in fade-in duration-200">
+                <p className="mt-1 text-[11px] text-emerald-700 flex items-center gap-1 animate-in fade-in duration-200">
                   <span>✅</span>
                   <span>Verified Postal Area: <strong>{pincodeStatus.location}</strong></span>
                 </p>
               )}
 
               {pincodeStatus.status === 'invalid' && (
-                <p className="mt-1.5 text-xs font-medium text-red-600 flex items-center gap-1 animate-in fade-in duration-200">
+                <p className="mt-1 text-[11px] text-red-600 flex items-center gap-1 animate-in fade-in duration-200">
                   <span>⚠️</span>
-                  <span>{pincodeStatus.message || 'Invalid Indian Postal PIN code. Please enter a valid PIN code.'}</span>
+                  <span>{pincodeStatus.message || 'Invalid Indian Postal PIN code.'}</span>
                 </p>
               )}
             </div>
 
-            {/* City / Area Dropdown (Amazon Model) */}
+            {/* City / Area Dropdown */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="city" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider">
-                  City / Area / Town <span className="text-red-500">*</span>
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="city" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider">
+                  City / Area <span className="text-[#E07B0C]">*</span>
                 </label>
                 {availableLocalities.length > 0 && (
-                  <span className="text-[10px] text-emerald-700 font-semibold uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    {availableLocalities.length} Verified Areas
+                  <span className="text-[9px] sm:text-[10px] text-emerald-700 font-semibold uppercase tracking-wider bg-emerald-50 px-1.5 py-0.5 rounded-[3px] border border-emerald-200">
+                    {availableLocalities.length} Areas
                   </span>
                 )}
               </div>
@@ -343,7 +344,7 @@ export function AddressForm({
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     required
-                    className="w-full appearance-none px-4 py-2.5 rounded-xl border border-emerald-300 bg-emerald-50/20 text-stone-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all pr-10 cursor-pointer shadow-xs"
+                    className="w-full appearance-none px-3.5 py-2 sm:py-2.5 rounded-[5px] border border-emerald-300 bg-emerald-50/20 text-[#14361F] text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all pr-9 cursor-pointer"
                   >
                     {availableLocalities.map((loc) => (
                       <option key={loc} value={loc}>
@@ -351,7 +352,7 @@ export function AddressForm({
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-emerald-600 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-emerald-600 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               ) : (
                 <input
@@ -363,21 +364,21 @@ export function AddressForm({
                   required
                   placeholder={
                     isVerifyingPincode
-                      ? 'Fetching official areas...'
+                      ? 'Fetching areas...'
                       : postalCode.length === 6
-                      ? 'Enter valid PIN above to select area'
-                      : 'Enter 6-digit PIN code above first'
+                      ? 'Enter valid PIN above to select'
+                      : 'Enter PIN above first'
                   }
                   disabled={postalCode.length < 6}
-                  className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3.5 py-2 sm:py-2.5 rounded-[5px] border border-[#D4C7BA] bg-[#FAF3EB]/50 text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               )}
             </div>
 
             {/* State */}
             <div>
-              <label htmlFor="state" className="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
-                State <span className="text-red-500">*</span>
+              <label htmlFor="state" className="block text-[11px] sm:text-xs font-bold text-[#14361F] uppercase tracking-wider mb-1">
+                State <span className="text-[#E07B0C]">*</span>
               </label>
               <div className="relative">
                 <select
@@ -386,7 +387,7 @@ export function AddressForm({
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
                   required
-                  className="w-full appearance-none px-4 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#431D0D]/20 focus:border-[#431D0D] focus:bg-white transition-all pr-10 cursor-pointer"
+                  className="w-full appearance-none px-3.5 py-2 sm:py-2.5 rounded-[5px] border border-[#D4C7BA] bg-white text-[#14361F] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] transition-all pr-9 cursor-pointer"
                 >
                   {INDIAN_STATES.map((st) => (
                     <option key={st} value={st}>
@@ -394,20 +395,20 @@ export function AddressForm({
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="w-4 h-4 text-stone-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ChevronDown className="w-4 h-4 text-[#8C7567] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
             {/* Is Default Checkbox */}
-            <div className="sm:col-span-2 pt-2">
-              <label className="flex items-center gap-3 cursor-pointer select-none">
+            <div className="sm:col-span-2 pt-1">
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   name="is_default"
                   defaultChecked={address?.is_default}
-                  className="h-4 w-4 rounded text-[#431D0D] focus:ring-[#431D0D] border-stone-300 cursor-pointer"
+                  className="h-4 w-4 rounded-[3px] text-[#E07B0C] focus:ring-[#E07B0C] border-[#D4C7BA] cursor-pointer"
                 />
-                <span className="text-xs sm:text-sm font-medium text-stone-800">
+                <span className="text-xs font-medium text-[#14361F]">
                   Set as my default shipping address for faster checkout
                 </span>
               </label>
@@ -415,23 +416,23 @@ export function AddressForm({
           </div>
 
           {/* Modal Actions */}
-          <div className="pt-6 border-t border-stone-100 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-[#E8DFD5] flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-stone-600 hover:bg-stone-100 rounded-xl transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs sm:text-sm font-semibold text-[#8C7567] hover:bg-[#FAF3EB] rounded-[5px] transition-colors cursor-pointer border border-transparent"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#431D0D] to-[#E07B0C] text-white text-xs sm:text-sm font-bold rounded-xl hover:from-[#2D1409] hover:to-[#431D0D] shadow-md shadow-[#431D0D]/20 transition-all cursor-pointer disabled:opacity-70"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2 bg-gradient-to-r from-[#E07B0C] to-[#D1491B] hover:from-[#2D1409] hover:to-[#E07B0C] text-white text-xs sm:text-sm font-bold rounded-[5px] shadow-sm transition-all cursor-pointer disabled:opacity-70 active:scale-98"
             >
               {isPending ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <Save className="w-4 h-4 text-[#F09819]" />
+                <Save className="w-3.5 h-3.5" />
               )}
               <span>{address ? 'Save Changes' : 'Save Address'}</span>
             </button>

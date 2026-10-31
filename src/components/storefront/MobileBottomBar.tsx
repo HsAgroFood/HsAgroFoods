@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Sparkles, Search, ShoppingBag, X, ArrowRight, Loader2, Package, User, LayoutGrid } from 'lucide-react'
+import { Home, Store, Search, ShoppingBag, X, ArrowRight, Loader2, Package, User, LayoutGrid } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
+import { FEATURED_DROPDOWN_RANGES } from './Navbar'
 
 const POPULAR_SEARCHES = [
   'Red Chilly Powder',
@@ -18,11 +19,14 @@ const POPULAR_SEARCHES = [
 type CategoryItem = {
   name: string
   slug: string
+  description?: string | null
+  image_url?: string | null
 }
 
 const DEFAULT_CATEGORIES: CategoryItem[] = [
   { name: 'Ground Spices', slug: 'ground-spices' },
-  { name: 'Blended Spices', slug: 'blended-spices' },
+  { name: 'Blended Masale', slug: 'blended-spices' },
+  { name: 'Dehydrated Veg & Fruit Powders', slug: 'dehydrated-powders' },
   { name: 'Whole Spices (Khade Masale)', slug: 'whole-spices' },
 ]
 
@@ -254,49 +258,77 @@ export function MobileBottomBar({
             </div>
 
             {/* Categories List */}
-            <div className="py-4 space-y-2.5">
+            <div className="py-3 space-y-2">
+              {/* All Products */}
               <Link
                 href="/shop"
                 onClick={() => setCategoriesOpen(false)}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#E8DFD5] hover:border-[#431D0D]/40 shadow-xs active:scale-[0.99] transition-all"
+                className="flex items-center justify-between p-2.5 rounded-[5px] bg-white border border-[#E8DFD5] hover:border-[#E07B0C]/40 shadow-2xs active:scale-[0.99] transition-all group"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FDF9F3] border border-[#E8DFD5] flex items-center justify-center text-lg">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-[5px] bg-[#FAF5EE] border border-[#E8DFD5] flex items-center justify-center shrink-0 shadow-2xs text-lg">
                     ✨
                   </div>
-                  <div>
-                    <span className="text-sm font-bold text-[#14361F] block">All Spices</span>
-                    <span className="text-xs text-[#8C766E]">View our complete spice catalogue</span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs sm:text-sm font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors truncate">
+                        All Products
+                      </span>
+                      <span className="text-[8.5px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1.5 py-0.5 rounded-[3px] shrink-0">
+                        Full Catalog
+                      </span>
+                    </div>
+                    <span className="text-[10.5px] text-[#8C766E] truncate block mt-0.5">
+                      Explore complete 14+ pure spices & powders collection
+                    </span>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-stone-400" />
+                <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-[#E07B0C] group-hover:translate-x-0.5 transition-all shrink-0 ml-1.5" />
               </Link>
 
-              {resolvedCategories.map((cat) => (
+              {FEATURED_DROPDOWN_RANGES.map((range) => (
                 <Link
-                  key={cat.slug}
-                  href={`/shop?category=${cat.slug}`}
+                  key={range.name}
+                  href={range.href || '/shop'}
                   onClick={() => setCategoriesOpen(false)}
-                  className="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-[#E8DFD5] hover:border-[#431D0D]/40 shadow-xs active:scale-[0.99] transition-all"
+                  className="flex items-center justify-between p-2.5 rounded-[5px] bg-white border border-[#E8DFD5] hover:border-[#E07B0C]/40 shadow-2xs active:scale-[0.99] transition-all group"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center text-lg">
-                      {cat.slug.includes('ground') ? '🟡' : cat.slug.includes('blend') ? '🥘' : '🌿'}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="relative w-10 h-10 rounded-[5px] bg-[#FAF5EE] border border-[#E8DFD5] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                      <Image
+                        src={range.image}
+                        alt={range.name}
+                        fill
+                        sizes="40px"
+                        className="object-cover group-hover:scale-105 transition-transform"
+                      />
                     </div>
-                    <div>
-                      <span className="text-sm font-bold text-[#14361F] block">{cat.name}</span>
-                      <span className="text-xs text-[#8C766E]">
-                        {cat.slug.includes('ground')
-                          ? 'Pure cold-ground turmeric, mirch & cumin'
-                          : cat.slug.includes('blend')
-                          ? 'Garam masala & signature royal blends'
-                          : 'Aromatic whole cardamom, cloves & pepper'}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs sm:text-sm font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors truncate">
+                          {range.name}
+                        </span>
+                        <span className="text-[8.5px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1.5 py-0.5 rounded-[3px] shrink-0">
+                          {range.badge}
+                        </span>
+                      </div>
+                      <span className="text-[10.5px] text-[#8C766E] truncate block mt-0.5">
+                        {range.subtext}
                       </span>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-stone-400" />
+                  <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-[#E07B0C] group-hover:translate-x-0.5 transition-all shrink-0 ml-1.5" />
                 </Link>
               ))}
+
+              <Link
+                href="/shop"
+                onClick={() => setCategoriesOpen(false)}
+                className="flex items-center justify-center gap-2 p-2.5 rounded-[5px] bg-[#14361F] text-white text-xs font-bold transition-all shadow-xs mt-2"
+              >
+                <span>Browse All Categories & Products</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>
@@ -307,7 +339,7 @@ export function MobileBottomBar({
         aria-label="Mobile Navigation"
         className="fixed bottom-3 inset-x-3 z-40 lg:hidden transform-gpu will-change-transform select-none"
       >
-        <div className="bg-[#1C0C05]/90 backdrop-blur-xl border border-white/15 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-1.5 py-1.5 flex items-center justify-between">
+        <div className="bg-[#1C0C05]/90 backdrop-blur-xl border border-white/15 rounded-[5px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-1.5 py-1.5 flex items-center justify-between">
           
           {/* 1. Home */}
           <Link
@@ -317,7 +349,7 @@ export function MobileBottomBar({
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }
             }}
-            className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-colors duration-150 active:opacity-75 ${
+            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-[5px] transition-colors duration-150 active:opacity-75 ${
               isHome && !searchOpen && !categoriesOpen
                 ? 'text-[#F7B733] bg-white/10'
                 : 'text-white/70 hover:text-white'
@@ -334,7 +366,7 @@ export function MobileBottomBar({
               setCategoriesOpen(!categoriesOpen)
               setSearchOpen(false)
             }}
-            className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-colors duration-150 active:opacity-75 cursor-pointer ${
+            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-[5px] transition-colors duration-150 active:opacity-75 cursor-pointer ${
               categoriesOpen
                 ? 'text-[#F7B733] bg-white/10'
                 : 'text-white/70 hover:text-white'
@@ -347,20 +379,20 @@ export function MobileBottomBar({
           {/* 3. Products */}
           <Link
             href="/shop"
-            className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-colors duration-150 active:opacity-75 ${
+            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-[5px] transition-colors duration-150 active:opacity-75 ${
               isShop && !searchOpen && !categoriesOpen
                 ? 'text-[#F7B733] bg-white/10'
                 : 'text-white/70 hover:text-white'
             }`}
           >
-            <Sparkles className="w-5 h-5 mb-0.5" />
-            <span className="text-[10px] font-medium tracking-tight">Products</span>
+            <Store className="w-5 h-5 mb-0.5" />
+            <span className="text-[10px] font-medium tracking-tight">Shop</span>
           </Link>
 
           {/* 4. Cart */}
           <Link
             href="/cart"
-            className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-colors duration-150 active:opacity-75 ${
+            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-[5px] transition-colors duration-150 active:opacity-75 ${
               isCart
                 ? 'text-[#F7B733] bg-white/10'
                 : 'text-white/70 hover:text-white'
@@ -380,7 +412,7 @@ export function MobileBottomBar({
           {/* 5. Profile Tab */}
           <Link
             href="/account"
-            className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-colors duration-150 active:opacity-75 ${
+            className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-[5px] transition-colors duration-150 active:opacity-75 ${
               pathname?.startsWith('/account') || pathname === '/login'
                 ? 'text-[#F7B733] bg-white/10'
                 : 'text-white/70 hover:text-white'

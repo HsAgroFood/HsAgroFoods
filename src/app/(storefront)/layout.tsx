@@ -4,9 +4,13 @@ import { CartProvider } from '@/contexts/CartContext'
 import { getCartCount } from '@/actions/cart'
 import { AnnouncementBar } from '@/components/storefront/AnnouncementBar'
 import { FloatingContact } from '@/components/storefront/FloatingContact'
+import { ScrollToTop } from '@/components/storefront/ScrollToTop'
 import { MobileBottomBar } from '@/components/storefront/MobileBottomBar'
+import { PageTransitionLoader } from '@/components/storefront/PageTransitionLoader'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getEffectiveUser } from '@/lib/userAuth'
+import { FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 
 export const metadata = {
   title: {
@@ -23,16 +27,20 @@ export default async function StorefrontLayout({
 }) {
   let cartCount = 0
   let isLoggedIn = false
-  let currentUser: { name: string; email: string } | null = null
-  let categories: { name: string; slug: string }[] = []
+  let currentUser: { name: string; email: string; role?: string } | null = null
+  let categories: { name: string; slug: string }[] = FALLBACK_CATEGORIES.map((c) => ({
+    name: c.name,
+    slug: c.slug,
+  }))
 
   try {
     try {
-      const supabase = await createClient()
-      const { data } = await supabase
+      const adminClient = createAdminClient()
+      const { data } = await adminClient
         .from('categories')
-        .select('name, slug')
+        .select('name, slug, description, image_url')
         .eq('is_active', true)
+        .not('slug', 'like', '__system_%')
         .order('name')
       if (data && data.length > 0) {
         categories = data
@@ -49,6 +57,7 @@ export default async function StorefrontLayout({
       currentUser = {
         name: authUser.full_name,
         email: authUser.email,
+        role: authUser.role,
       }
     }
   } catch {
@@ -63,7 +72,9 @@ export default async function StorefrontLayout({
         <main className="flex-grow">{children}</main>
         <Footer />
         <FloatingContact />
+        <ScrollToTop />
         <MobileBottomBar categories={categories} />
+        <PageTransitionLoader />
       </div>
     </CartProvider>
   )

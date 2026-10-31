@@ -12,7 +12,7 @@ import {
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
+  title: 'Dashboard | Admin | HS AgroFoods',
 }
 
 export const dynamic = 'force-dynamic'
@@ -59,11 +59,11 @@ async function getStats() {
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-700',
-  processing: 'bg-blue-100 text-blue-700',
-  shipped: 'bg-indigo-100 text-indigo-700',
-  delivered: 'bg-green-100 text-green-700',
-  cancelled: 'bg-red-100 text-red-700',
+  pending: 'bg-amber-50 text-amber-800 border border-amber-200',
+  processing: 'bg-blue-50 text-blue-800 border border-blue-200',
+  shipped: 'bg-indigo-50 text-indigo-800 border border-indigo-200',
+  delivered: 'bg-[#EBF3ED] text-[#144D29] border border-[#CFE3D3]',
+  cancelled: 'bg-red-50 text-red-800 border border-red-200',
 }
 
 export default async function AdminDashboardPage() {
@@ -75,139 +75,147 @@ export default async function AdminDashboardPage() {
       label: 'Total Revenue',
       value: `₹${totalRevenue.toLocaleString('en-IN')}`,
       icon: IndianRupee,
-      gradient: 'from-orange-500 to-orange-500',
-      shadowColor: 'shadow-orange-500/20',
+      bgColor: 'bg-[#FFF8F2]',
+      iconColor: 'text-[#E07B0C]',
+      borderColor: 'border-[#E07B0C]/30',
     },
     {
       label: 'Total Orders',
       value: totalOrders.toString(),
       icon: ShoppingCart,
-      gradient: 'from-blue-500 to-indigo-500',
-      shadowColor: 'shadow-blue-500/20',
+      bgColor: 'bg-[#EBF3ED]',
+      iconColor: 'text-[#144D29]',
+      borderColor: 'border-[#CFE3D3]',
     },
     {
-      label: 'Customers',
+      label: 'Registered Customers',
       value: totalCustomers.toString(),
       icon: Users,
-      gradient: 'from-emerald-500 to-teal-500',
-      shadowColor: 'shadow-emerald-500/20',
+      bgColor: 'bg-[#F2F7FB]',
+      iconColor: 'text-[#1A5B8C]',
+      borderColor: 'border-[#CFE3F4]',
     },
     {
-      label: 'Products',
+      label: 'Active Products',
       value: totalProducts.toString(),
       icon: Package,
-      gradient: 'from-violet-500 to-purple-500',
-      shadowColor: 'shadow-violet-500/20',
+      bgColor: 'bg-[#FAF4ED]',
+      iconColor: 'text-[#B85D08]',
+      borderColor: 'border-[#EBDBC9]',
     },
   ]
 
   return (
-    <div className="space-y-6">
-      {/* Page title */}
+    <div className="space-y-6 sm:space-y-8">
+      {/* Page Title */}
       <div>
-        <h1 className="text-2xl font-bold text-stone-900">Overview</h1>
-        <p className="text-stone-500 text-sm mt-0.5">
-          Welcome back! Here&apos;s what&apos;s happening with your store.
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#14361F]">
+          Store Overview
+        </h1>
+        <p className="text-[#615147] text-xs sm:text-sm mt-1">
+          Welcome back! Here&apos;s a live summary of your sales, products and recent activity.
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {statCards.map((card) => {
           const Icon = card.icon
           return (
             <div
               key={card.label}
-              className="bg-white rounded-xl border border-stone-200/80 p-5 hover:shadow-lg hover:shadow-stone-200/50 transition-all duration-300 group"
+              className="bg-white rounded-[5px] border border-[#EDE4D9] p-5 hover:shadow-md transition-all duration-300 group shadow-2xs"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3.5">
                 <div
-                  className={`w-10 h-10 rounded-lg bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-md ${card.shadowColor}`}
+                  className={`w-10 h-10 rounded-[5px] ${card.bgColor} ${card.borderColor} border flex items-center justify-center shadow-2xs`}
                 >
-                  <Icon className="w-5 h-5 text-white" />
+                  <Icon className={`w-5 h-5 ${card.iconColor}`} />
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-stone-300 group-hover:text-stone-400 transition-colors" />
+                <ArrowUpRight className="w-4 h-4 text-[#8C766E] group-hover:text-[#E07B0C] transition-colors" />
               </div>
-              <p className="text-2xl font-bold text-stone-900">{card.value}</p>
-              <p className="text-sm text-stone-500 mt-0.5">{card.label}</p>
+              <p className="font-serif text-2xl sm:text-3xl font-extrabold text-[#14361F]">{card.value}</p>
+              <p className="text-xs sm:text-[13px] font-semibold text-[#7A6458] mt-1">{card.label}</p>
             </div>
           )
         })}
       </div>
 
-      {/* Recent Orders */}
-      <div className="bg-white rounded-xl border border-stone-200/80 overflow-hidden">
-        <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
+      {/* Recent Orders Card */}
+      <div className="bg-white rounded-[5px] border border-[#EDE4D9] overflow-hidden shadow-2xs">
+        <div className="px-5 sm:px-6 py-4 border-b border-[#EDE4D9] bg-[#FAF7F2]/50 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Clock className="w-4.5 h-4.5 text-stone-400" />
-            <h2 className="text-base font-semibold text-stone-900">
-              Recent Orders
+            <Clock className="w-4.5 h-4.5 text-[#E07B0C]" />
+            <h2 className="font-serif text-base sm:text-lg font-bold text-[#14361F]">
+              Recent Customer Orders
             </h2>
           </div>
         </div>
 
         {recentOrders.length === 0 ? (
           <div className="p-12 text-center">
-            <ShoppingCart className="w-10 h-10 text-stone-300 mx-auto mb-3" />
-            <p className="text-stone-500 text-sm">No orders yet</p>
-            <p className="text-stone-400 text-xs mt-1">
-              Orders will appear here once customers start placing them.
+            <ShoppingCart className="w-10 h-10 text-[#8C766E] mx-auto mb-3 opacity-60" />
+            <p className="text-[#14361F] text-sm font-bold">No orders placed yet</p>
+            <p className="text-[#7A6458] text-xs mt-1">
+              Customer orders will appear here in real-time as they are placed.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[540px]">
+            <table className="w-full min-w-[560px]">
               <thead>
-                <tr className="bg-stone-50/50">
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Order
+                <tr className="bg-[#FAF7F2] border-b border-[#EDE4D9]">
+                  <th className="text-left text-xs font-bold text-[#14361F] uppercase tracking-wider px-6 py-3">
+                    Order Number
                   </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Amount
+                  <th className="text-left text-xs font-bold text-[#14361F] uppercase tracking-wider px-6 py-3">
+                    Total Amount
                   </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Status
+                  <th className="text-left text-xs font-bold text-[#14361F] uppercase tracking-wider px-6 py-3">
+                    Order Status
                   </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-bold text-[#14361F] uppercase tracking-wider px-6 py-3">
                     Payment
                   </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-bold text-[#14361F] uppercase tracking-wider px-6 py-3">
                     Date
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100">
+              <tbody className="divide-y divide-[#EDE4D9]">
                 {recentOrders.map((order) => (
                   <tr
                     key={order.id}
-                    className="hover:bg-stone-50/50 transition-colors"
+                    className="hover:bg-[#FAF7F2]/70 transition-colors"
                   >
-                    <td className="px-6 py-3.5 text-sm font-medium text-stone-900">
+                    <td className="px-6 py-3.5 text-xs sm:text-sm font-bold text-[#14361F] font-mono">
                       #{order.order_number}
                     </td>
-                    <td className="px-6 py-3.5 text-sm text-stone-700">
+                    <td className="px-6 py-3.5 text-xs sm:text-sm font-extrabold text-[#E07B0C]">
                       ₹{Number(order.total_amount).toLocaleString('en-IN')}
                     </td>
                     <td className="px-6 py-3.5">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium capitalize ${statusColors[order.order_status] ||
-                          'bg-stone-100 text-stone-700'
-                          }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-[5px] text-xs font-bold capitalize ${
+                          statusColors[order.order_status] ||
+                          'bg-[#FAF7F2] text-[#615147] border border-[#EDE4D9]'
+                        }`}
                       >
                         {order.order_status}
                       </span>
                     </td>
                     <td className="px-6 py-3.5">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium capitalize ${order.payment_status === 'paid'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                          }`}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-[5px] text-xs font-bold capitalize ${
+                          order.payment_status === 'paid'
+                            ? 'bg-[#EBF3ED] text-[#144D29] border border-[#CFE3D3]'
+                            : 'bg-amber-50 text-amber-800 border border-amber-200'
+                        }`}
                       >
                         {order.payment_status}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5 text-sm text-stone-500">
+                    <td className="px-6 py-3.5 text-xs text-[#615147]">
                       {new Date(order.created_at).toLocaleDateString('en-IN', {
                         day: 'numeric',
                         month: 'short',

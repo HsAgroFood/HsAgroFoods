@@ -125,7 +125,7 @@ export function GlobalFaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
                   type="text"
                   name="question"
                   defaultValue={faq.question}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 !px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   required
                 />
               </div>
@@ -134,7 +134,7 @@ export function GlobalFaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
                   name="answer"
                   rows={2}
                   defaultValue={faq.answer}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   required
                 />
               </div>
@@ -145,7 +145,7 @@ export function GlobalFaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
                 type="button"
                 onClick={() => handleDelete(faq.id)}
                 disabled={loading}
-                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                className="rounded-md bg-white px-2.5 py-1.5 text-sm  font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               >
                 <Trash2 className="h-4 w-4" />
               </button>

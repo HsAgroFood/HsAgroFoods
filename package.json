@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },
@@ -12,10 +12,11 @@
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "cloudinary": "^2.10.0",
-    "imagekit": "^6.0.0",
+    "imagekit": "^1.5.0",
+    "install": "^0.13.0",
     "lucide-react": "^1.21.0",
-    "next": "16.2.9",
-    "next-cloudinary": "^6.17.5",
+    "next": "^16.4.3",
+    "next-cloudinary": "^7.0.0",
     "razorpay": "^2.9.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",

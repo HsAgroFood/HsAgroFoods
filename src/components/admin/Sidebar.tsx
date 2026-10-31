@@ -41,29 +41,29 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile Backdrop Overlay */}
+      {/* Mobile Backdrop Overlay (Soft forest overlay, no pitch black) */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
-          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-[#14361F]/40 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300"
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar Aside */}
+      {/* Sidebar Aside (Clean modern warm aesthetic, zero pitch black) */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 flex flex-col bg-stone-950 border-r border-stone-800/50 transition-all duration-300 ease-in-out shrink-0
+          fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-[#EDE4D9] transition-all duration-300 ease-in-out shrink-0 shadow-xs
           lg:static lg:translate-x-0
           ${mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
           ${collapsed ? 'lg:w-[72px]' : 'lg:w-64'}
           w-72 max-w-[85vw]
         `}
       >
-        {/* Brand & Mobile Close */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-stone-800/50 shrink-0">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="relative w-9 h-9 rounded-full overflow-hidden border border-orange-500/40 shrink-0 shadow-md bg-[#FDF9F3]">
+        {/* Brand Header */}
+        <div className="h-16 flex items-center justify-between px-4 border-b border-[#EDE4D9] shrink-0 bg-[#FAF7F2]/60">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="relative w-9 h-9 rounded-[5px] overflow-hidden border border-[#EDE4D9] shrink-0 shadow-2xs bg-[#FAF6F0] flex items-center justify-center p-0.5">
               <Image
                 src="/images/logo.png"
                 alt="HS AgroFoods Logo"
@@ -74,10 +74,12 @@ export default function AdminSidebar() {
             </div>
             {(!collapsed || mobileOpen) && (
               <div className="overflow-hidden">
-                <p className="text-white font-semibold text-sm leading-tight truncate">
+                <p className="font-serif text-[#14361F] font-bold text-sm leading-tight truncate">
                   HS AgroFoods
                 </p>
-                <p className="text-stone-500 text-xs truncate">Admin Panel</p>
+                <p className="text-[#E07B0C] text-[11px] font-semibold tracking-wider uppercase truncate">
+                  Admin Panel
+                </p>
               </div>
             )}
           </div>
@@ -85,7 +87,7 @@ export default function AdminSidebar() {
           {/* Mobile Close Button */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-1.5 text-stone-400 hover:text-white rounded-lg hover:bg-stone-800 transition-colors"
+            className="lg:hidden p-1.5 text-[#7A6458] hover:text-[#14361F] rounded-[5px] hover:bg-[#FAF7F2] transition-colors"
             aria-label="Close sidebar"
           >
             <X className="w-5 h-5" />
@@ -107,17 +109,17 @@ export default function AdminSidebar() {
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
                 title={collapsed && !mobileOpen ? item.label : undefined}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-xs sm:text-sm font-semibold transition-all duration-200 group ${
                   isActive
-                    ? 'bg-orange-500/15 text-orange-400'
-                    : 'text-stone-400 hover:text-white hover:bg-stone-800/60'
+                    ? 'bg-[#FFF8F2] text-[#E07B0C] border-l-4 border-[#E07B0C] shadow-2xs'
+                    : 'text-[#615147] hover:text-[#14361F] hover:bg-[#FAF7F2]'
                 }`}
               >
                 <Icon
-                  className={`w-5 h-5 shrink-0 ${
+                  className={`w-4.5 h-4.5 shrink-0 ${
                     isActive
-                      ? 'text-orange-400'
-                      : 'text-stone-500 group-hover:text-stone-300'
+                      ? 'text-[#E07B0C]'
+                      : 'text-[#8C766E] group-hover:text-[#14361F]'
                   }`}
                 />
                 {(!collapsed || mobileOpen) && <span className="truncate">{item.label}</span>}
@@ -127,17 +129,17 @@ export default function AdminSidebar() {
         </nav>
 
         {/* Desktop Collapse Toggle */}
-        <div className="hidden lg:block p-3 border-t border-stone-800/50">
+        <div className="hidden lg:block p-3 border-t border-[#EDE4D9] bg-[#FAF7F2]/40">
           <button
             onClick={() => setCollapsed((prev) => !prev)}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-stone-500 hover:text-stone-300 hover:bg-stone-800/60 transition-all duration-200 text-sm"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-[5px] text-[#7A6458] hover:text-[#14361F] hover:bg-[#FAF7F2] border border-transparent hover:border-[#EDE4D9] transition-all duration-200 text-xs font-semibold"
           >
             {collapsed ? (
               <ChevronRight className="w-4 h-4" />
             ) : (
               <>
                 <ChevronLeft className="w-4 h-4" />
-                <span>Collapse</span>
+                <span>Collapse Sidebar</span>
               </>
             )}
           </button>

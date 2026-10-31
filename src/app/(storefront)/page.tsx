@@ -1,11 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
 import { HeroSection } from '@/components/storefront/HeroSection'
 import { PillarsBar } from '@/components/storefront/PillarsBar'
-import { SpiceRangeSection, LiveSpiceItem } from '@/components/storefront/SpiceRangeSection'
+import {
+  SpiceRangeSection,
+  LiveSpiceItem,
+  CategoryItem,
+} from '@/components/storefront/SpiceRangeSection'
 import { HealthBenefitsSection } from '@/components/storefront/HealthBenefitsSection'
 import { PromiseSection } from '@/components/storefront/PromiseSection'
 import { BottomBanner } from '@/components/storefront/BottomBanner'
 import { SPICE_ASSETS } from '@/constants/assets'
+import { FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 
 export const metadata = {
   title: 'HS AgroFoods — Pure Spices & Natural Dehydrated Veg & Fruit Powders',
@@ -17,11 +22,22 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   let liveProducts: LiveSpiceItem[] = []
+  let categories: CategoryItem[] = []
 
   try {
     const supabase = await createClient()
 
-    // Dynamically fetch ONLY active and featured products selected by admin
+    // 1. Fetch active categories (Exact same as Shop Page)
+    const { data: dbCategories } = await supabase
+      .from('categories')
+      .select('id, name, slug')
+      .eq('is_active', true)
+      .order('name')
+
+    categories =
+      dbCategories && dbCategories.length > 0 ? dbCategories : FALLBACK_CATEGORIES
+
+    // 2. Dynamically fetch active products (with admin featured flag respected)
     const { data: dbProducts } = await supabase
       .from('products')
       .select(`
@@ -30,10 +46,13 @@ export default async function HomePage() {
         slug,
         featured_image_url,
         is_featured,
-        product_variants (price, is_active)
+        short_description,
+        category_id,
+        categories (id, name, slug),
+        product_variants (id, price, is_active)
       `)
       .eq('is_active', true)
-      .eq('is_featured', true)
+      .order('is_featured', { ascending: false })
       .order('created_at', { ascending: true })
 
     if (dbProducts && dbProducts.length > 0) {
@@ -48,13 +67,17 @@ export default async function HomePage() {
           slug: p.slug,
           image: p.featured_image_url || SPICE_ASSETS.redChilly,
           tag: 'Featured',
+          shortDesc: p.short_description || undefined,
+          categoryId: p.category_id || undefined,
+          categorySlug: p.categories?.slug || undefined,
+          variantId: p.product_variants?.find((v: any) => v.is_active)?.id,
           href: `/product/${p.slug}`,
           priceText: minPrice !== null ? `From ₹${minPrice}` : undefined,
         }
       })
     }
   } catch {
-    // Graceful error handling
+    categories = FALLBACK_CATEGORIES
   }
 
   return (
@@ -65,8 +88,8 @@ export default async function HomePage() {
       {/* 2. 4-Pillars Feature Bar (Floating) */}
       <PillarsBar />
 
-      {/* 3. Our Spice Range Section (Wired to Supabase Products) */}
-      <SpiceRangeSection products={liveProducts} />
+      {/* 3. Our Spice Range Section (Wired to Shop Categories & Products) */}
+      <SpiceRangeSection products={liveProducts} categories={categories} />
 
       {/* 4. Spices That Do More Than Just Add Taste (Health Benefits & Recipes) */}
       <HealthBenefitsSection />

@@ -33,26 +33,26 @@ export function ProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       {message && (
-        <div className={`p-4 rounded-lg text-sm font-medium ${
-          message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+        <div className={`p-3.5 sm:p-4 rounded-[5px] text-xs sm:text-sm font-medium ${
+          message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
         }`}>
           {message.text}
         </div>
       )}
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium leading-6 text-text">
+        <label htmlFor="email" className="block text-xs font-bold text-[#14361F] uppercase tracking-wider">
           Email Address
         </label>
-        <div className="mt-2">
+        <div className="mt-1.5">
           <input
             type="email"
             id="email"
             value={email}
             readOnly
-            className="block w-full rounded-xl border border-[#D4C7BA] bg-[#FDF9F3] py-2.5 px-3.5 text-[#5A433B] text-xs sm:text-sm font-medium cursor-not-allowed"
+            className="block w-full rounded-[5px] border border-[#D4C7BA] bg-[#FDF9F3] py-2.5 px-3.5 text-[#5A433B] text-xs sm:text-sm font-medium cursor-not-allowed"
           />
           <p className="mt-1 text-[11px] text-[#8C7567]">Registered email address (verified)</p>
         </div>
@@ -69,7 +69,8 @@ export function ProfileForm({
             name="full_name"
             defaultValue={initialFullName}
             required
-            className="block w-full rounded-xl border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#14361F] focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-xs sm:text-sm shadow-xs transition-all"
+            autoComplete="name"
+            className="block w-full rounded-[5px] border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#14361F] focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-xs sm:text-sm shadow-xs transition-all"
           />
         </div>
       </div>
@@ -85,20 +86,21 @@ export function ProfileForm({
             name="phone"
             defaultValue={initialPhone}
             required
+            autoComplete="tel"
             placeholder="10-digit mobile number"
-            className="block w-full rounded-xl border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#14361F] focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-xs sm:text-sm shadow-xs transition-all"
+            className="block w-full rounded-[5px] border border-[#D4C7BA] bg-white py-2.5 px-3.5 text-[#14361F] focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/30 focus:border-[#E07B0C] text-xs sm:text-sm shadow-xs transition-all"
           />
         </div>
       </div>
 
-      <div className="pt-4 border-t border-[#E8DFD5] flex justify-end">
+      <div className="pt-3 sm:pt-4 border-t border-[#E8DFD5] flex sm:justify-end">
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex justify-center items-center gap-2 rounded-full bg-gradient-to-r from-[#E07B0C] to-[#D1491B] hover:from-[#2D1409] hover:to-[#E07B0C] px-8 py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#E07B0C]/20 disabled:opacity-60 transition-all cursor-pointer"
+          className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-[5px] bg-gradient-to-r from-[#E07B0C] to-[#D1491B] hover:from-[#2D1409] hover:to-[#E07B0C] px-7 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#E07B0C]/20 disabled:opacity-60 transition-all cursor-pointer active:scale-98"
         >
           {isPending ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-[5px] animate-spin" />
           ) : (
             <Save className="w-4 h-4" />
           )}

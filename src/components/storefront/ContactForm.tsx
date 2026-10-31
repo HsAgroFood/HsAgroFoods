@@ -31,9 +31,9 @@ export function ContactForm() {
 
   if (success) {
     return (
-      <div className="bg-white rounded-3xl shadow-xl border border-[#E8DFD5] p-8 sm:p-10 text-center flex flex-col items-center justify-center min-h-[420px] animate-in fade-in zoom-in-95 duration-300">
-        <div className="w-16 h-16 rounded-full bg-[#FAF3EB] border border-[#F09819]/40 flex items-center justify-center text-[#E07B0C] mb-5 shadow-sm">
-          <CheckCircle2 className="w-8 h-8 text-[#E07B0C]" />
+      <div className="bg-white rounded-[5px] shadow-md border border-[#EDE4D9] p-8 sm:p-10 text-center flex flex-col items-center justify-center min-h-[420px] animate-in fade-in zoom-in-95 duration-300">
+        <div className="w-14 h-14 rounded-[5px] bg-[#FAF3EB] border border-[#F09819]/40 flex items-center justify-center text-[#E07B0C] mb-4 shadow-2xs">
+          <CheckCircle2 className="w-7 h-7 text-[#E07B0C]" />
         </div>
         <h3 className="font-serif text-2xl font-bold text-[#14361F] mb-2">Message Sent Successfully!</h3>
         <p className="text-sm text-[#5A433B] max-w-md leading-relaxed">
@@ -41,7 +41,7 @@ export function ContactForm() {
         </p>
         <button
           onClick={() => setSuccess(false)}
-          className="mt-8 inline-flex items-center justify-center rounded-full bg-[#E07B0C] px-7 py-3 text-xs sm:text-sm font-semibold text-white shadow-md hover:bg-[#2D1409] transition-colors"
+          className="mt-6 inline-flex items-center justify-center rounded-[5px] bg-[#E07B0C] hover:bg-[#C96B06] px-7 py-3 text-xs sm:text-sm font-bold tracking-wider uppercase text-white shadow-md shadow-[#E07B0C]/25 transition-all active:scale-95 cursor-pointer"
         >
           Send Another Message
         </button>
@@ -50,19 +50,22 @@ export function ContactForm() {
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl border border-[#E8DFD5] p-6 sm:p-10">
-      <div className="mb-6 space-y-1">
-        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#14361F]">Send Us a Message</h3>
-        <p className="text-xs sm:text-sm text-[#6E5951]">Fill out the form below and we will get right back to you.</p>
+    <div className="bg-white rounded-[5px] shadow-md border border-[#EDE4D9] p-6 sm:p-8 lg:p-10">
+      <div className="mb-6 space-y-1.5">
+        <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#E07B0C]">
+          Direct Inquiry
+        </span>
+        <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#14361F]">Send Us a Message</h3>
+        <p className="text-xs sm:text-sm text-[#7A6458]">Fill out the form below and we will get right back to you.</p>
       </div>
       
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm font-medium rounded-xl">
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm font-medium rounded-[5px]">
           {error}
         </div>
       )}
 
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           <div>
             <label htmlFor="first-name" className="block text-xs sm:text-sm font-semibold text-[#14361F] mb-1.5">
@@ -74,7 +77,7 @@ export function ContactForm() {
               name="first-name"
               id="first-name"
               placeholder="e.g. Ramesh"
-              className="block w-full rounded-xl border border-[#E8DFD5] bg-[#FDF9F3] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all"
+              className="block w-full rounded-[5px] border border-[#EDE4D9] bg-[#FAF7F2] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-[#9C8A7F] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all"
             />
           </div>
           <div>
@@ -87,7 +90,7 @@ export function ContactForm() {
               name="last-name"
               id="last-name"
               placeholder="e.g. Sharma"
-              className="block w-full rounded-xl border border-[#E8DFD5] bg-[#FDF9F3] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all"
+              className="block w-full rounded-[5px] border border-[#EDE4D9] bg-[#FAF7F2] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-[#9C8A7F] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all"
             />
           </div>
         </div>
@@ -102,7 +105,7 @@ export function ContactForm() {
             name="email"
             id="email"
             placeholder="you@example.com"
-            className="block w-full rounded-xl border border-[#E8DFD5] bg-[#FDF9F3] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all"
+            className="block w-full rounded-[5px] border border-[#EDE4D9] bg-[#FAF7F2] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-[#9C8A7F] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all"
           />
         </div>
 
@@ -115,8 +118,8 @@ export function ContactForm() {
             name="message"
             id="message"
             rows={4}
-            placeholder="Tell us what you are looking for (e.g. product questions, bulk spice orders, recipe recommendations)..."
-            className="block w-full rounded-xl border border-[#E8DFD5] bg-[#FDF9F3] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-stone-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all resize-none"
+            placeholder="Tell us what you are looking for (e.g. product questions, bulk spice orders, restaurant supply, packaging requests)..."
+            className="block w-full rounded-[5px] border border-[#EDE4D9] bg-[#FAF7F2] py-2.5 px-3.5 text-xs sm:text-sm text-[#14361F] placeholder:text-[#9C8A7F] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E07B0C]/20 focus:border-[#E07B0C] transition-all resize-none"
           ></textarea>
         </div>
 
@@ -124,16 +127,16 @@ export function ContactForm() {
           <button 
             type="submit" 
             disabled={isPending}
-            className="w-full flex items-center justify-center gap-2 rounded-full bg-[#E07B0C] px-6 py-3.5 text-center text-sm font-bold text-white shadow-lg shadow-[#E07B0C]/25 hover:bg-[#2D1409] hover:shadow-xl hover:gap-3 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 rounded-[5px] bg-[#E07B0C] hover:bg-[#C96B06] px-6 py-3.5 text-center text-xs sm:text-sm font-bold tracking-wider uppercase text-white shadow-md shadow-[#E07B0C]/25 hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
           >
             {isPending ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Sending Message...
+                <span>Sending Message...</span>
               </>
             ) : (
               <>
-                Send Message
+                <span>Send Message</span>
                 <Send className="w-4 h-4" />
               </>
             )}

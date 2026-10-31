@@ -60,7 +60,7 @@ export async function createCategory(
 
   revalidatePath('/admin/categories')
   revalidatePath('/shop')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   redirect('/admin/categories')
 }
 
@@ -103,7 +103,7 @@ export async function updateCategory(
 
   revalidatePath('/admin/categories')
   revalidatePath('/shop')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   redirect('/admin/categories')
 }
 
@@ -119,7 +119,7 @@ export async function deleteCategory(id: string): Promise<ActionResult> {
 
   revalidatePath('/admin/categories')
   revalidatePath('/shop')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
 
@@ -141,6 +141,6 @@ export async function toggleCategoryStatus(
 
   revalidatePath('/admin/categories')
   revalidatePath('/shop')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
   return { success: true }
 }

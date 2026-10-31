@@ -2,10 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
+import { Leaf } from 'lucide-react'
 import { ProductImageGallery } from '@/components/storefront/ProductImageGallery'
 import { ProductVariantSelector } from '@/components/storefront/ProductVariantSelector'
 import { ProductTabsSection } from '@/components/storefront/ProductTabsSection'
 import { ProductCard } from '@/components/storefront/ProductCard'
+import { RelatedProductsCarousel } from '@/components/storefront/RelatedProductsCarousel'
 import { FALLBACK_PRODUCTS, getFallbackProductBySlug } from '@/constants/fallbackProducts'
 import { getEffectiveUser } from '@/lib/userAuth'
 
@@ -193,7 +196,7 @@ export default async function ProductDetailsPage({
 
       if (relatedProductsData && relatedProductsData.length > 0) {
         const shuffled = [...relatedProductsData].sort(() => 0.5 - Math.random())
-        relatedProducts = shuffled.slice(0, 6).map((rp: any) => {
+        relatedProducts = shuffled.slice(0, 10).map((rp: any) => {
           const activeVariants = rp.product_variants?.filter((v: any) => v.is_active) || []
           const prices = activeVariants.map((v: any) => v.price)
           const minPrice = prices.length > 0 ? Math.min(...prices) : null
@@ -237,7 +240,7 @@ export default async function ProductDetailsPage({
   if (relatedProducts.length === 0) {
     relatedProducts = Object.values(FALLBACK_PRODUCTS)
       .filter((p) => p.slug !== slug)
-      .slice(0, 4)
+      .slice(0, 10)
       .map((p) => {
         const activeVariants = p.product_variants.filter((v) => v.is_active)
         const prices = activeVariants.map((v) => v.price)
@@ -268,8 +271,32 @@ export default async function ProductDetailsPage({
   const displayedFaqs = product.use_global_faqs && globalFaqs.length > 0 ? globalFaqs : sortedFaqs
 
   return (
-    <div className="bg-[#FBF5EE] min-h-screen py-4 sm:py-8 lg:py-12 text-[#14361F]">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+    <div className="bg-[#FAF7F2] min-h-screen py-6 sm:py-10 text-[#14361F] relative overflow-hidden">
+      {/* ── Ambient Background Lighting Gradients ── */}
+      <div
+        className="absolute inset-0 pointer-events-none select-none z-0"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 50% 5%, rgba(240, 152, 25, 0.08) 0%, transparent 45%),
+            radial-gradient(circle at 92% 15%, rgba(224, 123, 12, 0.06) 0%, transparent 40%),
+            radial-gradient(circle at 8% 85%, rgba(20, 77, 41, 0.05) 0%, transparent 40%),
+            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, transparent 70%)
+          `,
+        }}
+      />
+
+      {/* Decorative Corner Asset: Top Left Herbal Accent */}
+      <div className="absolute top-0 left-0 w-36 h-36 sm:w-56 sm:h-56 lg:w-72 lg:h-72 pointer-events-none select-none mix-blend-multiply opacity-75 z-0 -scale-x-100">
+        <Image
+          src="/images/accent-leaves-spices.png"
+          alt="Natural Spice Accent"
+          fill
+          className="object-contain object-top-right"
+          sizes="(max-width: 768px) 144px, 288px"
+          priority={false}
+        />
+      </div>
+      <div className="max-w-[1370px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Product Hero Grid (Direct Content) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-x-12 xl:gap-x-16 items-start">
@@ -278,6 +305,7 @@ export default async function ProductDetailsPage({
           <div className="lg:col-span-5">
             <ProductImageGallery
               images={product.product_images || []}
+              productName={product.name}
               featuredImage={product.featured_image_url}
             />
           </div>
@@ -315,12 +343,12 @@ export default async function ProductDetailsPage({
                 )}
               </div>
 
-              <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#14361F] mb-2 sm:mb-3 leading-tight">
-                {product.name}
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#14361F] mb-2 leading-tight flex items-center gap-2">
+                {product.name} <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-[#227B44] fill-[#227B44]/20 shrink-0 inline-block" />
               </h1>
 
               {product.short_description && (
-                <p className="text-xs sm:text-sm lg:text-base text-[#5A433B] leading-relaxed mb-3 sm:mb-6 font-normal">
+                <p className="text-xs sm:text-sm lg:text-base text-[#5A433B] leading-relaxed mb-3 font-normal">
                   {product.short_description}
                 </p>
               )}
@@ -344,26 +372,9 @@ export default async function ProductDetailsPage({
           averageRating={Number(product.average_rating) || 0}
         />
 
-        {/* You May Also Like */}
+        {/* ── You May Also Like (5 items per row carousel with compact cards) ── */}
         {relatedProducts.length > 0 && (
-          <div className="mt-12 sm:mt-16 border-t border-[#E8DFD5] pt-8 sm:pt-12">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#14361F]">
-                You May Also Like
-              </h3>
-              <Link
-                href="/shop"
-                className="text-xs sm:text-sm font-bold text-[#E07B0C] hover:underline"
-              >
-                View All Spices →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-              {relatedProducts.map((rp) => (
-                <ProductCard key={rp.id} {...rp} />
-              ))}
-            </div>
-          </div>
+          <RelatedProductsCarousel products={relatedProducts} />
         )}
 
       </div>

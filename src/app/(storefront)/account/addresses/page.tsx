@@ -25,7 +25,7 @@ export default async function AccountAddressesPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="bg-white rounded-3xl border border-[#E8DFD5] p-6 sm:p-8 lg:p-10 shadow-xs min-h-full">
+    <div className="bg-white rounded-[5px] border border-[#E8DFD5] p-3.5 sm:p-6 lg:p-8 shadow-xs min-h-full">
       <AddressList addresses={addresses || []} />
     </div>
   )

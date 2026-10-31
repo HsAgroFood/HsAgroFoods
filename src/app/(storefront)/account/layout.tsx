@@ -42,29 +42,30 @@ export default async function AccountLayout({
   const initials = (profile?.full_name || 'Customer')
     .split(' ')
     .map((n: string) => n[0])
+    .filter(Boolean)
     .join('')
     .substring(0, 2)
-    .toUpperCase()
+    .toUpperCase() || 'CU'
 
   return (
-    <div className="bg-[#FBF5EE] min-h-[calc(100vh-80px)] py-8 sm:py-12 text-[#14361F]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-x-10 items-start">
+    <div className="bg-[#FBF5EE] min-h-[calc(100vh-80px)] py-4 sm:py-8 lg:py-10 text-[#14361F]">
+      <div className="max-w-[1310px] mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-x-8 xl:gap-x-10 items-start">
           
           {/* Sidebar Navigation */}
-          <aside className="lg:col-span-4 xl:col-span-3 mb-8 lg:mb-0 space-y-5">
+          <aside className="lg:col-span-4 xl:col-span-3 mb-4 sm:mb-6 lg:mb-0 space-y-3 sm:space-y-4 lg:space-y-5">
             {/* User Profile Summary Card */}
-            <div className="bg-white rounded-3xl border border-[#E8DFD5] p-6 shadow-xs text-center sm:text-left">
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#E07B0C] to-[#D1491B] text-white flex items-center justify-center font-serif text-xl font-bold shadow-md shadow-[#E07B0C]/20 shrink-0 border-2 border-[#F09819]/40">
+            <div className="bg-white rounded-[5px] border border-[#E8DFD5] p-3.5 sm:p-5 lg:p-6 shadow-xs">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-tr from-[#E07B0C] to-[#D1491B] text-white flex items-center justify-center font-serif text-base sm:text-lg lg:text-xl font-bold shadow-md shadow-[#E07B0C]/20 shrink-0 border-2 border-[#F09819]/40">
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="font-serif text-lg font-bold text-[#14361F] truncate">
+                  <h2 className="font-serif text-sm sm:text-base lg:text-lg font-bold text-[#14361F] truncate">
                     {profile?.full_name || 'Customer'}
                   </h2>
-                  <p className="text-xs text-[#8C7567] truncate mt-0.5">{profile?.email}</p>
-                  <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full bg-[#FDF9F3] border border-[#E8DFD5] text-[10px] font-bold text-[#E07B0C] uppercase tracking-wider">
+                  <p className="text-[11px] sm:text-xs text-[#8C7567] truncate mt-0.5">{profile?.email}</p>
+                  <span className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-[#FDF9F3] border border-[#E8DFD5] text-[9px] sm:text-[10px] font-bold text-[#E07B0C] uppercase tracking-wider">
                     <span>✦</span>
                     <span>{isAdmin ? 'Store Admin' : 'Verified Member'}</span>
                   </span>
@@ -73,7 +74,7 @@ export default async function AccountLayout({
             </div>
             
             {/* Account Navigation Tabs */}
-            <nav className="bg-white rounded-3xl border border-[#E8DFD5] overflow-hidden shadow-xs">
+            <nav className="bg-white rounded-[5px] border border-[#E8DFD5] shadow-xs">
               <AccountNav />
             </nav>
           </aside>

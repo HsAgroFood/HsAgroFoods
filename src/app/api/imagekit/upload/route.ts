@@ -3,6 +3,8 @@ import { getAuthUser } from '@/lib/userAuth'
 import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   let isAuthorized = await isAdminAuthenticated()
 

@@ -4,7 +4,7 @@ export function FloatingContact() {
   const waNumber = '919493184110'
 
   return (
-    <div className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-40 flex flex-col gap-3">
+    <div className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-30 flex flex-col gap-3">
       {/* WhatsApp Icon - Visible everywhere */}
       <a
         href={`https://wa.me/${waNumber}`}
