@@ -1,147 +1,93 @@
 
-# 🌿 Jaandaar Masale
+<div align="center">
 
-> **Pure Spice. Real Taste. Trusted Every Time.**  
-> A full-stack, production-ready D2C e-commerce platform built with Next.js (App Router), Supabase (PostgreSQL + Auth + RLS), Brevo (Transactional Email & Auth OTPs), and Razorpay.
+# 🌿 HS AgroFoods
+
+### Pure Spices & Natural Dehydrated Powders
+
+**100% Pure · Natural · Cold-Ground · FSSAI Certified**
+
+*Bringing the authentic aroma of pure Indian spices and nutrient-rich dehydrated fruit & vegetable powders straight to your kitchen.*
+
+</div>
 
 ---
 
-## 🚀 Quick Start
+## 🌾 About HS AgroFoods
 
-### 1. Prerequisites
-- **Node.js** v18+ (tested on Node v20/v22)
-- **npm** or **pnpm** / **yarn**
+HS AgroFoods is a Hyderabad-based food brand that makes everyday cooking purer. We source spices and produce from the regions India is known for, grind or dehydrate them gently, and pack them fresh, with nothing added.
 
-### 2. Installation & Run
+Our belief is simple: **what goes into your kitchen should be exactly what it says on the pack.**
+
+### What makes us different
+- **100% pure & natural**: single-origin spices, no artificial colours, no preservatives, no fillers.
+- **Cold-ground**: spices are ground at low temperature so the natural aroma and essential oils stay intact.
+- **Gently dehydrated**: fruit and vegetable powders are dried at low temperature to keep their colour, taste and nutrition.
+- **Lab tested & FSSAI certified**: quality you can trust on every batch.
+- **Fresh at your door**: dispatched within 24–48 hours and delivered across India with live tracking.
+
+---
+
+## 🛒 Our Range
+
+| Collection | What's inside |
+|---|---|
+| **Ground Spices** | Turmeric (Haldi), Red Chilli (Laal Mirch), Cumin (Zeera), Coriander (Dhaniya) |
+| **Blended Masale** | Shahi Garam Masala, Tangy Chaat Masala, Fruit Chaat Masala |
+| **Dehydrated Veg & Fruit Powders** | Beetroot, Tomato, Raw Banana, Garlic, Carrot, Radish, Dry Mango (Amchur) |
+
+Available in multiple pack sizes, from small pouches to value packs, for home kitchens as well as bulk and institutional supply (restaurants, caterers, food makers).
+
+---
+
+## 🤝 Our Promise
+
+| | |
+|---|---|
+| 🌱 **Farm-direct sourcing** | Spices from their home regions: Salem turmeric, Guntur chillies, Gujarat cumin |
+| ❄️ **Gentle processing** | Cold grinding and low-temperature drying |
+| 🧪 **Tested for purity** | No adulteration, no synthetic dyes |
+| 📦 **Sealed fresh** | Protective packaging that locks in aroma |
+| 🚚 **Pan-India delivery** | Cash on Delivery or secure online payment |
+
+---
+
+## 📍 Reach Us
+
+- **Address:** 4-11-92/3/A, M.M. Pahadi, Attapur, Hyderabad, Telangana, 500048
+- **Phone / WhatsApp:** +91 94931 84110 · +91 91009 39110
+- **Email:** Hs.foodofficial@gmail.com
+- **Instagram:** [@hs_agro_foods](https://www.instagram.com/hs_agro_foods) · **YouTube:** [@hsagrofoods](https://youtube.com/@hsagrofoods)
+
+---
+
+## 🖥️ The Website
+
+The online store lets customers browse the range, apply coupons, pay by UPI / card / Cash on Delivery, and track their orders. Everything that can change is controlled from a private admin panel: products and stock, categories, prices, delivery fee, coupons, hero banners, announcements, FAQs, reviews and newsletter subscribers.
+
+- **Storefront:** `/`  ·  **Admin panel:** `/admin`
+
+---
+
+## 🛠️ For Developers
+
+Built with **Next.js 16** (App Router), **TypeScript**, **Supabase** (PostgreSQL + RLS), **Razorpay**, **Brevo** (email), **ImageKit** (media), **iThink Logistics** (shipping) and **Tailwind CSS**.
+
 ```bash
-# Clone the repository
-git clone https://github.com/mynexasolutions-spec/Anisha-spices.git
-cd Anisha-spices
-
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
-```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser.
-
----
-
-## 🔑 Environment Variables (`.env.local`)
-
-Create a `.env.local` file in the root directory:
-
-```env
-# ─── Supabase Database & Auth ─────────────────────────────
-NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-
-# ─── Admin Seed Credentials ───────────────────────────────
-ADMIN_EMAIL="admin@jaandaarmasale.com"
-ADMIN_PASSWORD="your-secure-admin-password"
-
-# ─── Brevo (Transactional Emails & Auth OTPs) ──────────────
-BREVO_API_KEY="xkeysib-..."
-BREVO_SENDER_EMAIL="noreply@yourdomain.com"
-BREVO_SENDER_NAME="Jaandaar Masale"
-
-# ─── Razorpay Payment Gateway ─────────────────────────────
-NEXT_PUBLIC_RAZORPAY_KEY_ID="rzp_live_..."
-RAZORPAY_KEY_ID="rzp_live_..."
-RAZORPAY_KEY_SECRET="your-razorpay-key-secret"
-RAZORPAY_WEBHOOK_SECRET="your-razorpay-webhook-secret"
-
-# ─── ImageKit (Product & Media Uploads) ───────────────────
-NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY="your-public-key"
-IMAGEKIT_PRIVATE_KEY="your-private-key"
-NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT="https://ik.imagekit.io/your_id"
+npm run dev      # http://localhost:3000
 ```
 
----
-
-## 🔐 Credentials & Access URLs
-
-| Portal | URL | Description |
-|---|---|---|
-| **Storefront** | [`/`](http://localhost:3000/) | Customer marketplace & catalog |
-| **Store Admin Dashboard** | [`/admin`](http://localhost:3000/admin) | Management suite (Orders, Inventory, Customers) |
-| **Admin Login** | [`/admin/login`](http://localhost:3000/admin/login) | Secured admin authentication |
-| **Customer Auth** | [`/login`](http://localhost:3000/login) | Customer Sign In, Sign Up (OTP), and Password Reset |
+- **Environment:** copy the variables listed in `.env` (Supabase, Brevo, Razorpay, ImageKit, iThink, `ADMIN_EMAIL` / `ADMIN_PASSWORD`, `NEXT_PUBLIC_SITE_URL`). Never commit real keys.
+- **Database:** run `supabase/complete_schema.sql` for a new project, or the files in `supabase/migrations/` in filename order for an existing one. A new admin page shows a "one-time database setup needed" note until its migration has been run.
+- **Code layout:** `src/app` (pages), `src/actions` (server actions), `src/components` (storefront and admin UI), `src/lib` (pricing, coupons, shipping, payments).
 
 ---
 
-## ✨ Key Features & Architecture
+<div align="center">
 
-### 🛡️ Authentication Lifecycle (Brevo + Supabase)
-- **Sign Up via 6-Digit Email OTP**: Verified registration via Brevo email OTP (10-minute expiry with attempt counters).
-- **Zero-Quota Email/Password Login**: Returning customers log in instantly with email & password without consuming email quota.
-- **Forgot Password Workflow**: Secure 64-character tokenized single-use reset links sent via Brevo (15-minute expiry).
-- **Cart Session Merging**: Automatic synchronization of guest cart items into customer account upon login.
+**HS AgroFoods** · Pure. Natural. Trusted.
 
-### 💳 Payment & Webhooks Infrastructure
-- **Dual Payment Options**: Cash on Delivery (COD) and Online Payments via Razorpay.
-- **Razorpay Webhook API (`/api/webhooks/razorpay`)**:
-  - Background event listener for `order.paid` and `payment.captured`.
-  - **HMAC-SHA256 Signature Verification** with timing-safe comparison to block unauthorized requests.
-  - **Idempotency Guard**: Guarantees zero duplicate database updates and prevents duplicate invoice emails.
-  - Automatic order status updates to `paid` and `processing`.
-- **Royal Invoice Emails**: Beautiful branded email receipts delivered via Brevo upon order confirmation (with itemized pricing, discounts, shipping fees, and address breakdown).
+Private & Proprietary
 
-### 🛍️ Storefront (Customer Experience)
-- **Dynamic Spice Catalog**: Handcrafted Indian spices with multiple variant pack sizes (50g, 100g, 250g, 500g, 1kg).
-- **Hybrid Cart Engine**: Guest cart (HTTP cookies) + Authenticated cart (`cart_items` in Supabase).
-- **Live Free Shipping Threshold Bar**: Real-time progress tracker towards free shipping.
-- **Pincode Lookup**: Automatic city/state detection via Indian Postal PIN code API.
-- **Customer Account Dashboard (`/account/orders`)**: Real-time status tracker (*Placed ➔ Processing ➔ Shipped ➔ Delivered*).
-- **Address Book (`/account/addresses`)**: Saved address manager with default address selection.
-
-### 👑 Admin Management Suite (`/admin`)
-- **Dashboard Overview**: Revenue metrics, order counter, customer volume, and sales graphs.
-- **Product & Inventory Manager**: Full control over products, pack weights, SKU stock, and images.
-- **Order Processing Suite**: View customer contact, order history, shipping snapshots, and fulfill orders.
-- **Shipping Settings (`/admin/settings/shipping`)**: Dynamic control over free delivery threshold and standard delivery fees.
-- **Storefront Content Management**: Live controls for hero banners, announcement bars, and product FAQs.
-
----
-
-## 🗄️ Database Architecture (Supabase PostgreSQL)
-
-### Database Migrations
-Migrations are managed in `supabase/migrations/`:
-- `00001_initial_schema.sql`: Primary schema for products, variants, categories, orders, order items, and profiles.
-- `20260625000000_add_shipping_address_snapshot.sql`: Permanent JSONB shipping address snapshot on orders.
-- `20260701000000_brevo_auth_tables.sql`: Dedicated auth tables `auth_signup_otps` and `password_reset_tokens` with RLS protection.
-
-### Core Tables
-
-| Table | Purpose | Security & RLS |
-|---|---|---|
-| `profiles` | User directory with RBAC (`customer` / `admin`) | RLS: Users read/write own profile, Admins full access |
-| `categories` | Product categories & slugs | Public read, Admin write |
-| `products` | Base product data & descriptions | Public read, Admin write |
-| `product_variants` | Pack weights, prices, and stock inventory | Public read, Admin write |
-| `orders` | Customer orders, payment & delivery status, snapshots | Users view own orders, Admin full access |
-| `order_items` | Itemized order lines snapshot at purchase | Users view own items, Admin full access |
-| `addresses` | Saved customer addresses | Users view/edit own addresses |
-| `cart_items` | Customer cart items | Users view/edit own cart |
-| `auth_signup_otps` | Temporary encrypted signup requests & OTPs | Service role only |
-| `password_reset_tokens`| Single-use crypto password reset tokens | Service role only |
-
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js (App Router, Server Actions, Turbopack)
-- **Language**: TypeScript
-- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
-- **Email Service**: Brevo API v3 (REST SMTP client with IPv4 prioritization)
-- **Payments**: Razorpay SDK + Webhooks + Cash on Delivery (COD)
-- **Styling**: Tailwind CSS & Lucide Icons
-- **Media**: ImageKit CDN & Storage + Local Optimized Assets
-
----
-
-## 📜 License
-Private & Proprietary — Developed for **Jaandaar Masale**.
+</div>
