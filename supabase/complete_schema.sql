@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS public.categories (
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
   image_url TEXT,
+  badge_text TEXT,
   is_active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
@@ -172,7 +173,7 @@ CREATE TABLE IF NOT EXISTS public.reviews (
   user_id UUID NOT NULL,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   review_text TEXT,
-  is_approved BOOLEAN NOT NULL DEFAULT true,
+  is_approved BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
@@ -235,6 +236,8 @@ CREATE TABLE IF NOT EXISTS public.orders (
   payment_status TEXT NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
   order_status TEXT NOT NULL DEFAULT 'pending' CHECK (order_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
   payment_method TEXT DEFAULT 'online',
+  coupon_code TEXT,
+  discount_amount NUMERIC(10,2) NOT NULL DEFAULT 0,
   shipping_address JSONB,
   razorpay_order_id TEXT,
   razorpay_payment_id TEXT,
@@ -266,6 +269,7 @@ CREATE TABLE IF NOT EXISTS public.hero_slides (
   title TEXT,
   subtitle TEXT,
   image_url TEXT NOT NULL,
+  image_mobile_url TEXT,
   button_text TEXT DEFAULT 'Shop Now',
   button_link TEXT DEFAULT '/shop',
   display_order INTEGER NOT NULL DEFAULT 0,
@@ -734,3 +738,46 @@ VALUES ('🌿 100% Pure Spices & Natural Dehydrated Veg & Fruit Powders • Free
 INSERT INTO public.delivery_settings (free_shipping_threshold, default_shipping_fee, is_cod_enabled)
 SELECT 500, 50, true
 WHERE NOT EXISTS (SELECT 1 FROM public.delivery_settings);
+
+-- ==============================================================================
+-- Coupons
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.coupons (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code TEXT NOT NULL UNIQUE,                       -- always stored UPPERCASE
+  description TEXT,                                -- shown to the customer, e.g. "10% off your first order"
+  discount_type TEXT NOT NULL CHECK (discount_type IN ('percent', 'flat')),
+  discount_value NUMERIC(10,2) NOT NULL CHECK (discount_value > 0),
+  max_discount NUMERIC(10,2) CHECK (max_discount IS NULL OR max_discount > 0),  -- cap for percent coupons
+  min_order_amount NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (min_order_amount >= 0),
+  usage_limit INTEGER CHECK (usage_limit IS NULL OR usage_limit > 0),            -- total redemptions, NULL = unlimited
+  per_customer_limit INTEGER CHECK (per_customer_limit IS NULL OR per_customer_limit > 0),
+  is_public BOOLEAN NOT NULL DEFAULT true,
+  starts_at TIMESTAMPTZ,
+  expires_at TIMESTAMPTZ,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+-- Codes are looked up only by the server (service role), so customers cannot list or guess them.
+ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Service Role Full Access Coupons" ON public.coupons;
+CREATE POLICY "Service Role Full Access Coupons" ON public.coupons FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+CREATE INDEX IF NOT EXISTS idx_orders_coupon_code ON public.orders(coupon_code) WHERE coupon_code IS NOT NULL;
+
+-- ==============================================================================
+-- Newsletter subscribers
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL UNIQUE,                 -- stored lowercase
+  source TEXT NOT NULL DEFAULT 'footer',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Service Role Full Access Newsletter" ON public.newsletter_subscribers;
+CREATE POLICY "Service Role Full Access Newsletter" ON public.newsletter_subscribers FOR ALL TO service_role USING (true) WITH CHECK (true);
+

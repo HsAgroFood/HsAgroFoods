@@ -25,6 +25,7 @@ import { createOrder, verifyRazorpayPayment, reportPaymentFailure, type Shipping
 import { useCart } from '@/contexts/CartContext'
 import Script from 'next/script'
 import type { ShippingConfig } from '@/actions/shipping'
+import { computeDiscount, describeCouponFull, type CouponRules } from '@/lib/coupons'
 
 type Address = {
   id: string
@@ -52,7 +53,8 @@ interface CheckoutClientProps {
   addresses: Address[]
   isAuthenticated: boolean
   userEmail?: string
-  shippingConfig?: ShippingConfig
+  shippingConfig: ShippingConfig
+  appliedCoupon?: CouponRules | null
 }
 
 export function CheckoutClient({
@@ -60,7 +62,8 @@ export function CheckoutClient({
   addresses,
   isAuthenticated,
   userEmail = '',
-  shippingConfig = { free_shipping_threshold: 500, standard_shipping_cost: 90 },
+  shippingConfig,
+  appliedCoupon = null,
 }: CheckoutClientProps) {
   const router = useRouter()
   const { refreshCart } = useCart()
@@ -109,7 +112,8 @@ export function CheckoutClient({
   const SHIPPING_COST = shippingConfig.standard_shipping_cost
   const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD
   const shipping = isFreeShipping ? 0 : SHIPPING_COST
-  const total = subtotal + shipping
+  const couponDiscount = appliedCoupon ? computeDiscount(appliedCoupon, subtotal) : 0
+  const total = subtotal - couponDiscount + shipping
   const amountNeededForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal)
 
   // Pincode auto-fill & verification function
@@ -813,6 +817,16 @@ export function CheckoutClient({
               <span>Items Subtotal</span>
               <span className="font-bold text-[#14361F]">₹{subtotal.toLocaleString('en-IN')}</span>
             </div>
+
+            {appliedCoupon && couponDiscount > 0 && (
+              <div className="flex justify-between items-center text-emerald-700">
+                <span className="flex items-center gap-1.5">
+                  <span>Coupon ({appliedCoupon.code})</span>
+                  <span className="text-[10px] font-semibold text-emerald-600">{describeCouponFull(appliedCoupon)}</span>
+                </span>
+                <span className="font-bold">-₹{couponDiscount.toLocaleString('en-IN')}</span>
+              </div>
+            )}
             
             <div className="flex justify-between items-center">
               <span className="flex items-center gap-1.5">

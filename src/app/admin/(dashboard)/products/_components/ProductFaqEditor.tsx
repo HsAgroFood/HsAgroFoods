@@ -71,9 +71,9 @@ export default function ProductFaqEditor({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200/80 p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="bg-white rounded-xl border border-stone-200/80 p-4 sm:p-6 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-base font-semibold text-stone-900">
             Frequently Asked Questions
           </h2>
@@ -176,7 +176,7 @@ export default function ProductFaqEditor({
         type="button"
         onClick={handleSave}
         disabled={isPending}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 disabled:opacity-60 transition-colors"
+        className="inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 disabled:opacity-60 transition-colors sm:w-auto sm:py-2"
       >
         {isPending ? (
           <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

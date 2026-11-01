@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -16,8 +16,11 @@ import {
   Lock,
   RotateCcw,
   Loader2,
+  X,
 } from 'lucide-react'
 import { removeFromCart, updateCartQuantity } from '@/actions/cart'
+import { applyCoupon, removeCoupon } from '@/actions/coupons'
+import { computeDiscount, describeCouponFull, type CouponRules } from '@/lib/coupons'
 import { useCart } from '@/contexts/CartContext'
 import type { ShippingConfig } from '@/actions/shipping'
 
@@ -44,15 +47,21 @@ type CartItem = {
 
 export function CartItemsList({
   initialItems,
-  shippingConfig = { free_shipping_threshold: 499, standard_shipping_cost: 90 },
+  shippingConfig,
+  appliedCoupon = null,
+  offers = [],
 }: {
   initialItems: any[]
-  shippingConfig?: ShippingConfig
+  shippingConfig: ShippingConfig
+  appliedCoupon?: CouponRules | null
+  offers?: CouponRules[]
 }) {
   const [items, setItems] = useState<CartItem[]>(initialItems as CartItem[])
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [couponCode, setCouponCode] = useState('')
   const [couponMessage, setCouponMessage] = useState<{ text: string; isError: boolean } | null>(null)
+  const [coupon, setCoupon] = useState<CouponRules | null>(appliedCoupon)
+  const [couponPending, startCouponTransition] = useTransition()
   const { refreshCart } = useCart()
 
   // Keep local state in sync when the server sends fresh cart data
@@ -95,16 +104,32 @@ export function CartItemsList({
     }
   }
 
+  const submitCoupon = (rawCode: string) => {
+    if (!rawCode.trim()) return
+
+    startCouponTransition(async () => {
+      const res = await applyCoupon(rawCode)
+      if (res.success) {
+        setCoupon(res.coupon)
+        setCouponCode('')
+        setCouponMessage({ text: `Coupon ${res.coupon.code} applied! You save ₹${res.discount}.`, isError: false })
+      } else {
+        setCouponMessage({ text: res.error, isError: true })
+      }
+    })
+  }
+
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!couponCode.trim()) return
+    submitCoupon(couponCode)
+  }
 
-    const code = couponCode.trim().toUpperCase()
-    if (code === 'PURE10' || code === 'WELCOME10') {
-      setCouponMessage({ text: 'Coupon applied! 10% discount added at checkout.', isError: false })
-    } else {
-      setCouponMessage({ text: 'Invalid coupon code. Try WELCOME10 or PURE10.', isError: true })
-    }
+  const handleRemoveCoupon = () => {
+    startCouponTransition(async () => {
+      await removeCoupon()
+      setCoupon(null)
+      setCouponMessage(null)
+    })
   }
 
   const subtotal = items.reduce((sum, item) => {
@@ -114,7 +139,19 @@ export function CartItemsList({
   const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal)
   const shipping = isFreeShipping ? 0 : SHIPPING_COST
-  const total = subtotal + shipping
+  const couponDiscount = coupon ? computeDiscount(coupon, subtotal) : 0
+  const couponBelowMinimum = !!coupon && subtotal < coupon.min_order_amount
+  const total = subtotal - couponDiscount + shipping
+
+  // Public coupons this cart already qualifies for, best saving first
+  const eligibleOffers = coupon
+    ? []
+    : offers
+        .filter((offer) => subtotal >= offer.min_order_amount)
+        .map((offer) => ({ offer, saving: computeDiscount(offer, subtotal) }))
+        .filter((entry) => entry.saving > 0)
+        .sort((a, b) => b.saving - a.saving)
+        .slice(0, 3)
   const progressPercent = Math.min(100, Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100))
 
   return (
@@ -309,6 +346,16 @@ export function CartItemsList({
               <span>Items Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} packs)</span>
               <span className="font-bold text-[#14361F]">₹{subtotal.toFixed(2)}</span>
             </div>
+
+            {coupon && couponDiscount > 0 && (
+              <div className="flex justify-between items-center text-emerald-700">
+                <span className="flex items-center gap-1">
+                  <Tag className="w-3.5 h-3.5" />
+                  <span>Coupon ({coupon.code})</span>
+                </span>
+                <span className="font-bold">-₹{couponDiscount.toFixed(2)}</span>
+              </div>
+            )}
             
             <div className="flex justify-between items-center text-[#5A433B]">
               <span className="flex items-center gap-1">
@@ -326,24 +373,78 @@ export function CartItemsList({
 
             {/* Promo Code Box */}
             <div className="pt-2 border-t border-[#F0E6DA]">
-              <form onSubmit={handleApplyCoupon} className="flex gap-2">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Coupon code (e.g. PURE10)"
-                    className="w-full rounded-[5px] bg-[#FAF7F2] border border-[#EDE4D9] px-3 py-2 text-xs text-[#14361F] placeholder:text-[#9C8A7F] focus:outline-none focus:ring-1 focus:ring-[#E07B0C] focus:border-[#E07B0C] transition-all uppercase"
-                  />
-                  <Tag className="w-3.5 h-3.5 text-[#9C8A7F] absolute right-2.5 top-2.5 pointer-events-none" />
-                </div>
-                <button
-                  type="submit"
-                  className="rounded-[5px] bg-[#FAF3EB] hover:bg-[#E07B0C] text-[#E07B0C] hover:text-white border border-[#EDE4D9] hover:border-[#E07B0C] px-3.5 py-2 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0"
+              {coupon ? (
+                <div
+                  className={`flex items-center justify-between gap-2 rounded-[5px] border px-3 py-2 ${
+                    couponBelowMinimum ? 'bg-amber-50 border-amber-200' : 'bg-[#EBF3ED] border-[#CFE3D3]'
+                  }`}
                 >
-                  Apply
-                </button>
-              </form>
+                  <div className="min-w-0">
+                    <p className={`text-xs font-extrabold ${couponBelowMinimum ? 'text-amber-800' : 'text-[#144D29]'}`}>
+                      <Tag className="inline w-3 h-3 mr-1 -mt-0.5" />
+                      {coupon.code}
+                      <span className="ml-1.5 font-semibold">{describeCouponFull(coupon)}</span>
+                    </p>
+                    {couponBelowMinimum ? (
+                      <p className="text-[11px] text-amber-700">
+                        Add ₹{Math.ceil(coupon.min_order_amount - subtotal)} more to use this coupon.
+                      </p>
+                    ) : null}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    disabled={couponPending}
+                    aria-label="Remove coupon"
+                    className="shrink-0 rounded p-1 text-[#7A6458] hover:text-rose-600 hover:bg-white/70 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Have a coupon code?"
+                      className="w-full rounded-[5px] bg-[#FAF7F2] border border-[#EDE4D9] px-3 py-2 text-xs text-[#14361F] placeholder:text-[#9C8A7F] focus:outline-none focus:ring-1 focus:ring-[#E07B0C] focus:border-[#E07B0C] transition-all uppercase"
+                    />
+                    <Tag className="w-3.5 h-3.5 text-[#9C8A7F] absolute right-2.5 top-2.5 pointer-events-none" />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={couponPending}
+                    className="rounded-[5px] bg-[#FAF3EB] hover:bg-[#E07B0C] text-[#E07B0C] hover:text-white border border-[#EDE4D9] hover:border-[#E07B0C] px-3.5 py-2 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0 disabled:opacity-60"
+                  >
+                    {couponPending ? 'Checking...' : 'Apply'}
+                  </button>
+                </form>
+              )}
+
+              {eligibleOffers.length > 0 && (
+                <div className="mt-2 space-y-1.5">
+                  <p className="text-[11px] font-semibold text-[#7A6458]">You can use this coupon on your order:</p>
+                  {eligibleOffers.map(({ offer, saving }) => (
+                    <button
+                      key={offer.code}
+                      type="button"
+                      onClick={() => submitCoupon(offer.code)}
+                      disabled={couponPending}
+                      className="w-full flex items-center justify-between gap-2 rounded-[5px] border border-dashed border-[#E07B0C]/60 bg-[#FFF8F0] hover:bg-[#FFF1E2] px-3 py-2 text-left transition-colors cursor-pointer disabled:opacity-60"
+                    >
+                      <span className="min-w-0">
+                        <span className="font-mono text-xs font-extrabold tracking-wide text-[#E07B0C]">{offer.code}</span>
+                        <span className="block text-[11px] text-[#5A433B]">
+                          {describeCouponFull(offer)} · you save ₹{saving}
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-[11px] font-bold text-[#E07B0C]">Tap to apply</span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {couponMessage && (
                 <p

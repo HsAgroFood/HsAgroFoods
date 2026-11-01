@@ -1,4 +1,4 @@
-import { getGlobalFaqs } from '@/actions/global_faqs'
+import { getGlobalFaqs, getGlobalFaqUsage } from '@/actions/global_faqs'
 import { GlobalFaqsEditor } from '@/components/admin/GlobalFaqsEditor'
 
 export const metadata = {
@@ -8,7 +8,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function GlobalFaqsPage() {
-  const { data: initialFaqs } = await getGlobalFaqs()
+  const [{ data: initialFaqs }, usage] = await Promise.all([getGlobalFaqs(), getGlobalFaqUsage()])
 
   return (
     <div>
@@ -20,7 +20,7 @@ export default async function GlobalFaqsPage() {
       </div>
 
       <div className="bg-white p-6 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <GlobalFaqsEditor initialFaqs={initialFaqs || []} />
+        <GlobalFaqsEditor initialFaqs={initialFaqs || []} usage={usage} />
       </div>
     </div>
   )

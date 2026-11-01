@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useShippingConfig } from '@/contexts/ShippingConfigContext'
+import { shippingCopy } from '@/lib/shippingText'
 import {
   ShieldCheck,
   Check,
@@ -18,7 +20,32 @@ import {
 } from 'lucide-react'
 import { subscribeNewsletter } from '@/actions/newsletter'
 
-export function Footer() {
+type FooterLinkItem = { name: string; slug: string }
+
+const footerLinkClass =
+  'inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5'
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <li>
+      <Link href={href} className={footerLinkClass}>
+        <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
+        <span>{children}</span>
+      </Link>
+    </li>
+  )
+}
+
+export function Footer({
+  categories = [],
+  signatureProducts = [],
+}: {
+  /** Shop categories from the database (Explore column) */
+  categories?: FooterLinkItem[]
+  /** Featured products from the database (Signature Range column) */
+  signatureProducts?: FooterLinkItem[]
+}) {
+  const shipping = shippingCopy(useShippingConfig())
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [subscribed, setSubscribed] = useState(false)
@@ -85,7 +112,7 @@ export function Footer() {
               <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-[#E07B0C]" />
             </div>
             <div className="min-w-0 flex-1">
-              <h4 className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14361F] leading-tight">Free Delivery &gt; ₹499</h4>
+              <h4 className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-[#14361F] leading-tight">{shipping.deliveryShort}</h4>
               <p className="text-[9.5px] sm:text-[10.5px] lg:text-[11px] text-[#7A6458] mt-0.5 leading-snug">Safe pan-India dispatch</p>
             </div>
           </div>
@@ -182,69 +209,15 @@ export function Footer() {
               <span>Explore</span>
             </h3>
             <ul className="space-y-2 text-xs sm:text-[13px] font-medium text-[#5A433B]">
-              <li>
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Home</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shop"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Shop All Products</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shop?category=ground-spices"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Ground Spices</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shop?category=blended-spices"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Blended Masale</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shop?category=dehydrated-powders"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Dehydrated Powders</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>About Us</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Contact Us</span>
-                </Link>
-              </li>
+              <FooterLink href="/">Home</FooterLink>
+              <FooterLink href="/shop">Shop All Products</FooterLink>
+              {categories.map((category) => (
+                <FooterLink key={category.slug} href={`/shop?category=${category.slug}`}>
+                  {category.name}
+                </FooterLink>
+              ))}
+              <FooterLink href="/about">About Us</FooterLink>
+              <FooterLink href="/contact">Contact Us</FooterLink>
             </ul>
           </div>
 
@@ -255,69 +228,12 @@ export function Footer() {
               <span>Signature Range</span>
             </h3>
             <ul className="space-y-2 text-xs sm:text-[13px] font-medium text-[#5A433B]">
-              <li>
-                <Link
-                  href="/product/turmeric-powder"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Turmeric Powder (Haldi)</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/product/red-chilli-powder"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Red Chilli Powder</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/product/shahi-garam-masala"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Shahi Garam Masala</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/product/chat-masala"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Tangy Chaat Masala</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/product/beetroot-powder"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Pure Beetroot Powder</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/product/tomato-powder"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Dehydrated Tomato Powder</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/product/banana-powder"
-                  className="inline-flex items-center gap-1.5 hover:text-[#E07B0C] hover:translate-x-1 transition-all py-0.5"
-                >
-                  <ArrowRight className="w-3 h-3 text-[#E07B0C]" />
-                  <span>Raw Banana Powder</span>
-                </Link>
-              </li>
+              {signatureProducts.map((product) => (
+                <FooterLink key={product.slug} href={`/product/${product.slug}`}>
+                  {product.name}
+                </FooterLink>
+              ))}
+              {signatureProducts.length === 0 && <FooterLink href="/shop">Browse all products</FooterLink>}
             </ul>
           </div>
 

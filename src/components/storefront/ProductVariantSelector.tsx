@@ -17,6 +17,8 @@ import {
 } from 'lucide-react'
 import { addToCart } from '@/actions/cart'
 import { useCart } from '@/contexts/CartContext'
+import { useShippingConfig } from '@/contexts/ShippingConfigContext'
+import { shippingCopy } from '@/lib/shippingText'
 
 type Variant = {
   id: string
@@ -48,6 +50,7 @@ export function ProductVariantSelector({ variants }: { variants: Variant[] }) {
   const [addedSuccess, setAddedSuccess] = useState(false)
   const router = useRouter()
   const { refreshCart } = useCart()
+  const shipping = shippingCopy(useShippingConfig())
 
   if (activeVariants.length === 0) {
     return (
@@ -310,7 +313,7 @@ export function ProductVariantSelector({ variants }: { variants: Variant[] }) {
           <Truck className="w-5 h-5 text-[#E07B0C] shrink-0" />
           <div className="text-left leading-tight">
             <p className="text-xs font-bold text-[#14361F]">Free Shipping</p>
-            <p className="text-[11px] text-[#6E5951]">on orders above ₹499</p>
+            <p className="text-[11px] text-[#6E5951]">{shipping.ordersAbove}</p>
           </div>
         </div>
 

@@ -11,18 +11,6 @@ type Category = {
   slug: string
 }
 
-// Category visual icon lookup
-const CATEGORY_ICONS: Record<string, string> = {
-  'all': '✨',
-  'ground-spices': '🌶️',
-  'pure-ground-spices': '🌶️',
-  'blended-spices': '🥣',
-  'blended-masalas': '🥣',
-  'dehydrated-powders': '🌿',
-  'whole-spices': '🪵',
-  'exotic-herbs': '🌿',
-}
-
 export function ShopSidebar({
   categories,
   categoryFilter,
@@ -137,10 +125,7 @@ export function ShopSidebar({
                       : 'text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#14361F]'
                   }`}
                 >
-                  <span className="flex items-center gap-2">
-                    <span>✨</span>
-                    <span>All Products</span>
-                  </span>
+                  <span>All Products</span>
                   {!categoryFilter && <Check className="w-3.5 h-3.5 text-white" />}
                 </Link>
               </li>
@@ -148,7 +133,6 @@ export function ShopSidebar({
               {/* Dynamic Categories */}
               {categories.map((cat) => {
                 const isActive = categoryFilter === cat.slug
-                const icon = CATEGORY_ICONS[cat.slug] || '🌿'
 
                 return (
                   <li key={cat.id}>
@@ -161,10 +145,7 @@ export function ShopSidebar({
                           : 'text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#14361F]'
                       }`}
                     >
-                      <span className="flex items-center gap-2">
-                        <span>{icon}</span>
-                        <span>{cat.name}</span>
-                      </span>
+                      <span>{cat.name}</span>
                       {isActive && <Check className="w-3.5 h-3.5 text-white" />}
                     </Link>
                   </li>

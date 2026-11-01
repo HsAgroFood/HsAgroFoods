@@ -3,6 +3,7 @@ import { getEffectiveUser } from '@/lib/userAuth'
 import { redirect } from 'next/navigation'
 import { getCart } from '@/actions/cart'
 import { getShippingConfig } from '@/actions/shipping'
+import { getAppliedCoupon } from '@/actions/coupons'
 import { CheckoutClient } from './_components/CheckoutClient'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,9 +20,10 @@ export default async function CheckoutPage() {
   const user = await getEffectiveUser()
 
   // Get Cart & Shipping Configuration in parallel
-  const [{ items }, shippingConfig] = await Promise.all([
+  const [{ items }, shippingConfig, appliedCoupon] = await Promise.all([
     getCart(),
     getShippingConfig(),
+    getAppliedCoupon(),
   ])
 
   if (!items || items.length === 0) {
@@ -109,6 +111,7 @@ export default async function CheckoutPage() {
           isAuthenticated={!!user}
           userEmail={user?.email || ''}
           shippingConfig={shippingConfig}
+          appliedCoupon={appliedCoupon}
         />
       </div>
     </div>

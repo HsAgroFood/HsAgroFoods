@@ -21,6 +21,22 @@ function revalidateReviewConsumers() {
   revalidatePath('/')
 }
 
+async function syncProductRatings(supabase: ReturnType<typeof createAdminClient>, productId: string) {
+  const { data: approved } = await supabase
+    .from('reviews')
+    .select('rating')
+    .eq('product_id', productId)
+    .eq('is_approved', true)
+
+  const count = approved?.length ?? 0
+  const avg = count > 0 ? approved!.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0) / count : 0
+
+  await supabase
+    .from('products')
+    .update({ average_rating: parseFloat(avg.toFixed(1)), review_count: count })
+    .eq('id', productId)
+}
+
 export async function approveReview(
   prevState: ActionResult,
   formData: FormData
@@ -47,10 +63,6 @@ export async function approveReview(
       return { error: 'Failed to approve review.' }
     }
 
-    // Update the product's average_rating and review_count
-    // To do this reliably, we can trigger an edge function or calculate it here.
-    // For now we can calculate it manually or let a trigger handle it.
-    // Assuming the database doesn't have a trigger yet, let's fetch all approved reviews for the product
     const { data: reviewData } = await supabase
       .from('reviews')
       .select('product_id')
@@ -58,24 +70,7 @@ export async function approveReview(
       .single()
 
     if (reviewData?.product_id) {
-      const { data: allReviews } = await supabase
-        .from('reviews')
-        .select('rating')
-        .eq('product_id', reviewData.product_id)
-        .eq('is_approved', true)
-
-      if (allReviews && allReviews.length > 0) {
-        const sum = allReviews.reduce((acc, curr) => acc + curr.rating, 0)
-        const avg = sum / allReviews.length
-        
-        await supabase
-          .from('products')
-          .update({
-            average_rating: parseFloat(avg.toFixed(1)),
-            review_count: allReviews.length
-          })
-          .eq('id', reviewData.product_id)
-      }
+      await syncProductRatings(supabase, reviewData.product_id)
     }
 
     revalidateReviewConsumers()
@@ -119,40 +114,55 @@ export async function deleteReview(
       return { error: 'Failed to delete review.' }
     }
 
-    // If it was an approved review, update the aggregates
+    // Only approved reviews count towards ratings
     if (reviewData?.is_approved && reviewData.product_id) {
-      const { data: allReviews } = await supabase
-        .from('reviews')
-        .select('rating')
-        .eq('product_id', reviewData.product_id)
-        .eq('is_approved', true)
-
-      if (allReviews && allReviews.length > 0) {
-        const sum = allReviews.reduce((acc, curr) => acc + curr.rating, 0)
-        const avg = sum / allReviews.length
-        
-        await supabase
-          .from('products')
-          .update({
-            average_rating: parseFloat(avg.toFixed(1)),
-            review_count: allReviews.length
-          })
-          .eq('id', reviewData.product_id)
-      } else if (allReviews && allReviews.length === 0) {
-        await supabase
-          .from('products')
-          .update({
-            average_rating: 0,
-            review_count: 0
-          })
-          .eq('id', reviewData.product_id)
-      }
+      await syncProductRatings(supabase, reviewData.product_id)
     }
 
     revalidateReviewConsumers()
     return { success: true }
   } catch (err: any) {
     console.error('Unexpected error deleting review:', err)
+    return { error: 'An unexpected error occurred.' }
+  }
+}
+
+/** Take an approved review back off the storefront (it returns to Pending). */
+export async function unapproveReview(
+  prevState: ActionResult,
+  formData: FormData
+): Promise<ActionResult> {
+  try {
+    const supabase = await getAdminClient()
+    if (!supabase) {
+      return { error: 'Unauthorized. Admin access required.' }
+    }
+
+    const reviewId = formData.get('id') as string
+    if (!reviewId) {
+      return { error: 'Review ID is required.' }
+    }
+
+    const { data: reviewData, error: updateError } = await supabase
+      .from('reviews')
+      .update({ is_approved: false })
+      .eq('id', reviewId)
+      .select('product_id')
+      .single()
+
+    if (updateError) {
+      console.error('Error hiding review:', updateError)
+      return { error: 'Failed to hide review.' }
+    }
+
+    if (reviewData?.product_id) {
+      await syncProductRatings(supabase, reviewData.product_id)
+    }
+
+    revalidateReviewConsumers()
+    return { success: true }
+  } catch (err: unknown) {
+    console.error('Unexpected error hiding review:', err)
     return { error: 'An unexpected error occurred.' }
   }
 }

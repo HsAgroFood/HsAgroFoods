@@ -47,8 +47,8 @@ export async function addGlobalFaq(formData: FormData) {
 
   const supabase = createAdminClient()
 
-  const question = formData.get('question')?.toString()
-  const answer = formData.get('answer')?.toString()
+  const question = formData.get('question')?.toString().trim()
+  const answer = formData.get('answer')?.toString().trim()
 
   if (!question || !answer) {
     return { success: false, error: 'Question and answer are required' }
@@ -89,8 +89,8 @@ export async function updateGlobalFaq(id: string, formData: FormData) {
 
   const supabase = createAdminClient()
 
-  const question = formData.get('question')?.toString()
-  const answer = formData.get('answer')?.toString()
+  const question = formData.get('question')?.toString().trim()
+  const answer = formData.get('answer')?.toString().trim()
 
   if (!question || !answer) {
     return { success: false, error: 'Question and answer are required' }
@@ -136,18 +136,53 @@ export async function updateGlobalFaqOrders(orders: { id: string; display_order:
   }
 
   const supabase = createAdminClient()
+  const updatedAt = new Date().toISOString()
 
-  for (const item of orders) {
-    const { error } = await supabase
-      .from('global_faqs')
-      .update({ display_order: item.display_order, updated_at: new Date().toISOString() })
-      .eq('id', item.id)
+  const results = await Promise.all(
+    orders.map((item) =>
+      supabase
+        .from('global_faqs')
+        .update({ display_order: item.display_order, updated_at: updatedAt })
+        .eq('id', item.id)
+    )
+  )
 
-    if (error) {
-      return { success: false, error: error.message }
-    }
+  const failed = results.find((r) => r.error)
+  if (failed?.error) {
+    return { success: false, error: failed.error.message }
   }
 
   revalidateFaqConsumers()
   return { success: true }
+}
+
+/** Show or hide a global FAQ on the storefront without deleting it. */
+export async function setGlobalFaqActive(id: string, isActive: boolean) {
+  if (!(await isAdminAuthenticated())) {
+    return { success: false, error: UNAUTHORIZED_ERROR }
+  }
+
+  const supabase = createAdminClient()
+  const { data, error } = await supabase
+    .from('global_faqs')
+    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  revalidateFaqConsumers()
+  return { success: true, data: data[0] }
+}
+
+/** How many products currently pull in the global FAQs. */
+export async function getGlobalFaqUsage(): Promise<{ using: number; total: number }> {
+  const supabase = createAdminClient()
+  const [{ count: total }, { count: using }] = await Promise.all([
+    supabase.from('products').select('id', { count: 'exact', head: true }),
+    supabase.from('products').select('id', { count: 'exact', head: true }).eq('use_global_faqs', true),
+  ])
+  return { using: using ?? 0, total: total ?? 0 }
 }

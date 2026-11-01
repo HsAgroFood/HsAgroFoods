@@ -12,7 +12,7 @@
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "cloudinary": "^2.10.0",
-    "imagekit": "^1.5.0",
+    "imagekit": "^5.2.0",
     "install": "^0.13.0",
     "lucide-react": "^1.21.0",
     "next": "^16.4.3",

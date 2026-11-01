@@ -35,6 +35,7 @@ export async function createCategory(
   const name = formData.get('name') as string
   const description = formData.get('description') as string
   const imageUrl = formData.get('image_url') as string
+  const badgeText = ((formData.get('badge_text') as string) || '').trim().slice(0, 24)
   const isActive = formData.get('is_active') === 'on'
 
   if (!name) {
@@ -43,13 +44,18 @@ export async function createCategory(
 
   const slug = slugify(name)
 
-  const { error } = await supabase.from('categories').insert({
+  const row = {
     name,
     slug,
     description: description || null,
     image_url: imageUrl || null,
     is_active: isActive,
-  })
+  }
+  let { error } = await supabase.from('categories').insert({ ...row, badge_text: badgeText || null })
+  if (error && /badge_text/i.test(error.message)) {
+    // Column not created yet (migration pending): save without the tag
+    ;({ error } = await supabase.from('categories').insert(row))
+  }
 
   if (error) {
     if (error.code === '23505') {
@@ -75,6 +81,7 @@ export async function updateCategory(
   const name = formData.get('name') as string
   const description = formData.get('description') as string
   const imageUrl = formData.get('image_url') as string
+  const badgeText = ((formData.get('badge_text') as string) || '').trim().slice(0, 24)
   const isActive = formData.get('is_active') === 'on'
 
   if (!id || !name) {
@@ -83,16 +90,21 @@ export async function updateCategory(
 
   const slug = slugify(name)
 
-  const { error } = await supabase
+  const row = {
+    name,
+    slug,
+    description: description || null,
+    image_url: imageUrl || null,
+    is_active: isActive,
+  }
+  let { error } = await supabase
     .from('categories')
-    .update({
-      name,
-      slug,
-      description: description || null,
-      image_url: imageUrl || null,
-      is_active: isActive,
-    })
+    .update({ ...row, badge_text: badgeText || null })
     .eq('id', id)
+  if (error && /badge_text/i.test(error.message)) {
+    // Column not created yet (migration pending): save without the tag
+    ;({ error } = await supabase.from('categories').update(row).eq('id', id))
+  }
 
   if (error) {
     if (error.code === '23505') {

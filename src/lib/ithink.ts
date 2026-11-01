@@ -240,7 +240,7 @@ export async function createIthinkShipment(
   const admin = createAdminClient()
   const { data: order, error: orderError } = await admin
     .from('orders')
-    .select('id, order_number, created_at, total_amount, shipping_cost, payment_method, payment_status, order_status, shipping_address, shipment_status')
+    .select('*') // '*' so a coupon's discount_amount is picked up once that column exists
     .eq('id', orderId)
     .maybeSingle()
   if (orderError) throw orderError
@@ -326,8 +326,10 @@ export async function createIthinkShipment(
     const isCod = isCodPayment(order.payment_method)
     const total = Number(order.total_amount)
     const shippingCharge = Number(order.shipping_cost ?? 0)
+    const couponDiscount = Number(order.discount_amount ?? 0)
     // iThink recalculates total_amount itself as (sum of product price x qty) + shipping_charges
-    // and rejects the shipment if ours differs, so build it the same way.
+    // (minus any coupon discount we report in total_discount) and rejects the shipment if ours
+    // differs, so build it the same way.
     const merchandise = items.reduce((sum, item) => sum + Number(item.price_at_purchase) * Number(item.quantity), 0)
 
     const shipment = {
@@ -335,8 +337,8 @@ export async function createIthinkShipment(
       order: order.order_number,
       sub_order: '',
       order_date: formatDate(),
-      // Merchandise + shipping_charges; the amount to collect on delivery goes in cod_amount
-      total_amount: (merchandise + shippingCharge).toFixed(2),
+      // Merchandise - coupon discount + shipping_charges; the amount to collect on delivery goes in cod_amount
+      total_amount: (merchandise - couponDiscount + shippingCharge).toFixed(2),
       name: asciiSafe(String(address.full_name || ''), 'Customer'),
       company_name: '',
       add: asciiSafe(addressLine1, ''),
@@ -365,7 +367,7 @@ export async function createIthinkShipment(
       shipping_charges: shippingCharge.toFixed(2),
       giftwrap_charges: '0',
       transaction_charges: '0',
-      total_discount: '0',
+      total_discount: couponDiscount.toFixed(2),
       first_attemp_discount: '0',
       cod_amount: isCod ? total.toFixed(2) : '0',
       payment_mode: isCod ? 'COD' : 'Prepaid',

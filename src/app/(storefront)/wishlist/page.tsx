@@ -20,6 +20,8 @@ import {
 import { FALLBACK_PRODUCTS } from '@/constants/fallbackProducts'
 import { createClient } from '@/lib/supabase/client'
 import { useCart } from '@/contexts/CartContext'
+import { useShippingConfig } from '@/contexts/ShippingConfigContext'
+import { shippingCopy } from '@/lib/shippingText'
 import { addToCart } from '@/actions/cart'
 import { removeWishlistProduct } from '@/lib/wishlist'
 
@@ -40,6 +42,7 @@ export type WishlistItem = {
 
 export default function WishlistPage() {
   const { refreshCart } = useCart()
+  const shipping = shippingCopy(useShippingConfig())
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([])
   const [loading, setLoading] = useState(true)
   const [addingToCartId, setAddingToCartId] = useState<string | null>(null)
@@ -453,8 +456,8 @@ export default function WishlistPage() {
                 <p className="text-[10px] sm:text-xs text-[#7A6458]">Cold-Ground</p>
               </div>
               <div>
-                <p className="text-base sm:text-lg font-extrabold text-[#14361F]">₹499+</p>
-                <p className="text-[10px] sm:text-xs text-[#7A6458]">Free Shipping</p>
+                <p className="text-base sm:text-lg font-extrabold text-[#14361F]">{shipping.statValue}</p>
+                <p className="text-[10px] sm:text-xs text-[#7A6458]">{shipping.statLabel}</p>
               </div>
             </div>
           </div>

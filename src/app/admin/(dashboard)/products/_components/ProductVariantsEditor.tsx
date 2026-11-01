@@ -127,7 +127,7 @@ export function ProductVariantsEditor({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-lg font-medium text-gray-900">Product Variants</h3>
         {!isAdding && !editingId && (
           <button
@@ -282,7 +282,74 @@ export function ProductVariantsEditor({
       )}
 
       {variants.length > 0 ? (
-        <div className="overflow-hidden bg-white shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <>
+        {/* Phones: one card per variant (the wide table is for tablets and up) */}
+        <ul className="space-y-3 md:hidden">
+          {variants.map((variant) => (
+            <li
+              key={variant.id}
+              className={`rounded-xl border p-4 ${editingId === variant.id ? 'border-indigo-300 bg-indigo-50' : 'border-gray-200 bg-white'}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-semibold text-gray-900">{variant.variant_name}</p>
+                {variant.is_active ? (
+                  <span className="inline-flex shrink-0 items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                    Active
+                  </span>
+                ) : (
+                  <span className="inline-flex shrink-0 items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                    Inactive
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-base font-bold text-gray-900">₹{variant.price}</span>
+                {variant.original_price && (
+                  <span className="text-xs text-gray-400 line-through">₹{variant.original_price}</span>
+                )}
+              </div>
+
+              <dl className="mt-3 grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <dt className="text-gray-400">Stock</dt>
+                  <dd className="font-medium text-gray-700">{variant.stock_quantity}</dd>
+                </div>
+                <div>
+                  <dt className="text-gray-400">Parcel</dt>
+                  <dd className="font-medium text-gray-700">
+                    {variant.weight_kg != null
+                      ? `${Number(variant.weight_kg)} kg · ${Number(variant.length_cm)}×${Number(variant.width_cm)}×${Number(variant.height_cm)} cm`
+                      : '-'}
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleEdit(variant)}
+                  disabled={isPending}
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-300 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 disabled:opacity-50"
+                >
+                  <Edit2 className="h-4 w-4" />
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(variant.id)}
+                  disabled={isPending}
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-300 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden overflow-x-auto bg-white shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg md:block">
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
@@ -350,6 +417,7 @@ export function ProductVariantsEditor({
             </tbody>
           </table>
         </div>
+        </>
       ) : (
         <div className="text-center py-12 bg-white border-2 border-dashed border-gray-300 rounded-lg">
           <p className="text-sm text-gray-500">No variants added yet.</p>

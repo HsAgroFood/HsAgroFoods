@@ -1,28 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  ArrowRight,
-  ShoppingCart,
-  Heart,
-  Leaf,
-  FlaskConical,
-  ShieldCheck,
-  LayoutGrid,
-  Check,
-  Loader2,
-} from 'lucide-react'
+import { ArrowRight, LayoutGrid, Leaf } from 'lucide-react'
 import { SPICE_ASSETS } from '@/constants/assets'
-import { useCart } from '@/contexts/CartContext'
-import { addToCart } from '@/actions/cart'
-import { FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from '@/constants/fallbackProducts'
-import {
-  isProductWishlisted,
-  toggleWishlistProduct,
-  getWishlistMap,
-} from '@/lib/wishlist'
+import { FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
+import { ProductCard } from '@/components/storefront/ProductCard'
 
 export type CategoryItem = {
   id: string
@@ -43,6 +27,10 @@ export type LiveSpiceItem = {
   categorySlug?: string
   categoryId?: string
   variantId?: string
+  minPrice?: number | null
+  originalPrice?: number | null
+  rating?: number
+  reviewCount?: number
 }
 
 export type SpiceProduct = {
@@ -54,6 +42,10 @@ export type SpiceProduct = {
   shortDesc: string
   categorySlug: string
   categoryId?: string
+  minPrice?: number | null
+  originalPrice?: number | null
+  rating?: number
+  reviewCount?: number
   href: string
   priceText: string
   variantId: string
@@ -236,19 +228,6 @@ const DEFAULT_14_PRODUCTS: SpiceProduct[] = [
   },
 ]
 
-// Visual category icon lookup matching the shop categories
-const CATEGORY_ICONS: Record<string, string> = {
-  'all': '✨',
-  'ground-spices': '🌶️',
-  'pure-ground-spices': '🌶️',
-  'blended-spices': '🥣',
-  'blended-masalas': '🥣',
-  'dehydrated-powders': '🌿',
-  'whole-spices': '🪵',
-  'exotic-herbs': '🌿',
-  'organic-wellness': '🌱',
-}
-
 // Realistic Botanical Leaf SVG for Ambient Background Decor
 function RealisticLeaf({ className = '' }: { className?: string }) {
   return (
@@ -296,156 +275,46 @@ function RealisticLeaf({ className = '' }: { className?: string }) {
   )
 }
 
-// Dedicated product card component with instant local wishlist reactivity and live synchronization
-function SpiceCardItem({
-  product,
-  onAddToCart,
-  isAdding,
-  isAdded,
-}: {
-  product: SpiceProduct
-  onAddToCart: (e: React.MouseEvent, product: SpiceProduct) => void
-  isAdding: boolean
-  isAdded: boolean
-}) {
-  const [isWishlisted, setIsWishlisted] = useState(false)
-
-  // Initialize and synchronize wishlist state with localStorage & custom events
-  useEffect(() => {
-    const syncWishlist = () => {
-      const map = getWishlistMap()
-      setIsWishlisted(isProductWishlisted(map, product.id, product.slug))
-    }
-
-    syncWishlist()
-    window.addEventListener('hs_wishlist_updated', syncWishlist)
-    window.addEventListener('storage', syncWishlist)
-
-    return () => {
-      window.removeEventListener('hs_wishlist_updated', syncWishlist)
-      window.removeEventListener('storage', syncWishlist)
-    }
-  }, [product.id, product.slug])
-
-  // Toggle wishlist state with instant visual reaction
-  const handleToggleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    const next = toggleWishlistProduct(product.id, product.slug)
-    setIsWishlisted(next)
-  }
-
-  return (
-    <Link
-      href={product.href}
-      className="group relative rounded-[5px] bg-white border border-[#EDE4D9] p-2 sm:p-2.5 lg:p-3 shadow-[0_4px_20px_rgba(20,54,31,0.04)] hover:shadow-[0_16px_36px_rgba(20,54,31,0.1)] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden cursor-pointer"
-    >
-      {/* Card Top: Bowl Image + Featured Badge + Wishlist Heart */}
-      <div className="relative w-full aspect-square rounded-[5px] overflow-hidden bg-[#FAF6F0] mb-2 sm:mb-3.5 flex items-center justify-center">
-        {/* FEATURED Badge */}
-        {product.tag && (
-          <span className="absolute top-1.5 left-1.5 sm:top-2.5 sm:left-2.5 z-10 inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-[4px] bg-[#E07B0C] text-[9px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
-            {product.tag}
-          </span>
-        )}
-
-        {/* Wishlist Heart Button (Prevents navigation on click, syncs with localStorage) */}
-        <button
-          type="button"
-          onClick={handleToggleWishlist}
-          aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
-          title={isWishlisted ? 'Saved in wishlist' : 'Save to wishlist'}
-          className="absolute top-1.5 right-1.5 sm:top-2.5 sm:right-2.5 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-[5px] bg-white/95 hover:bg-white text-stone-500 hover:text-[#E07B0C] border border-[#EDE4D9]/80 shadow-xs flex items-center justify-center transition-all duration-200 active:scale-115 cursor-pointer"
-        >
-          <Heart
-            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all duration-300 ${
-              isWishlisted
-                ? 'fill-[#E07B0C] text-[#E07B0C] scale-110'
-                : 'text-[#8C766E] hover:text-[#E07B0C]'
-            }`}
-          />
-        </button>
-
-        {/* Bowl Product Image */}
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-        />
-      </div>
-
-      {/* Card Body: Title & Short Subtitle */}
-      <div className="text-left px-0.5 sm:px-1 flex-1 flex flex-col justify-start">
-        <h3 className="font-serif text-[13px] sm:text-base lg:text-lg font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors leading-snug line-clamp-1">
-          {product.name}
-        </h3>
-
-        <p className="text-[10px] sm:text-xs text-[#615147] line-clamp-1 mt-0.5 sm:mt-1 leading-relaxed">
-          {product.shortDesc}
-        </p>
-      </div>
-
-      {/* Card Actions: Shop Now Pill Button + Quick Add Cart Icon */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 border-t border-[#F0E6DA] mt-2 pt-2">
-        <div className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 sm:py-2 px-1.5 sm:px-2.5 rounded-[5px] bg-[#E07B0C] group-hover:bg-[#C86A08] text-white text-[11px] sm:text-xs font-semibold shadow-xs hover:shadow-md transition-all active:scale-[0.98]">
-          <span>Shop Now</span>
-          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </div>
-
-        {/* Add to Cart Button (Prevents navigation on click) */}
-        <button
-          type="button"
-          onClick={(e) => onAddToCart(e, product)}
-          aria-label={`Add ${product.name} to cart`}
-          disabled={isAdding}
-          className="relative z-20 w-8 h-8 sm:w-[40px] sm:h-[33.5px] rounded-[5px] border border-[#E07B0C]/40 hover:border-[#E07B0C] bg-[#FFF8F2] hover:bg-[#E07B0C] text-[#E07B0C] hover:text-white flex items-center justify-center transition-all shrink-0 active:scale-95 shadow-2xs cursor-pointer"
-        >
-          {isAdded ? (
-            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
-          ) : isAdding ? (
-            <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin text-[#E07B0C]" />
-          ) : (
-            <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          )}
-        </button>
-      </div>
-    </Link>
-  )
+// "From ₹55" -> 55 (only used by the built-in sample range, which has no numeric price)
+function priceFromText(text?: string | null): number | null {
+  const match = /(\d+(?:\.\d+)?)/.exec(text || '')
+  return match ? Number(match[1]) : null
 }
 
 export function SpiceRangeSection({
   products = [],
   categories = [],
+  useLiveProducts = false,
 }: {
   products?: LiveSpiceItem[]
   categories?: CategoryItem[]
+  /** true: show only the products passed in (from the database). false: fall back to the built-in sample range. */
+  useLiveProducts?: boolean
 }) {
-  const { refreshCart } = useCart()
   const [activeCategorySlug, setActiveCategorySlug] = useState<string>('all')
   const [showAll14, setShowAll14] = useState<boolean>(false)
-  const [addingId, setAddingId] = useState<string | null>(null)
-  const [addedSuccessId, setAddedSuccessId] = useState<string | null>(null)
 
   // Use shop page categories (from DB or fallback to shop categories)
   const resolvedCategories: CategoryItem[] =
     categories && categories.length > 0 ? categories : FALLBACK_CATEGORIES
 
-  // Build filter tabs: "All Products" + Exact categories from the Shop page
+  // Build filter tabs: "All Products" + the shop categories (live mode: only those with a product to show)
+  const tabCategories = useLiveProducts
+    ? resolvedCategories.filter((c) =>
+        products.some((p) => p.categorySlug === c.slug || (p.categoryId && p.categoryId === c.id))
+      )
+    : resolvedCategories
   const filterTabs = [
-    { id: 'all', name: 'All Products', slug: 'all', icon: '✨' },
-    ...resolvedCategories.map((c) => ({
+    { id: 'all', name: 'All Products', slug: 'all' },
+    ...tabCategories.map((c) => ({
       id: c.id,
       name: c.name,
       slug: c.slug,
-      icon: CATEGORY_ICONS[c.slug] || '🌿',
     })),
   ]
 
   // Merge database products with complete 14-product definitions if provided
-  const combinedProducts: SpiceProduct[] = DEFAULT_14_PRODUCTS.map((def) => {
+  const combinedProducts: SpiceProduct[] = (useLiveProducts ? [] : DEFAULT_14_PRODUCTS).map((def) => {
     const liveMatch = products.find((p) => p.slug === def.slug || p.id === def.id)
     if (liveMatch) {
       return {
@@ -466,7 +335,7 @@ export function SpiceRangeSection({
 
   // Also include any extra live products from DB that are not in the default 14
   const extraProducts: SpiceProduct[] = products
-    .filter((p) => !DEFAULT_14_PRODUCTS.some((def) => def.slug === p.slug || def.id === p.id))
+    .filter((p) => useLiveProducts || !DEFAULT_14_PRODUCTS.some((def) => def.slug === p.slug || def.id === p.id))
     .map((p) => ({
       id: p.id,
       name: p.name,
@@ -479,6 +348,10 @@ export function SpiceRangeSection({
       href: `/product/${p.slug}`,
       priceText: p.priceText || 'In Stock',
       variantId: p.variantId || '',
+      minPrice: p.minPrice ?? null,
+      originalPrice: p.originalPrice ?? null,
+      rating: p.rating,
+      reviewCount: p.reviewCount,
     }))
 
   const allAvailableProducts = [...combinedProducts, ...extraProducts]
@@ -501,29 +374,6 @@ export function SpiceRangeSection({
 
   // Active category name for dynamic button text & shop link
   const activeCategoryObj = resolvedCategories.find((c) => c.slug === activeCategorySlug)
-
-  // Quick Add to Cart with live toast feedback without navigating away
-  const handleAddToCart = async (e: React.MouseEvent, product: SpiceProduct) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    setAddingId(product.id)
-
-    try {
-      const result = await addToCart(product.variantId, 1)
-      if (result.success) {
-        refreshCart()
-        setAddedSuccessId(product.id)
-        setTimeout(() => setAddedSuccessId(null), 2000)
-      } else {
-        alert(result.error || 'Failed to add to cart')
-      }
-    } catch {
-      alert('Could not add to cart. Please try again.')
-    } finally {
-      setAddingId(null)
-    }
-  }
 
   return (
     <section className="relative overflow-hidden py-8 sm:py-12 lg:py-16 bg-[#FBF7EE]">
@@ -638,22 +488,33 @@ export function SpiceRangeSection({
                     : 'bg-white/90 hover:bg-white text-[#4A3B32] hover:text-[#14361F] border border-[#E8DFD5] hover:border-[#E07B0C]/40 shadow-xs'
                 }`}
               >
-                {tab.icon && <span className="text-sm sm:text-base">{tab.icon}</span>}
                 <span>{tab.name}</span>
               </button>
             )
           })}
         </div>
 
+        {displayedProducts.length === 0 && (
+          <p className="py-10 text-center text-sm text-[#7A6458]">
+            No featured products to show here yet. Browse the full range in our shop.
+          </p>
+        )}
+
         {/* Product Cards Grid: 2 columns on mobile, 4 columns on desktop */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
           {displayedProducts.map((product) => (
-            <SpiceCardItem
+            <ProductCard
               key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              isAdding={addingId === product.id}
-              isAdded={addedSuccessId === product.id}
+              id={product.id}
+              slug={product.slug}
+              name={product.name}
+              shortDescription={product.shortDesc}
+              featuredImage={product.image}
+              minPrice={product.minPrice ?? priceFromText(product.priceText)}
+              originalPrice={product.originalPrice}
+              rating={product.rating}
+              reviewCount={product.reviewCount}
+              variantId={product.variantId || null}
             />
           ))}
         </div>
@@ -666,14 +527,14 @@ export function SpiceRangeSection({
           </div>
 
           {activeCategorySlug === 'all' ? (
-            !showAll14 ? (
+            !showAll14 && filteredProducts.length > 8 ? (
               <button
                 type="button"
                 onClick={() => setShowAll14(true)}
                 className="inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-[#14361F] hover:bg-[#0D2515] px-7 sm:px-9 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:scale-95 z-10 cursor-pointer"
               >
                 <LayoutGrid className="w-4 h-4 text-emerald-400" />
-                <span>View All 14 Products</span>
+                <span>View All {filteredProducts.length} Products</span>
                 <ArrowRight className="w-4 h-4 text-white" />
               </button>
             ) : (

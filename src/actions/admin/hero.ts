@@ -265,9 +265,18 @@ export async function getHeroSlides() {
   }))
 }
 
+const MOBILE_COLUMN_MISSING =
+  'The hero_slides table has no image_mobile_url column yet. Run supabase/migrations/20261101020000_hero_slides_mobile_image.sql in the Supabase SQL editor, then try again.'
+
+function hasMissingMobileColumn(message: string) {
+  return /image_mobile_url/i.test(message)
+}
+
 export async function saveHeroSlide(slide: {
   id?: string
   image_url: string
+  /** undefined = leave as is, null/'' = clear (auto-crop desktop image), string = custom phone image */
+  image_mobile_url?: string | null
   title: string
   subtitle: string
   button_text: string
@@ -280,12 +289,17 @@ export async function saveHeroSlide(slide: {
 
   const adminClient = createAdminClient()
 
+  // Only touch the column when the caller sent a value, so saves keep working before the migration is run.
+  const mobileField =
+    slide.image_mobile_url === undefined ? {} : { image_mobile_url: slide.image_mobile_url || null }
+
   if (slide.id) {
     // Update existing slide
     const { error } = await adminClient
       .from('hero_slides')
       .update({
         image_url: slide.image_url,
+        ...mobileField,
         title: slide.title,
         subtitle: slide.subtitle,
         button_text: slide.button_text,
@@ -295,7 +309,9 @@ export async function saveHeroSlide(slide: {
       })
       .eq('id', slide.id)
 
-    if (error) return { success: false, error: error.message }
+    if (error) {
+      return { success: false, error: hasMissingMobileColumn(error.message) ? MOBILE_COLUMN_MISSING : error.message }
+    }
   } else {
     // Create new slide
     const { count } = await adminClient
@@ -306,6 +322,7 @@ export async function saveHeroSlide(slide: {
       .from('hero_slides')
       .insert([{
         image_url: slide.image_url,
+        ...mobileField,
         title: slide.title,
         subtitle: slide.subtitle,
         button_text: slide.button_text,
@@ -314,7 +331,9 @@ export async function saveHeroSlide(slide: {
         display_order: count || 0
       }])
 
-    if (error) return { success: false, error: error.message }
+    if (error) {
+      return { success: false, error: hasMissingMobileColumn(error.message) ? MOBILE_COLUMN_MISSING : error.message }
+    }
   }
 
   revalidatePath('/', 'layout')
@@ -331,10 +350,6 @@ export async function createHeroSlide(imageUrl: string, slideData?: any) {
   const { count } = await adminClient
     .from('hero_slides')
     .select('*', { count: 'exact', head: true })
-
-  if (count && count >= 8) {
-    return { success: false, error: 'Maximum 8 slides allowed.' }
-  }
 
   const { error } = await adminClient
     .from('hero_slides')

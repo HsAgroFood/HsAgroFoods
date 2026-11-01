@@ -1,5 +1,7 @@
 import { getCart } from '@/actions/cart'
 import { getShippingConfig } from '@/actions/shipping'
+import { getAppliedCoupon, getPublicOffers } from '@/actions/coupons'
+import { shippingCopy } from '@/lib/shippingText'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -22,11 +24,14 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function CartPage() {
-  const [{ items }, shippingConfig] = await Promise.all([
+  const [{ items }, shippingConfig, appliedCoupon, offers] = await Promise.all([
     getCart(),
     getShippingConfig(),
+    getAppliedCoupon(),
+    getPublicOffers(),
   ])
 
+  const shipping = shippingCopy(shippingConfig)
   const totalPacks = items.reduce((sum: number, item: any) => sum + item.quantity, 0)
 
   return (
@@ -107,7 +112,7 @@ export default async function CartPage() {
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Truck className="w-3.5 h-3.5 text-[#E07B0C]" />
-              <span>Free Delivery Above ₹499</span>
+              <span>{shipping.deliveryAbove}</span>
             </span>
           </div>
         </div>
@@ -157,13 +162,13 @@ export default async function CartPage() {
                 <p className="text-[10px] sm:text-xs text-[#7A6458]">Cold-Ground</p>
               </div>
               <div>
-                <p className="text-base sm:text-lg font-extrabold text-[#14361F]">₹499+</p>
-                <p className="text-[10px] sm:text-xs text-[#7A6458]">Free Shipping</p>
+                <p className="text-base sm:text-lg font-extrabold text-[#14361F]">{shipping.statValue}</p>
+                <p className="text-[10px] sm:text-xs text-[#7A6458]">{shipping.statLabel}</p>
               </div>
             </div>
           </div>
         ) : (
-          <CartItemsList initialItems={items} shippingConfig={shippingConfig} />
+          <CartItemsList initialItems={items} shippingConfig={shippingConfig} appliedCoupon={appliedCoupon} offers={offers} />
         )}
       </div>
     </div>

@@ -368,6 +368,8 @@ export type OrderEmailData = {
   }
   items: OrderItemSummary[]
   subtotal: number
+  discountAmount?: number
+  couponCode?: string | null
   shippingCost: number
   totalAmount: number
   paymentMethod: string
@@ -457,6 +459,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
 
     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 8px;">
       ${totalRow('Subtotal', inr(data.subtotal))}
+      ${data.discountAmount && data.discountAmount > 0 ? totalRow(`Discount${data.couponCode ? ` (${esc(data.couponCode)})` : ''}`, `-${inr(data.discountAmount)}`) : ''}
       ${totalRow('Shipping', data.shippingCost === 0 ? 'Free' : inr(data.shippingCost))}
       <tr><td colspan="2" style="padding: 4px 8px 0 8px;"><div style="border-top: 1px solid #E7E1D8; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div></td></tr>
       ${totalRow('Total', inr(data.totalAmount), true)}

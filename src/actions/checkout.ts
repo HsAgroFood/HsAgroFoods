@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getCart } from '@/actions/cart'
 import { getShippingConfig } from '@/actions/shipping'
+import { checkCoupon, COUPON_COOKIE } from '@/lib/couponServer'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import Razorpay from 'razorpay'
@@ -270,8 +271,32 @@ export async function createOrder(
     }
 
     const shippingConfig = await getShippingConfig()
+    // Free delivery is decided on the cart value before any coupon discount
     const shipping_cost = subtotal >= shippingConfig.free_shipping_threshold ? 0 : shippingConfig.standard_shipping_cost
-    const total_amount = subtotal + shipping_cost
+
+    // Coupon: re-validated here (never trust the cart screen). If it stopped being valid
+    // (expired, limit reached, cart changed) the order is NOT placed, so the customer is never
+    // charged a different amount than the one they saw.
+    let couponCode: string | null = null
+    let discount_amount = 0
+    const appliedCouponCode = (await cookies()).get(COUPON_COOKIE)?.value
+    if (appliedCouponCode) {
+      const couponResult = await checkCoupon(adminClient, appliedCouponCode, subtotal, {
+        userId: targetUserId,
+        email: checkoutEmail,
+      })
+      if (!couponResult.ok) {
+        ;(await cookies()).delete(COUPON_COOKIE)
+        return {
+          success: false,
+          error: `Coupon ${appliedCouponCode} could not be applied: ${couponResult.error} It has been removed - please review your total and place the order again.`,
+        }
+      }
+      couponCode = couponResult.coupon.code
+      discount_amount = couponResult.discount
+    }
+
+    const total_amount = subtotal - discount_amount + shipping_cost
 
     // Generate readable order number
     const order_number = `AS-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`
@@ -288,6 +313,8 @@ export async function createOrder(
         subtotal,
         shipping_cost,
         total_amount,
+        // Only sent when a coupon was used, so ordering keeps working even before the coupons migration is run
+        ...(couponCode ? { coupon_code: couponCode, discount_amount } : {}),
         payment_status: 'pending',
         order_status: 'pending',
         payment_method: actualPaymentMethod,
@@ -405,10 +432,11 @@ export async function createOrder(
         .eq('user_id', user.id)
     }
 
-    // Clear guest cart cookie
+    // Clear guest cart cookie (and the used coupon)
     try {
       const cookieStore = await cookies()
       cookieStore.delete('guest_cart')
+      cookieStore.delete(COUPON_COOKIE)
     } catch (e) {
       console.warn('Could not clear guest cart cookie:', e)
     }
@@ -436,6 +464,8 @@ export async function createOrder(
             line_total: item.line_total,
           })),
           subtotal,
+          discountAmount: discount_amount,
+          couponCode,
           shippingCost: shipping_cost,
           totalAmount: total_amount,
           paymentMethod: 'Cash on Delivery (COD)',
@@ -468,8 +498,8 @@ export async function verifyRazorpayPayment(
   razorpay_order_id: string,
   razorpay_signature: string,
   internal_order_id: string
-) {
-  const failure = { success: false, error: 'Payment verification failed. If money was deducted, your order will be confirmed automatically.' }
+): Promise<{ success: true; receiptToken: string } | { success: false; error: string }> {
+  const failure = { success: false as const, error: 'Payment verification failed. If money was deducted, your order will be confirmed automatically.' }
 
   try {
     const secret = process.env.RAZORPAY_KEY_SECRET
@@ -539,6 +569,7 @@ export async function verifyRazorpayPayment(
 
     const cookieStore = await cookies()
     cookieStore.delete('guest_cart')
+    cookieStore.delete(COUPON_COOKIE)
 
     revalidatePath('/shop')
     revalidatePath('/cart')

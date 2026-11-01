@@ -54,7 +54,7 @@ export default function ProductForm({ product, categories, initialGalleryImages 
       )}
 
       {/* Basic Info */}
-      <div className="bg-white rounded-xl border border-stone-200/80 p-6 space-y-5">
+      <div className="bg-white rounded-xl border border-stone-200/80 p-4 sm:p-6 space-y-5">
         <h2 className="text-base font-semibold text-stone-900">
           Basic Information
         </h2>
@@ -182,7 +182,7 @@ export default function ProductForm({ product, categories, initialGalleryImages 
       </div>
 
       {/* Product Images (ImageKit) */}
-      <div className="bg-white rounded-xl border border-stone-200/80 p-6 space-y-5">
+      <div className="bg-white rounded-xl border border-stone-200/80 p-4 sm:p-6 space-y-5">
         <div>
           <h2 className="text-base font-semibold text-stone-900">
             Product Images
@@ -306,7 +306,7 @@ export default function ProductForm({ product, categories, initialGalleryImages 
 
       {/* Pricing & Initial Variant (Only when creating a new product) */}
       {!isEditing ? (
-        <div className="bg-white rounded-xl border border-stone-200/80 p-6 space-y-5">
+        <div className="bg-white rounded-xl border border-stone-200/80 p-4 sm:p-6 space-y-5">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-stone-900 flex items-center gap-2">
               <IndianRupee className="w-4 h-4 text-orange-600" />
@@ -450,7 +450,7 @@ export default function ProductForm({ product, categories, initialGalleryImages 
       )}
 
       {/* SEO */}
-      <div className="bg-white rounded-xl border border-stone-200/80 p-6 space-y-5">
+      <div className="bg-white rounded-xl border border-stone-200/80 p-4 sm:p-6 space-y-5">
         <h2 className="text-base font-semibold text-stone-900">SEO</h2>
 
         <div>

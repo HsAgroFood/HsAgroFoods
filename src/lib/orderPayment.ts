@@ -68,6 +68,8 @@ async function sendPaidOrderEmail(admin: AdminClient, order: any) {
       line_total: item.line_total,
     })),
     subtotal: Number(order.subtotal),
+    discountAmount: Number(order.discount_amount || 0),
+    couponCode: order.coupon_code || null,
     shippingCost: Number(order.shipping_cost),
     totalAmount: Number(order.total_amount),
     paymentMethod: 'Online Payment (Razorpay)',

@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { getShippingConfig } from '@/actions/shipping'
+import { shippingCopy } from '@/lib/shippingText'
 import {
   FileCheck,
   Truck,
@@ -18,7 +20,11 @@ export const metadata = {
   description: 'Understand the terms, shipping conditions, and return guarantees for purchasing pure spices and dehydrated vegetable & fruit powders from HS AgroFoods.',
 }
 
-export default function TermsOfServicePage() {
+export const dynamic = 'force-dynamic'
+
+export default async function TermsOfServicePage() {
+  const shipping = shippingCopy(await getShippingConfig())
+
   return (
     <div className="bg-[#FDF9F3] min-h-screen text-[#14361F] pb-20">
       
@@ -54,9 +60,9 @@ export default function TermsOfServicePage() {
             <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mb-3">
               <Truck className="w-5 h-5" />
             </div>
-            <h2 className="font-bold text-sm text-[#14361F]">Free Shipping ₹500+</h2>
+            <h2 className="font-bold text-sm text-[#14361F]">{shipping.termsTitle}</h2>
             <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-              Standard 2–4 business days delivery across India. Free shipping on ₹500+ orders.
+              Standard 2–4 business days delivery across India. {shipping.termsSentence}
             </p>
           </div>
 

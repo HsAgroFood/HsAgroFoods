@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Home, Store, Search, ShoppingBag, X, ArrowRight, Loader2, Package, User, LayoutGrid } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
-import { FEATURED_DROPDOWN_RANGES } from './Navbar'
+import { resolveShopCategories } from '@/lib/shopCategories'
 
 const POPULAR_SEARCHES = [
   'Red Chilly Powder',
@@ -21,6 +21,7 @@ type CategoryItem = {
   slug: string
   description?: string | null
   image_url?: string | null
+  badge_text?: string | null
 }
 
 const DEFAULT_CATEGORIES: CategoryItem[] = [
@@ -45,6 +46,7 @@ export function MobileBottomBar({
   const [isSearching, setIsSearching] = useState(false)
 
   const resolvedCategories = categories.length > 0 ? categories : DEFAULT_CATEGORIES
+  const shopCategories = resolveShopCategories(resolvedCategories)
 
   // Live auto-complete search effect for mobile modal
   useEffect(() => {
@@ -286,10 +288,10 @@ export function MobileBottomBar({
                 <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-[#E07B0C] group-hover:translate-x-0.5 transition-all shrink-0 ml-1.5" />
               </Link>
 
-              {FEATURED_DROPDOWN_RANGES.map((range) => (
+              {shopCategories.map((range) => (
                 <Link
                   key={range.name}
-                  href={range.href || '/shop'}
+                  href={range.href}
                   onClick={() => setCategoriesOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-[5px] bg-white border border-[#E8DFD5] hover:border-[#E07B0C]/40 shadow-2xs active:scale-[0.99] transition-all group"
                 >
@@ -308,9 +310,9 @@ export function MobileBottomBar({
                         <span className="text-xs sm:text-sm font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors truncate">
                           {range.name}
                         </span>
-                        <span className="text-[8.5px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1.5 py-0.5 rounded-[3px] shrink-0">
-                          {range.badge}
-                        </span>
+                        {range.badge && (
+                          <span className="text-[8.5px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1.5 py-0.5 rounded-[3px] shrink-0">{range.badge}</span>
+                        )}
                       </div>
                       <span className="text-[10.5px] text-[#8C766E] truncate block mt-0.5">
                         {range.subtext}

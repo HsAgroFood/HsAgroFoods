@@ -79,6 +79,28 @@ export default function CategoryForm({ category }: CategoryFormProps) {
           />
         </div>
 
+        {/* Tag shown next to the name in the storefront menu */}
+        <div>
+          <label
+            htmlFor="category-badge"
+            className="block text-sm font-medium text-stone-700 mb-1.5"
+          >
+            Tag (Optional)
+          </label>
+          <input
+            id="category-badge"
+            name="badge_text"
+            type="text"
+            maxLength={24}
+            defaultValue={category?.badge_text || ''}
+            placeholder="e.g. 100% Pure, Royal Recipes, New"
+            className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all duration-200"
+          />
+          <p className="mt-1.5 text-xs text-stone-500">
+            Small label shown next to the category name in the website menu. Leave empty for no tag.
+          </p>
+        </div>
+
         {/* Category Image */}
         <div>
           <label className="block text-sm font-medium text-stone-700 mb-1.5">

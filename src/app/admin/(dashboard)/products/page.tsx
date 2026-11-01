@@ -1,8 +1,8 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
-import { Plus, Package } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import type { Metadata } from 'next'
-import ProductRow from './_components/ProductRow'
+import ProductsList, { type ProductWithCategory } from './_components/ProductsList'
 
 export const metadata: Metadata = {
   title: 'Products',
@@ -15,7 +15,7 @@ export default async function ProductsPage() {
 
   const { data: products } = await supabase
     .from('products')
-    .select('*, categories(name)')
+    .select('*, categories(name), product_variants(price, stock_quantity, is_active)')
     .order('created_at', { ascending: false })
 
   return (
@@ -37,47 +37,7 @@ export default async function ProductsPage() {
         </Link>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-stone-200/80 overflow-hidden">
-        {!products || products.length === 0 ? (
-          <div className="p-12 text-center">
-            <Package className="w-10 h-10 text-stone-300 mx-auto mb-3" />
-            <p className="text-stone-500 text-sm">No products yet</p>
-            <p className="text-stone-400 text-xs mt-1">
-              Create your first product to get started.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[620px]">
-              <thead>
-                <tr className="bg-stone-50/50">
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Product
-                  </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Category
-                  </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Status
-                  </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Created
-                  </th>
-                  <th className="text-right text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-100">
-                {products.map((product) => (
-                  <ProductRow key={product.id} product={product} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <ProductsList products={(products ?? []) as ProductWithCategory[]} />
     </div>
   )
 }

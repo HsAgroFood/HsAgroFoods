@@ -22,6 +22,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   let liveProducts: LiveSpiceItem[] = []
+  let productsFromDatabase = false
   let categories: CategoryItem[] = []
 
   try {
@@ -37,8 +38,8 @@ export default async function HomePage() {
     categories =
       dbCategories && dbCategories.length > 0 ? dbCategories : FALLBACK_CATEGORIES
 
-    // 2. Dynamically fetch active products (with admin featured flag respected)
-    const { data: dbProducts } = await supabase
+    // 2. Fetch the products the admin marked as Featured (Admin > Products > Edit > Featured)
+    const { data: dbProducts, error: productsError } = await supabase
       .from('products')
       .select(`
         id,
@@ -47,19 +48,25 @@ export default async function HomePage() {
         featured_image_url,
         is_featured,
         short_description,
+        average_rating,
+        review_count,
         category_id,
         categories (id, name, slug),
-        product_variants (id, price, is_active)
+        product_variants (id, price, original_price, is_active)
       `)
       .eq('is_active', true)
-      .order('is_featured', { ascending: false })
+      .eq('is_featured', true)
       .order('created_at', { ascending: true })
+
+    // The database answered: show exactly what it returned, even when nothing is featured
+    productsFromDatabase = !productsError && Array.isArray(dbProducts)
 
     if (dbProducts && dbProducts.length > 0) {
       liveProducts = dbProducts.map((p: any) => {
         const activeVariants = p.product_variants?.filter((v: any) => v.is_active) || []
         const prices = activeVariants.map((v: any) => v.price)
         const minPrice = prices.length > 0 ? Math.min(...prices) : null
+        const minVariant = activeVariants.find((v: any) => v.price === minPrice)
 
         return {
           id: p.id,
@@ -70,9 +77,13 @@ export default async function HomePage() {
           shortDesc: p.short_description || undefined,
           categoryId: p.category_id || undefined,
           categorySlug: p.categories?.slug || undefined,
-          variantId: p.product_variants?.find((v: any) => v.is_active)?.id,
+          variantId: minVariant?.id,
           href: `/product/${p.slug}`,
           priceText: minPrice !== null ? `From ₹${minPrice}` : undefined,
+          minPrice,
+          originalPrice: minVariant?.original_price || null,
+          rating: Number(p.average_rating) || 0,
+          reviewCount: Number(p.review_count) || 0,
         }
       })
     }
@@ -89,7 +100,7 @@ export default async function HomePage() {
       <PillarsBar />
 
       {/* 3. Our Spice Range Section (Wired to Shop Categories & Products) */}
-      <SpiceRangeSection products={liveProducts} categories={categories} />
+      <SpiceRangeSection products={liveProducts} categories={categories} useLiveProducts={productsFromDatabase} />
 
       {/* 4. Spices That Do More Than Just Add Taste (Health Benefits & Recipes) */}
       <HealthBenefitsSection />

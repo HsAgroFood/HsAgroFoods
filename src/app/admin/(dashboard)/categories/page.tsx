@@ -1,8 +1,8 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
-import { Plus, FolderTree } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import type { Metadata } from 'next'
-import CategoryRow from './_components/CategoryRow'
+import CategoriesList from './_components/CategoriesList'
 
 export const metadata: Metadata = {
   title: 'Categories',
@@ -19,6 +19,16 @@ export default async function CategoriesPage() {
     .not('slug', 'like', '__system_%')
     .order('created_at', { ascending: false })
 
+  // How many products each category holds
+  const { data: productRows } = await supabase.from('products').select('category_id')
+  const productCounts = new Map<string, number>()
+  for (const row of productRows || []) {
+    if (row.category_id) productCounts.set(row.category_id, (productCounts.get(row.category_id) || 0) + 1)
+  }
+
+  const activeCount = (categories || []).filter((c) => c.is_active).length
+  const withoutImage = (categories || []).filter((c) => !c.image_url).length
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -26,7 +36,10 @@ export default async function CategoriesPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-stone-900">Categories</h1>
           <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
-            Manage your product categories
+            {categories?.length || 0} {categories?.length === 1 ? 'category' : 'categories'} · {activeCount} active
+            {withoutImage > 0 && (
+              <span className="text-amber-600"> · {withoutImage} without an image</span>
+            )}
           </p>
         </div>
         <Link
@@ -38,47 +51,19 @@ export default async function CategoriesPage() {
         </Link>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl border border-stone-200/80 overflow-hidden">
-        {!categories || categories.length === 0 ? (
-          <div className="p-12 text-center">
-            <FolderTree className="w-10 h-10 text-stone-300 mx-auto mb-3" />
-            <p className="text-stone-500 text-sm">No categories yet</p>
-            <p className="text-stone-400 text-xs mt-1">
-              Create your first category to get started.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px]">
-              <thead>
-                <tr className="bg-stone-50/50">
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Name
-                  </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Slug
-                  </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Status
-                  </th>
-                  <th className="text-left text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Created
-                  </th>
-                  <th className="text-right text-xs font-medium text-stone-500 uppercase tracking-wider px-6 py-3">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-100">
-                {categories.map((category) => (
-                  <CategoryRow key={category.id} category={category} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <CategoriesList
+        categories={(categories || []).map((c) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          description: c.description,
+          image_url: c.image_url,
+          badge_text: c.badge_text,
+          is_active: c.is_active,
+          created_at: c.created_at,
+          product_count: productCounts.get(c.id) || 0,
+        }))}
+      />
     </div>
   )
 }

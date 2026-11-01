@@ -33,7 +33,7 @@ export async function submitReview(
 
     const adminClient = createAdminClient()
 
-    // 1. Insert Review into database
+    // Insert as pending: reviews only appear on the storefront after admin approval
     const { error: insertError } = await adminClient
       .from('reviews')
       .insert({
@@ -41,7 +41,7 @@ export async function submitReview(
         user_id: user.id,
         rating,
         review_text: reviewText ? reviewText.trim() : null,
-        is_approved: true, // Visible immediately on product page
+        is_approved: false, // Hidden until an admin approves it in /admin/reviews
       })
 
     if (insertError) {
@@ -49,32 +49,8 @@ export async function submitReview(
       return { error: 'Failed to submit review. Please try again later.' }
     }
 
-    // 2. Automatically update product average_rating & review_count
-    try {
-      const { data: allReviews } = await adminClient
-        .from('reviews')
-        .select('rating')
-        .eq('product_id', productId)
-        .eq('is_approved', true)
-
-      if (allReviews && allReviews.length > 0) {
-        const sum = allReviews.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0)
-        const avg = sum / allReviews.length
-
-        await adminClient
-          .from('products')
-          .update({
-            average_rating: parseFloat(avg.toFixed(1)),
-            review_count: allReviews.length,
-          })
-          .eq('id', productId)
-      }
-    } catch (aggErr) {
-      console.warn('Could not update product ratings aggregate:', aggErr)
-    }
-
+    // Ratings/review_count only count approved reviews, so nothing to recalculate until an admin approves it.
     revalidatePath('/', 'layout')
-    revalidatePath(`/product/[slug]`)
     revalidatePath('/admin/reviews')
     return { success: true }
   } catch (err: any) {

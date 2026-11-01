@@ -22,11 +22,11 @@ export function TextModeToggle({ currentMode }: { currentMode: 'global' | 'per_s
   }
 
   return (
-    <div className="flex items-center gap-2 bg-stone-100 p-1 rounded-xl border border-stone-200">
+    <div className="flex w-full items-center gap-2 bg-stone-100 p-1 rounded-xl border border-stone-200 sm:w-auto">
       <button
         onClick={() => handleToggle('global')}
         disabled={isPending}
-        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+        className={`flex-1 sm:flex-none px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
           mode === 'global' 
             ? 'bg-white text-stone-900 shadow-sm' 
             : 'text-stone-500 hover:text-stone-700 hover:bg-stone-200/50'
@@ -38,7 +38,7 @@ export function TextModeToggle({ currentMode }: { currentMode: 'global' | 'per_s
       <button
         onClick={() => handleToggle('per_slide')}
         disabled={isPending}
-        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 ${
+        className={`flex-1 sm:flex-none justify-center px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 ${
           mode === 'per_slide' 
             ? 'bg-white text-stone-900 shadow-sm' 
             : 'text-stone-500 hover:text-stone-700 hover:bg-stone-200/50'

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, User, MapPin, Package, CreditCard, ExternalLink } from 'lucide-react'
 import { OrderStatusManager } from '../_components/OrderStatusManager'
+import { DeleteOrderButton } from '../_components/DeleteOrderButton'
 import { ShipmentPanel } from '../_components/ShipmentPanel'
 import { getOrderParcel } from '@/lib/orderParcel'
 import { describeRazorpayMethod } from '@/lib/razorpay'
@@ -67,8 +68,8 @@ export default async function AdminOrderDetailsPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex flex-1 items-start sm:items-center gap-3 sm:gap-4 min-w-0">
           <Link 
             href="/admin/orders"
             className="p-2 bg-white border border-stone-200 text-stone-600 rounded-xl hover:bg-stone-50 transition-colors shrink-0"
@@ -77,7 +78,7 @@ export default async function AdminOrderDetailsPage({
           </Link>
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-stone-900">Order {order.order_number}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-stone-900 break-all">Order {order.order_number}</h1>
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${
                 order.order_status === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
                 order.order_status === 'shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' :
@@ -104,6 +105,12 @@ export default async function AdminOrderDetailsPage({
             </p>
           </div>
         </div>
+        <DeleteOrderButton
+          orderId={order.id}
+          orderNumber={order.order_number}
+          variant="button"
+          redirectTo="/admin/orders"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -159,11 +166,52 @@ export default async function AdminOrderDetailsPage({
 
           {/* Order Items */}
           <div className="bg-white rounded-2xl shadow-sm border border-stone-200/60 overflow-hidden">
-            <div className="p-6 border-b border-stone-200/60 flex items-center gap-2">
+            <div className="p-4 sm:p-6 border-b border-stone-200/60 flex items-center gap-2">
               <Package className="w-5 h-5 text-stone-400" />
               <h3 className="text-lg font-bold text-stone-900">Order Items</h3>
             </div>
-            <div className="overflow-x-auto">
+
+            {/* Phones: one row per item */}
+            <ul className="divide-y divide-stone-100 md:hidden">
+              {order.order_items?.map((item: any) => {
+                const product = productById.get(item.product_id)
+                return (
+                  <li key={item.id} className="flex gap-3 p-4">
+                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-stone-200 bg-stone-100">
+                      {product?.image ? (
+                        <Image src={product.image} alt={item.product_name} fill sizes="56px" className="object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-stone-300">
+                          <Package className="h-5 w-5" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-sm font-medium text-stone-900">{item.product_name}</p>
+                        <p className="shrink-0 text-sm font-bold text-stone-900">₹{item.line_total}</p>
+                      </div>
+                      <p className="mt-0.5 text-xs text-stone-500">
+                        {item.variant_name} · {item.quantity} × ₹{item.price_at_purchase}
+                      </p>
+                      {product?.slug && (
+                        <Link
+                          href={`/product/${product.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-orange-600 hover:text-orange-700"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          View on site
+                        </Link>
+                      )}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead className="bg-stone-50 text-stone-500 uppercase tracking-wider text-xs">
                   <tr>
@@ -265,6 +313,19 @@ export default async function AdminOrderDetailsPage({
                 <span>Subtotal</span>
                 <span className="font-medium text-stone-900">₹{order.subtotal}</span>
               </div>
+              {Number(order.discount_amount) > 0 && (
+                <div className="flex justify-between text-stone-600">
+                  <span>
+                    Discount
+                    {order.coupon_code && (
+                      <span className="ml-1.5 rounded bg-green-50 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-green-700">
+                        {order.coupon_code}
+                      </span>
+                    )}
+                  </span>
+                  <span className="font-medium text-green-600">-₹{order.discount_amount}</span>
+                </div>
+              )}
               <div className="flex justify-between text-stone-600">
                 <span>Shipping</span>
                 {order.shipping_cost === 0 ? (

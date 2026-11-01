@@ -74,7 +74,7 @@ export default async function EditProductPage({
         initialItems={infoRes.data || []}
       />
 
-      <div className="bg-white p-6 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+      <div className="bg-white p-4 sm:p-6 shadow-sm ring-1 ring-gray-900/5 rounded-xl">
         <ProductVariantsEditor
           productId={id}
           variants={variantsRes.data || []}

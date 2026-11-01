@@ -67,9 +67,9 @@ export default function ProductInfoEditor({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200/80 p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="bg-white rounded-xl border border-stone-200/80 p-4 sm:p-6 space-y-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-base font-semibold text-stone-900">
             Additional Information
           </h2>
@@ -81,7 +81,7 @@ export default function ProductInfoEditor({
         <button
           type="button"
           onClick={addItem}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+          className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-xs font-medium text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           Add Row
@@ -102,15 +102,16 @@ export default function ProductInfoEditor({
 
       <div className="space-y-2">
         {items.map((item, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <GripVertical className="w-4 h-4 text-stone-300 shrink-0" />
+          <div key={index} className="flex items-start gap-2">
+            <GripVertical className="mt-2.5 hidden h-4 w-4 shrink-0 text-stone-300 sm:block" />
+            <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-2">
             <input
               type="text"
               maxLength={100}
               value={item.label}
               onChange={(e) => updateItem(index, 'label', e.target.value)}
               placeholder="Label (e.g. Brand)"
-              className="flex-1 px-3 py-2 rounded-lg border border-stone-200 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all"
+              className="w-full min-w-0 px-3 py-2 rounded-lg border border-stone-200 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all"
             />
             <input
               type="text"
@@ -118,12 +119,14 @@ export default function ProductInfoEditor({
               value={item.value}
               onChange={(e) => updateItem(index, 'value', e.target.value)}
               placeholder="Value (e.g. HS AgroFoods)"
-              className="flex-1 px-3 py-2 rounded-lg border border-stone-200 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all"
+              className="w-full min-w-0 px-3 py-2 rounded-lg border border-stone-200 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500 transition-all"
             />
+            </div>
             <button
               type="button"
               onClick={() => removeItem(index)}
-              className="p-1.5 rounded-lg text-stone-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+              aria-label="Remove row"
+              className="mt-1 shrink-0 p-2 sm:p-1.5 rounded-lg text-stone-400 hover:text-red-500 hover:bg-red-50 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -135,7 +138,7 @@ export default function ProductInfoEditor({
         type="button"
         onClick={handleSave}
         disabled={isPending}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 disabled:opacity-60 transition-colors"
+        className="inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 disabled:opacity-60 transition-colors sm:w-auto sm:py-2"
       >
         {isPending ? (
           <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

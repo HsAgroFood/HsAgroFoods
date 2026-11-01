@@ -17,6 +17,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  Ticket,
+  Mail,
   X,
 } from 'lucide-react'
 import { useAdminNav } from '@/contexts/AdminNavContext'
@@ -29,8 +31,10 @@ const navItems = [
   { label: 'Customers', href: '/admin/customers', icon: Users },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
   { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
+  { label: 'Subscribers', href: '/admin/subscribers', icon: Mail },
   { label: 'Hero Slides', href: '/admin/hero-slides', icon: ImageIcon },
   { label: 'Announcements', href: '/admin/announcements', icon: Megaphone },
+  { label: 'Coupons', href: '/admin/coupons', icon: Ticket },
   { label: 'Delivery Settings', href: '/admin/delivery-settings', icon: Truck },
   { label: 'Global FAQs', href: '/admin/global-faqs', icon: HelpCircle },
 ]

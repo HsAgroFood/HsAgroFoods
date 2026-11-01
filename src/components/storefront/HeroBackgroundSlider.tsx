@@ -11,10 +11,8 @@ import {
   ShieldCheck,
   Sparkles,
   Award,
-  CheckCircle2,
   Play,
   Pause,
-  Star,
 } from 'lucide-react'
 import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
 
@@ -44,16 +42,40 @@ function normalizeBrandText(text: string): string {
     .replace(/jaandaar/gi, 'HS AgroFoods')
 }
 
+const CHIP_MAX_LENGTH = 22
+const GENERIC_BUTTON_TARGETS = new Set(['now', 'all', 'all products', 'more', 'today', 'here', 'online'])
+
+function fitChipLabel(text: string): string {
+  const label = text.replace(/\s+/g, ' ').trim()
+  if (label.length <= CHIP_MAX_LENGTH) return label
+  const words = label.split(' ')
+  let out = ''
+  for (const word of words) {
+    const next = out ? `${out} ${word}` : word
+    if (next.length > CHIP_MAX_LENGTH - 1) break
+    out = next
+  }
+  return `${out || label.slice(0, CHIP_MAX_LENGTH - 1)}…`
+}
+
+// Short name shown on the slide tabs: explicit tag -> product name from the button -> title -> "Slide 0N"
 function getSlideChipLabel(slide: HeroSlideItem, index: number): string {
   if (slide.tag) {
     const cleaned = slide.tag.replace(/^[✦★•\s]+/, '').split('·')[0].trim()
-    if (cleaned.length <= 16) return cleaned
+    if (cleaned) return fitChipLabel(cleaned)
   }
+
+  // "Shop Beetroot Powder" -> "Beetroot Powder"
+  const product = (slide.button_text || '').replace(/^(shop|buy|order|explore|discover)\s+/i, '').trim()
+  if (product && product !== (slide.button_text || '').trim() && !GENERIC_BUTTON_TARGETS.has(product.toLowerCase())) {
+    return fitChipLabel(product)
+  }
+
   if (slide.title) {
-    const firstWord = slide.title.split(/[—–\.\,\:]/)[0].trim()
-    if (firstWord.length <= 16) return firstWord
+    const firstPart = slide.title.split(/[—–.,:|!]/)[0].trim()
+    if (firstPart) return fitChipLabel(firstPart)
   }
-  return `Slide 0${index + 1}`
+  return `Slide ${String(index + 1).padStart(2, '0')}`
 }
 
 export function HeroBackgroundSlider({
@@ -171,7 +193,7 @@ export function HeroBackgroundSlider({
   return (
     <section
       aria-label="HS AgroFoods Corporate Hero Carousel"
-      className="relative overflow-hidden min-h-[580px] sm:min-h-[620px] lg:min-h-[560px] xl:min-h-[600px] flex flex-col justify-between select-none bg-[#160A04]"
+      className="relative overflow-hidden min-h-[580px] sm:min-h-[620px] lg:min-h-[max(560px,calc(100svh-120px))] flex flex-col justify-between select-none bg-[#160A04]"
       onMouseEnter={() => setIsPaused(false)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -239,11 +261,11 @@ export function HeroBackgroundSlider({
       </div>
 
       {/* 📝 CORPORATE CONTENT GRID */}
-      <div className="relative z-20 mx-auto max-w-[1350px] px-4 sm:px-6 lg:px-8 w-full pt-10 sm:pt-14 lg:pt-12 pb-5 sm:pb-6 lg:pb-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+      <div className="relative z-20 mx-auto max-w-[1350px] px-4 sm:px-6 lg:px-8 w-full pt-10 sm:pt-14 lg:pt-12 pb-5 sm:pb-6 lg:pb-4 lg:flex-1 lg:flex lg:items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center w-full">
           
           {/* 🏷️ LEFT CONTENT: CORPORATE HEADLINE, BADGES & CTAs */}
-          <div className="lg:col-span-7 xl:col-span-8 space-y-4 sm:space-y-6 lg:space-y-5 text-left">
+          <div className="lg:col-span-9 xl:col-span-8 space-y-4 sm:space-y-6 lg:space-y-5 text-left">
             
             {/* Live Status Corporate Pill Badge */}
             <div
@@ -339,80 +361,6 @@ export function HeroBackgroundSlider({
               </div>
             </div>
 
-          </div>
-
-          {/* 🏢 RIGHT COLUMN: MODERN CORPORATE FLOATING HIGHLIGHT CARD (Desktop & Tablet) */}
-          <div className="hidden lg:flex lg:col-span-5 xl:col-span-4 flex-col items-end justify-center">
-            <div className="w-full max-w-sm rounded-[5px] bg-black/45 backdrop-blur-xl border border-white/20 p-5 shadow-xl space-y-3.5 text-white">
-              
-              {/* Card Header with Guarantee Badge */}
-              <div className="flex items-center justify-between border-b border-white/15 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-amber-400 shadow-inner">
-                    <Award className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
-                      Enterprise Standard
-                    </span>
-                    <h4 className="text-xs sm:text-sm font-bold text-white tracking-tight">
-                      HS AgroFoods™ Guarantee
-                    </h4>
-                  </div>
-                </div>
-                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Verified
-                </span>
-              </div>
-
-              {/* Rating & Social Proof */}
-              <div className="flex items-center justify-between bg-white/5 rounded-xl p-2.5 border border-white/10">
-                <div className="flex items-center gap-1 text-amber-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-bold text-white block">4.9 / 5 Rating</span>
-                  <span className="text-[10px] text-stone-300">25,000+ Happy Kitchens</span>
-                </div>
-              </div>
-
-              {/* Key Corporate Pillars */}
-              <div className="space-y-2 text-[11px] text-stone-200">
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong className="text-white">Cryo-Cold Ground:</strong> Below 40°C stone milling preserving authentic curcumin &amp; botanical oils.
-                  </span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong className="text-white">Zero Synthetic Dyes:</strong> 100% natural hue without Sudan dyes, artificial flavorings, or fillers.
-                  </span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong className="text-white">Aroma-Lock Freshness:</strong> Multi-barrier nitrogen-flushed packaging for 12 months crisp fragrance.
-                  </span>
-                </div>
-              </div>
-
-              {/* Corporate Inquiry Link */}
-              <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-                <span className="text-[10px] text-stone-300 font-medium">Bulk &amp; Institutional Supply</span>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-amber-300 hover:text-amber-200 transition-colors group"
-                >
-                  <span>Request Quote</span>
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-
-            </div>
           </div>
 
         </div>

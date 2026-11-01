@@ -43,6 +43,7 @@ export interface Category {
   slug: string
   description: string | null
   image_url: string | null
+  badge_text: string | null
   is_active: boolean
   created_at: string
   updated_at: string
@@ -137,6 +138,8 @@ export interface Order {
   subtotal: number
   shipping_cost: number
   total_amount: number
+  coupon_code?: string | null
+  discount_amount?: number
   payment_status: PaymentStatus
   order_status: OrderStatus
   payment_method: string | null

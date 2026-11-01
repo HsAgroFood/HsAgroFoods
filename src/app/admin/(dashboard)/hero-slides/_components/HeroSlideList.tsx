@@ -1,15 +1,14 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import Image from 'next/image'
 import { saveHeroSlide, deleteHeroSlide, toggleHeroSlideStatus } from '@/actions/admin/hero'
-import { Trash2, Plus, Image as ImageIcon, Loader2, Save, Check, ExternalLink, RefreshCw, Monitor, Smartphone } from 'lucide-react'
-import { ImageKitUpload } from '@/components/admin/ImageKitUpload'
-import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
+import { Trash2, Plus, Image as ImageIcon, Loader2, Save, Check, ExternalLink } from 'lucide-react'
+import { SlideImagesField } from './SlideImagesField'
 
 interface SlideData {
   id: string
   image_url: string
+  image_mobile_url?: string | null
   title: string
   subtitle: string
   button_text: string
@@ -31,10 +30,9 @@ export function HeroSlideList({
   const [isPending, startTransition] = useTransition()
   const [savedId, setSavedId] = useState<string | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
-  const [newSlidePreviewMode, setNewSlidePreviewMode] = useState<'desktop' | 'mobile'>('desktop')
-  const [slidePreviewModes, setSlidePreviewModes] = useState<Record<string, 'desktop' | 'mobile'>>({})
   const [newSlide, setNewSlide] = useState({
     image_url: '',
+    image_mobile_url: null as string | null,
     title: 'Pure Spice. Real Taste. Trusted Every Time.',
     subtitle: "HS AgroFoods brings the richness of India's finest spices to your kitchen. Pure, natural & full of flavor.",
     button_text: 'Shop Now',
@@ -50,6 +48,7 @@ export function HeroSlideList({
       const res = await saveHeroSlide({
         id: slide.id,
         image_url: slide.image_url,
+        image_mobile_url: slide.image_mobile_url,
         title: slide.title,
         subtitle: slide.subtitle,
         button_text: slide.button_text,
@@ -99,6 +98,7 @@ export function HeroSlideList({
     startTransition(async () => {
       const res = await saveHeroSlide({
         image_url: newSlide.image_url,
+        image_mobile_url: newSlide.image_mobile_url,
         title: newSlide.title,
         subtitle: newSlide.subtitle,
         button_text: newSlide.button_text,
@@ -119,10 +119,10 @@ export function HeroSlideList({
   return (
     <div className="space-y-6">
       {/* Top Banner with Add Slide button */}
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-200/60 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-stone-200/60 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <ImageIcon className="w-5 h-5 text-spice-primary" />
+            <ImageIcon className="w-5 h-5 text-orange-500" />
             <h2 className="text-lg font-bold text-stone-900">Hero Slider Slides ({slides.length})</h2>
           </div>
           <p className="text-sm text-stone-500 mt-1">
@@ -133,7 +133,7 @@ export function HeroSlideList({
         <button
           type="button"
           onClick={() => setShowAddForm(!showAddForm)}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-spice-primary text-white text-sm font-semibold rounded-xl hover:bg-spice-secondary transition-colors cursor-pointer shrink-0"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 transition-colors cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           {showAddForm ? 'Close Add Form' : 'Add New Slide'}
@@ -142,10 +142,10 @@ export function HeroSlideList({
 
       {/* New Slide Creation Form */}
       {showAddForm && (
-        <div className="bg-orange-50/50 rounded-2xl border-2 border-orange-200 p-6 space-y-5 animate-in fade-in duration-200">
+        <div className="bg-orange-50/50 rounded-2xl border-2 border-orange-200 p-4 sm:p-6 space-y-5 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
-              <Plus className="w-4 h-4 text-spice-primary" />
+              <Plus className="w-4 h-4 text-orange-500" />
               Create New Hero Slide
             </h3>
             <span className="text-xs font-semibold text-orange-700 bg-orange-100 px-2.5 py-1 rounded-full">
@@ -154,78 +154,15 @@ export function HeroSlideList({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Image Preview & Upload */}
-            <div className="lg:col-span-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Slide Image</label>
-                {newSlide.image_url && (
-                  <div className="flex items-center bg-stone-200/70 p-0.5 rounded-lg text-xs">
-                    <button
-                      type="button"
-                      onClick={() => setNewSlidePreviewMode("desktop")}
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
-                        newSlidePreviewMode === "desktop"
-                          ? "bg-white text-stone-900 shadow-xs"
-                          : "text-stone-600 hover:text-stone-900"
-                      }`}
-                    >
-                      <Monitor className="w-3 h-3" />
-                      16:9 Desktop
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setNewSlidePreviewMode("mobile")}
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
-                        newSlidePreviewMode === "mobile"
-                          ? "bg-white text-stone-900 shadow-xs"
-                          : "text-stone-600 hover:text-stone-900"
-                      }`}
-                    >
-                      <Smartphone className="w-3 h-3" />
-                      4:5 Phone
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className={`relative rounded-xl bg-stone-100 border border-stone-200 overflow-hidden flex items-center justify-center transition-all ${
-                newSlidePreviewMode === "mobile" ? "aspect-[4/5] max-w-[200px] mx-auto shadow-sm" : "aspect-video w-full"
-              }`}>
-                {newSlide.image_url ? (
-                  <Image
-                    src={newSlidePreviewMode === "mobile" ? getMobileSlideUrl(newSlide.image_url) : getDesktopSlideUrl(newSlide.image_url)}
-                    alt="Slide preview"
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="text-center p-4">
-                    <ImageIcon className="w-8 h-8 text-stone-400 mx-auto mb-2" />
-                    <span className="text-xs text-stone-500">No image selected</span>
-                  </div>
-                )}
-              </div>
-              <p className="text-[11px] text-stone-500 text-center font-medium">
-                ⚡ Auto-crops: <strong>16:9</strong> (Desktop) &amp; <strong>4:5</strong> (Phones)
-              </p>
-
-              <ImageKitUpload
-                folder="/hero-slides"
-                multiple={false}
-                onSuccess={(res) => setNewSlide(prev => ({ ...prev, image_url: res.url }))}
-              >
-                {({ open, isUploading }) => (
-                  <button
-                    type="button"
-                    onClick={open}
-                    disabled={isUploading || isPending}
-                    className="w-full py-2 px-3 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-700 hover:bg-stone-50 transition-colors flex items-center justify-center gap-2"
-                  >
-                    {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                    {newSlide.image_url ? 'Change Image' : 'Upload Image (ImageKit)'}
-                  </button>
-                )}
-              </ImageKitUpload>
+            {/* Desktop + Phone images */}
+            <div className="lg:col-span-4">
+              <SlideImagesField
+                desktopUrl={newSlide.image_url}
+                mobileUrl={newSlide.image_mobile_url}
+                disabled={isPending}
+                onDesktopChange={(url) => setNewSlide(prev => ({ ...prev, image_url: url }))}
+                onMobileChange={(url) => setNewSlide(prev => ({ ...prev, image_mobile_url: url }))}
+              />
             </div>
 
             {/* Content Fields */}
@@ -237,7 +174,7 @@ export function HeroSlideList({
                   value={newSlide.title}
                   onChange={(e) => setNewSlide(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="e.g. Golden Purity. Natural Healing."
-                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary"
+                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
               </div>
 
@@ -248,7 +185,7 @@ export function HeroSlideList({
                   value={newSlide.subtitle}
                   onChange={(e) => setNewSlide(prev => ({ ...prev, subtitle: e.target.value }))}
                   placeholder="e.g. Handpicked Salem & Alleppey turmeric roots..."
-                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary resize-none"
+                  className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
                 />
               </div>
 
@@ -260,7 +197,7 @@ export function HeroSlideList({
                     value={newSlide.button_text}
                     onChange={(e) => setNewSlide(prev => ({ ...prev, button_text: e.target.value }))}
                     placeholder="Shop Now"
-                    className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary"
+                    className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                   />
                 </div>
                 <div>
@@ -270,17 +207,17 @@ export function HeroSlideList({
                     value={newSlide.button_link}
                     onChange={(e) => setNewSlide(prev => ({ ...prev, button_link: e.target.value }))}
                     placeholder="/shop or /product/slug"
-                    className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary"
+                    className="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                   />
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end">
+              <div className="pt-2 flex sm:justify-end">
                 <button
                   type="button"
                   onClick={handleCreateNewSlide}
                   disabled={isPending || !newSlide.image_url}
-                  className="px-5 py-2.5 bg-spice-primary text-white text-sm font-bold rounded-xl hover:bg-spice-secondary transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto justify-center px-5 py-3 sm:py-2.5 bg-orange-500 text-white text-sm font-bold rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                 >
                   {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   Save & Publish Slide
@@ -308,22 +245,22 @@ export function HeroSlideList({
             return (
               <div 
                 key={slide.id} 
-                className={`bg-white rounded-2xl border transition-all p-6 shadow-sm ${
+                className={`bg-white rounded-2xl border transition-all p-4 sm:p-6 shadow-sm ${
                   slide.is_active ? 'border-stone-200' : 'border-stone-200/60 opacity-70 bg-stone-50/50'
                 }`}
               >
                 {/* Header info */}
-                <div className="flex items-center justify-between pb-4 border-b border-stone-100 mb-5">
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-full bg-stone-100 text-stone-700 text-xs font-bold flex items-center justify-center border border-stone-200">
+                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 pb-4 border-b border-stone-100 mb-5">
+                  <div className="flex w-full min-w-0 items-center gap-3 sm:w-auto sm:flex-1">
+                    <span className="w-7 h-7 shrink-0 rounded-full bg-stone-100 text-stone-700 text-xs font-bold flex items-center justify-center border border-stone-200">
                       #{index + 1}
                     </span>
-                    <h3 className="text-sm font-bold text-stone-900">
+                    <h3 className="min-w-0 text-sm font-bold text-stone-900 line-clamp-2 break-words">
                       Slide {index + 1}: {slide.title || 'Untitled Slide'}
                     </h3>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
                     {/* Status badge & toggle */}
                     <div className="flex items-center gap-2">
                       <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
@@ -356,77 +293,15 @@ export function HeroSlideList({
 
                 {/* Main slide editor row */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                  {/* Left: Image preview and ImageKit change */}
-                  <div className="lg:col-span-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-stone-600 uppercase tracking-wider">Slide Image</span>
-                      {slide.image_url && (
-                        <div className="flex items-center bg-stone-200/70 p-0.5 rounded-lg text-xs">
-                          <button
-                            type="button"
-                            onClick={() => setSlidePreviewModes(prev => ({ ...prev, [slide.id]: "desktop" }))}
-                            className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
-                              (slidePreviewModes[slide.id] || "desktop") === "desktop"
-                                ? "bg-white text-stone-900 shadow-xs"
-                                : "text-stone-600 hover:text-stone-900"
-                            }`}
-                          >
-                            <Monitor className="w-3 h-3" />
-                            16:9
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setSlidePreviewModes(prev => ({ ...prev, [slide.id]: "mobile" }))}
-                            className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
-                              slidePreviewModes[slide.id] === "mobile"
-                                ? "bg-white text-stone-900 shadow-xs"
-                                : "text-stone-600 hover:text-stone-900"
-                            }`}
-                          >
-                            <Smartphone className="w-3 h-3" />
-                            4:5 Phone
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={`relative rounded-xl bg-stone-100 border border-stone-200 overflow-hidden transition-all ${
-                      slidePreviewModes[slide.id] === "mobile" ? "aspect-[4/5] max-w-[200px] mx-auto shadow-sm" : "aspect-video w-full"
-                    }`}>
-                      {slide.image_url ? (
-                        <Image
-                          src={slidePreviewModes[slide.id] === "mobile" ? getMobileSlideUrl(slide.image_url) : getDesktopSlideUrl(slide.image_url)}
-                          alt={slide.title || "Slide Image"}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="h-full flex items-center justify-center text-xs text-stone-400">
-                          No Image
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-stone-500 text-center font-medium">
-                      ⚡ Auto-crops: <strong>16:9</strong> (Desktop) &amp; <strong>4:5</strong> (Phones)
-                    </p>
-
-                    <ImageKitUpload
-                      folder="/hero-slides"
-                      multiple={false}
-                      onSuccess={(res) => updateSlideField(slide.id, 'image_url', res.url)}
-                    >
-                      {({ open, isUploading }) => (
-                        <button
-                          type="button"
-                          onClick={open}
-                          disabled={isUploading || isPending}
-                          className="w-full py-2 px-3 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-lg text-xs font-semibold text-stone-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                          Replace Image (ImageKit)
-                        </button>
-                      )}
-                    </ImageKitUpload>
+                  {/* Left: Desktop + Phone images */}
+                  <div className="lg:col-span-4">
+                    <SlideImagesField
+                      desktopUrl={slide.image_url}
+                      mobileUrl={slide.image_mobile_url}
+                      disabled={isPending}
+                      onDesktopChange={(url) => updateSlideField(slide.id, 'image_url', url)}
+                      onMobileChange={(url) => updateSlideField(slide.id, 'image_mobile_url', url)}
+                    />
                   </div>
 
                   {/* Right: Editable content fields */}
@@ -438,7 +313,7 @@ export function HeroSlideList({
                         value={slide.title || ''}
                         onChange={(e) => updateSlideField(slide.id, 'title', e.target.value)}
                         placeholder="e.g. Golden Purity. Natural Healing."
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary transition-all font-medium text-stone-900"
+                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium text-stone-900"
                       />
                     </div>
 
@@ -449,7 +324,7 @@ export function HeroSlideList({
                         value={slide.subtitle || ''}
                         onChange={(e) => updateSlideField(slide.id, 'subtitle', e.target.value)}
                         placeholder="e.g. Handpicked Salem & Alleppey turmeric roots..."
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary transition-all text-stone-700 resize-none"
+                        className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-stone-700 resize-none"
                       />
                     </div>
 
@@ -461,7 +336,7 @@ export function HeroSlideList({
                           value={slide.button_text || ''}
                           onChange={(e) => updateSlideField(slide.id, 'button_text', e.target.value)}
                           placeholder="Shop Now"
-                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary transition-all text-stone-900"
+                          className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-stone-900"
                         />
                       </div>
                       <div>
@@ -472,7 +347,7 @@ export function HeroSlideList({
                             value={slide.button_link || ''}
                             onChange={(e) => updateSlideField(slide.id, 'button_link', e.target.value)}
                             placeholder="/shop or /product/turmeric-powder"
-                            className="w-full pl-3 pr-8 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-spice-primary/20 focus:border-spice-primary transition-all text-stone-900"
+                            className="w-full pl-3 pr-8 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-stone-900"
                           />
                           {slide.button_link && (
                             <a
@@ -490,12 +365,12 @@ export function HeroSlideList({
                     </div>
 
                     {/* Bottom Save Action for this Slide */}
-                    <div className="pt-2 flex items-center justify-between">
+                    <div className="pt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-xs text-stone-400">
                         Changes will appear immediately on the homepage.
                       </span>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
                         {isSaved && (
                           <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
                             <Check className="w-4 h-4 text-emerald-600" />
@@ -507,7 +382,7 @@ export function HeroSlideList({
                           type="button"
                           onClick={() => handleSaveSlide(slide)}
                           disabled={isPending}
-                          className="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
+                          className="w-full sm:w-auto justify-center px-5 py-3 sm:py-2.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95 whitespace-nowrap"
                         >
                           {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                           Save Slide

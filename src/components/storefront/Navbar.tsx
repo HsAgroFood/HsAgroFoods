@@ -28,6 +28,9 @@ import {
 } from 'lucide-react'
 import { logout } from '@/actions/auth'
 import { useCart } from '@/contexts/CartContext'
+import { resolveShopCategories, type ShopCategoryInput } from '@/lib/shopCategories'
+import { useShippingConfig } from '@/contexts/ShippingConfigContext'
+import { shippingCopy } from '@/lib/shippingText'
 import { FALLBACK_PRODUCTS } from '@/constants/fallbackProducts'
 import { getWishlistCount } from '@/lib/wishlist'
 
@@ -113,82 +116,6 @@ type NavLink = {
   subItems?: { name: string; href: string }[]
 }
 
-export const SHOP_CATEGORY_METADATA: Record<
-  string,
-  {
-    name: string
-    subtext: string
-    badge: string
-    image: string
-    icon: string
-  }
-> = {
-  'ground-spices': {
-    name: 'Ground Spices',
-    subtext: 'Pure Salem Haldi, Guntur Mirch, Dhaniya & Jeera',
-    badge: '100% Pure',
-    image: '/images/products/turmeric-powder.png',
-    icon: '🌶️',
-  },
-  'pure-ground-spices': {
-    name: 'Ground Spices',
-    subtext: 'Pure Salem Haldi, Guntur Mirch, Dhaniya & Jeera',
-    badge: '100% Pure',
-    image: '/images/products/turmeric-powder.png',
-    icon: '🌶️',
-  },
-  'blended-spices': {
-    name: 'Blended Masale',
-    subtext: 'Authentic Shahi Garam Masala, Kitchen King & Chaat Blends',
-    badge: 'Royal Recipes',
-    image: '/images/products/shahi-garam-masala.jpeg',
-    icon: '🥣',
-  },
-  'blended-masalas': {
-    name: 'Blended Masale',
-    subtext: 'Authentic Shahi Garam Masala, Kitchen King & Chaat Blends',
-    badge: 'Royal Recipes',
-    image: '/images/products/shahi-garam-masala.jpeg',
-    icon: '🥣',
-  },
-  'dehydrated-powders': {
-    name: 'Dehydrated Veg & Fruit Powders',
-    subtext: 'Beetroot, Tomato, Raw Banana, Garlic & Carrot Powders',
-    badge: 'Zero Additives',
-    image: '/images/products/banana-powder.png',
-    icon: '🌿',
-  },
-}
-
-export const FEATURED_DROPDOWN_RANGES = [
-  {
-    name: 'Ground Spices',
-    slug: 'ground-spices',
-    subtext: 'Pure Salem Haldi, Guntur Mirch, Dhaniya & Jeera',
-    href: '/shop?category=ground-spices',
-    badge: '100% Pure',
-    image: '/images/products/turmeric-powder.png',
-    icon: '🌶️',
-  },
-  {
-    name: 'Blended Masale',
-    slug: 'blended-spices',
-    subtext: 'Authentic Shahi Garam Masala, Kitchen King & Chaat Blends',
-    href: '/shop?category=blended-spices',
-    badge: 'Royal Recipes',
-    image: '/images/products/shahi-garam-masala.jpeg',
-    icon: '🥣',
-  },
-  {
-    name: 'Dehydrated Veg & Fruit Powders',
-    slug: 'dehydrated-powders',
-    subtext: 'Beetroot, Tomato, Raw Banana, Garlic & Carrot Powders',
-    badge: 'Zero Additives',
-    image: '/images/products/banana-powder.png',
-    icon: '🌿',
-  },
-]
-
 const defaultCategoryItems = [
   { name: 'All Products', href: '/shop' },
   { name: 'Ground Spices', href: '/shop?category=ground-spices' },
@@ -203,9 +130,9 @@ export function Navbar({
 }: {
   isLoggedIn?: boolean
   user?: { name: string; email: string; role?: string } | null
-  categories?: { name: string; slug: string; description?: string | null; image_url?: string | null }[]
+  categories?: ShopCategoryInput[]
 }) {
-  const resolvedShopCategories = (
+  const resolvedShopCategories = resolveShopCategories(
     categories.length > 0
       ? categories
       : [
@@ -213,24 +140,7 @@ export function Navbar({
           { name: 'Blended Masale', slug: 'blended-spices' },
           { name: 'Dehydrated Veg & Fruit Powders', slug: 'dehydrated-powders' },
         ]
-  ).map((c) => {
-    const meta = SHOP_CATEGORY_METADATA[c.slug] || {
-      name: c.name,
-      subtext: c.description || '100% pure cold-ground spices',
-      badge: 'Cold-Ground',
-      image: c.image_url || '/images/products/turmeric-powder.png',
-      icon: '🌿',
-    }
-    return {
-      name: c.name,
-      slug: c.slug,
-      href: `/shop?category=${c.slug}`,
-      subtext: c.description || meta.subtext,
-      badge: meta.badge,
-      image: c.image_url || meta.image,
-      icon: meta.icon,
-    }
-  })
+  )
 
   const dynamicSubItems = [
     { name: 'All Products', href: '/shop' },
@@ -251,6 +161,7 @@ export function Navbar({
   ]
 
   const { itemCount } = useCart()
+  const shipping = shippingCopy(useShippingConfig())
   const pathname = usePathname()
   const router = useRouter()
 
@@ -419,7 +330,7 @@ export function Navbar({
                 className="group flex items-center gap-2 sm:gap-2.5"
                 aria-label="HS AgroFoods"
               >
-                <div className="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-[68px] lg:h-[68px] group-hover:scale-105 transition-transform shrink-0">
+                <div className="relative w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] lg:w-[76px] lg:h-[76px] group-hover:scale-105 transition-transform shrink-0">
                   <Image
                     src="/images/logo.png"
                     alt="HS AgroFoods Logo"
@@ -427,7 +338,7 @@ export function Navbar({
                     priority
                     unoptimized
                     className="object-contain drop-shadow-2xs"
-                    sizes="(max-width: 1024px) 60px, 68px"
+                    sizes="(max-width: 640px) 60px, (max-width: 1024px) 70px, 76px"
                   />
                 </div>
                 <div className="flex flex-col leading-none whitespace-nowrap shrink-0">
@@ -537,9 +448,9 @@ export function Navbar({
                                         <span className="font-bold text-[#14361F] group-hover/item:text-[#E07B0C] truncate block">
                                           {cat.name}
                                         </span>
-                                        <span className="text-[8.5px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1.5 py-0.5 rounded-[3px] shrink-0">
-                                          {cat.badge}
-                                        </span>
+                                        {cat.badge && (
+                                        <span className="text-[8.5px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1.5 py-0.5 rounded-[3px] shrink-0">{cat.badge}</span>
+                                      )}
                                       </div>
                                       <span className="text-[10px] text-[#7A6458] truncate block leading-tight mt-0.5">
                                         {cat.subtext}
@@ -587,7 +498,7 @@ export function Navbar({
 
                           {/* Bottom Shipping Strip */}
                           <div className="mt-3 pt-2.5 border-t border-[#EDE4D9] flex items-center justify-center text-[11px] font-semibold text-[#14361F]">
-                            <span>🚚 Free Shipping Across India Above ₹499</span>
+                            <span>🚚 {shipping.acrossIndia}</span>
                           </div>
                         </div>
                       )}
@@ -1231,9 +1142,9 @@ export function Navbar({
                                 <span className="text-xs font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors truncate block">
                                   {cat.name}
                                 </span>
-                                <span className="text-[8px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1 py-0.2 rounded-[2px] shrink-0">
-                                  {cat.badge}
-                                </span>
+                                {cat.badge && (
+                                        <span className="text-[8px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1 py-0.2 rounded-[2px] shrink-0">{cat.badge}</span>
+                                      )}
                               </div>
                               <span className="text-[10px] text-[#7A6458] truncate block leading-tight mt-0.5">
                                 {cat.subtext}
@@ -1383,7 +1294,7 @@ export function Navbar({
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <div className="py-1 px-2 rounded-[5px] bg-white border border-[#EDE4D9] text-center text-[10px] font-medium text-[#7A6458]">
-                🚚 Free Shipping Across India Above ₹499
+                🚚 {shipping.acrossIndia}
               </div>
             </div>
           </div>

@@ -11,6 +11,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getEffectiveUser } from '@/lib/userAuth'
 import { FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
+import { getShippingConfig } from '@/actions/shipping'
+import { ShippingConfigProvider } from '@/contexts/ShippingConfigContext'
 
 export const metadata = {
   title: {
@@ -25,10 +27,12 @@ export default async function StorefrontLayout({
 }: {
   children: React.ReactNode
 }) {
+  const shippingConfig = await getShippingConfig()
+  let signatureProducts: { name: string; slug: string }[] = []
   let cartCount = 0
   let isLoggedIn = false
   let currentUser: { name: string; email: string; role?: string } | null = null
-  let categories: { name: string; slug: string }[] = FALLBACK_CATEGORIES.map((c) => ({
+  let categories: { name: string; slug: string; description?: string | null; image_url?: string | null; badge_text?: string | null }[] = FALLBACK_CATEGORIES.map((c) => ({
     name: c.name,
     slug: c.slug,
   }))
@@ -36,17 +40,38 @@ export default async function StorefrontLayout({
   try {
     try {
       const adminClient = createAdminClient()
-      const { data } = await adminClient
-        .from('categories')
-        .select('name, slug, description, image_url')
-        .eq('is_active', true)
-        .not('slug', 'like', '__system_%')
-        .order('name')
+      const loadCategories = (columns: string) =>
+        adminClient
+          .from('categories')
+          .select(columns)
+          .eq('is_active', true)
+          .not('slug', 'like', '__system_%')
+          .order('name')
+
+      const withTags = await loadCategories('name, slug, description, image_url, badge_text')
+      // badge_text column not created yet (migration pending): keep the menu working without tags
+      const data = withTags.error
+        ? (await loadCategories('name, slug, description, image_url')).data
+        : withTags.data
       if (data && data.length > 0) {
-        categories = data
+        categories = data as unknown as typeof categories
       }
     } catch {
       // Fallback
+    }
+
+    // Footer "Signature Range": the featured products (Admin > Products > Featured)
+    try {
+      const { data: featured } = await createAdminClient()
+        .from('products')
+        .select('name, slug')
+        .eq('is_active', true)
+        .eq('is_featured', true)
+        .order('created_at', { ascending: true })
+        .limit(7)
+      if (featured) signatureProducts = featured
+    } catch {
+      // Footer simply shows its fallback link
     }
 
     cartCount = await getCartCount()
@@ -65,17 +90,19 @@ export default async function StorefrontLayout({
   }
 
   return (
+    <ShippingConfigProvider config={shippingConfig}>
     <CartProvider initialCount={cartCount}>
       <div className="min-h-screen flex flex-col bg-[#FBF5EE]">
         <AnnouncementBar />
         <Navbar isLoggedIn={isLoggedIn} user={currentUser} categories={categories} />
         <main className="flex-grow">{children}</main>
-        <Footer />
+        <Footer categories={categories} signatureProducts={signatureProducts} />
         <FloatingContact />
         <ScrollToTop />
         <MobileBottomBar categories={categories} />
         <PageTransitionLoader />
       </div>
     </CartProvider>
+    </ShippingConfigProvider>
   )
 }
