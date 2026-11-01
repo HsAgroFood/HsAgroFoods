@@ -14,8 +14,9 @@ import {
 } from 'lucide-react'
 
 export const metadata = {
-  title: 'Privacy Policy | HS AgroFoods',
+  title: 'Privacy Policy',
   description: 'Understand how HS AgroFoods protects your personal data, address privacy, and payment security.',
+  alternates: { canonical: '/privacy' },
 }
 
 export default function PrivacyPolicyPage() {

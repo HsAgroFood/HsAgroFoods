@@ -1,18 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import {
   Mail,
   ArrowRight,
   Check,
-  Tag,
-  Gift,
   Lock,
   Loader2,
   CheckCircle2,
 } from 'lucide-react'
 import { subscribeNewsletter } from '@/actions/newsletter'
+import { HOME_DEFAULTS, type HomeContent } from '@/lib/homeContent'
+import { resolveHomeIcon } from '@/lib/homeIcons'
 
 // Realistic Botanical Leaf SVG from User
 function RealisticLeaf({ className = '' }: { className?: string }) {
@@ -61,7 +61,7 @@ function RealisticLeaf({ className = '' }: { className?: string }) {
   )
 }
 
-export function BottomBanner() {
+export function BottomBanner({ content = HOME_DEFAULTS.newsletter }: { content?: HomeContent['newsletter'] }) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -85,7 +85,7 @@ export function BottomBanner() {
   }
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#FAF6F0] text-[#14361F] pt-6 sm:pt-8 lg:pt-10 pb-12 sm:pb-14 lg:pb-16 border-t border-[#EDE4D9]/80">
+    <section className="relative w-full overflow-hidden bg-[#FAF6F0] text-[#14361F] pt-6 sm:pt-8 lg:pt-10 pb-36 sm:pb-14 lg:pb-16 border-t border-[#EDE4D9]/80">
       
       {/* ── Soft Ambient Radial Glow Behind Center Content ── */}
       <div
@@ -119,9 +119,9 @@ export function BottomBanner() {
       </div>
 
       {/* ── Left Artwork: Turmeric Bowl & Spices Flatlay (newsletter1.png) ── */}
-      <div className="absolute left-[-30px] xs:left-[-20px] sm:left-[-15px] md:left-0 lg:left-[-20px] xl:left-[-10px] 2xl:left-0 bottom-[-10px] sm:bottom-[-20px] lg:bottom-[-28px] w-[200px] xs:w-[240px] sm:w-[310px] md:w-[370px] lg:w-[430px] xl:w-[490px] 2xl:w-[530px] aspect-[1536/1024] pointer-events-none select-none z-10 transition-transform duration-500 opacity-35 sm:opacity-100">
-        <Image
-          src="/images/newsletter/newsletter1.png"
+      <div className="absolute left-[-30px] xs:left-[-20px] sm:left-[-15px] md:left-0 lg:left-[-20px] xl:left-[-10px] 2xl:left-0 bottom-[-10px] sm:bottom-[-20px] lg:bottom-[-28px] w-[200px] xs:w-[240px] sm:w-[310px] md:w-[370px] lg:w-[430px] xl:w-[490px] 2xl:w-[530px] aspect-[1536/1024] pointer-events-none select-none z-10 transition-transform duration-500">
+        <CornerAccentImage
+          kind="newsletterLeft"
           alt="Golden Salem Turmeric, star anise, peppercorns and whole spices"
           fill
           priority
@@ -131,9 +131,9 @@ export function BottomBanner() {
       </div>
 
       {/* ── Right Artwork: Red Chilly Bowl & Spices Flatlay (newsletter2.png) ── */}
-      <div className="absolute right-[-30px] xs:right-[-20px] sm:right-[-15px] md:right-0 lg:right-[-20px] xl:right-[-10px] 2xl:right-0 bottom-[-10px] sm:bottom-[-20px] lg:bottom-[-28px] w-[200px] xs:w-[240px] sm:w-[310px] md:w-[370px] lg:w-[430px] xl:w-[490px] 2xl:w-[530px] aspect-[1536/1024] pointer-events-none select-none z-10 transition-transform duration-500 opacity-35 sm:opacity-100">
-        <Image
-          src="/images/newsletter/newsletter2.png"
+      <div className="absolute right-[-30px] xs:right-[-20px] sm:right-[-15px] md:right-0 lg:right-[-20px] xl:right-[-10px] 2xl:right-0 bottom-[-10px] sm:bottom-[-20px] lg:bottom-[-28px] w-[200px] xs:w-[240px] sm:w-[310px] md:w-[370px] lg:w-[430px] xl:w-[490px] 2xl:w-[530px] aspect-[1536/1024] pointer-events-none select-none z-10 transition-transform duration-500">
+        <CornerAccentImage
+          kind="newsletterRight"
           alt="Vibrant Red Chilly powder, whole dried chillies, cinnamon, peppercorns and garlic"
           fill
           priority
@@ -151,20 +151,20 @@ export function BottomBanner() {
           <div className="flex items-center justify-center gap-3 mb-2.5">
             <div className="w-8 sm:w-14 h-px bg-[#7A6458]/40" />
             <span className="text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase text-[#7A6458]">
-              NEWSLETTER
+              {content.label}
             </span>
             <div className="w-8 sm:w-14 h-px bg-[#7A6458]/40" />
           </div>
 
           {/* 3. Main Headline */}
           <h2 className="font-serif text-2xl xs:text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-[#14361F] leading-[1.2]">
-            <span>Stay Updated with</span> <br />
-            <span className="text-[#E07B0C]">Our Latest Spices &amp; Offers</span>
+            <span>{content.line1}</span> <br />
+            <span className="text-[#E07B0C]">{content.line2}</span>
           </h2>
 
           {/* 4. Subtitle Description */}
           <p className="mt-2 text-xs sm:text-sm lg:text-[15px] text-[#5A433B] max-w-lg mx-auto leading-relaxed font-normal">
-            Join our newsletter and be the first to know about new products, special offers and healthy living tips.
+            {content.subtitle}
           </p>
 
           {/* 5. Email Subscription Form Box */}
@@ -172,7 +172,7 @@ export function BottomBanner() {
             {success ? (
               <div className="bg-white rounded-[5px] p-2 sm:p-[15px] border border-[#EDE4D9] shadow-md flex items-center justify-center gap-2.5 text-emerald-800 text-xs sm:text-sm font-semibold animate-in fade-in duration-300">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                <span>You&apos;re subscribed! Check your inbox for exclusive perks.</span>
+                <span>{content.successText}</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="relative">
@@ -186,7 +186,7 @@ export function BottomBanner() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email address"
+                      placeholder={content.placeholder}
                       className="w-full bg-transparent text-xs sm:text-sm text-[#14361F] placeholder:text-[#9C8A7F] outline-none"
                     />
                   </div>
@@ -204,7 +204,7 @@ export function BottomBanner() {
                       </>
                     ) : (
                       <>
-                        <span>Subscribe</span>
+                        <span>{content.buttonText}</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
@@ -223,38 +223,29 @@ export function BottomBanner() {
           {/* 6. Three Value Propositions (Exclusive Offers | New Arrivals | Healthy Living Tips) */}
           <div className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-6 gap-y-2 mt-4 sm:mt-5 text-xs sm:text-[13px] text-[#5A433B] font-medium">
             
-            {/* Value 1: Exclusive Offers */}
-            <div className="inline-flex items-center gap-2">
-              <div className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full border border-[#E07B0C]/40 bg-[#FAF3EB] flex items-center justify-center text-[#E07B0C] shrink-0">
-                <Check className="w-2.5 h-2.5 stroke-[3]" />
-              </div>
-              <span className="text-[#3A2A22]">Exclusive Offers</span>
-            </div>
-
-            {/* Divider 1 */}
-            <div className="hidden sm:block w-px h-3.5 bg-[#DDD3C7]" />
-
-            {/* Value 2: New Arrivals */}
-            <div className="inline-flex items-center gap-2">
-              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E07B0C] shrink-0" />
-              <span className="text-[#3A2A22]">New Arrivals</span>
-            </div>
-
-            {/* Divider 2 */}
-            <div className="hidden sm:block w-px h-3.5 bg-[#DDD3C7]" />
-
-            {/* Value 3: Healthy Living Tips */}
-            <div className="inline-flex items-center gap-2">
-              <Gift className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E07B0C] shrink-0" />
-              <span className="text-[#3A2A22]">Healthy Living Tips</span>
-            </div>
+            {content.values.map((value, index) => {
+              const Icon = resolveHomeIcon(value.icon, Check)
+              return (
+                <div key={`${value.label}-${index}`} className="inline-flex items-center gap-2">
+                  {index > 0 && <div className="mr-2 hidden h-3.5 w-px bg-[#DDD3C7] sm:mr-4 sm:block" />}
+                  {value.icon === 'Check' ? (
+                    <div className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full border border-[#E07B0C]/40 bg-[#FAF3EB] flex items-center justify-center text-[#E07B0C] shrink-0">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                    </div>
+                  ) : (
+                    <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E07B0C] shrink-0" />
+                  )}
+                  <span className="text-[#3A2A22]">{value.label}</span>
+                </div>
+              )
+            })}
 
           </div>
 
           {/* 7. Privacy Guarantee Note */}
           <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-[#7A6458] mt-3 sm:mt-3.5">
             <Lock className="w-3 h-3 text-[#7A6458]" />
-            <span>Your email is safe with us. No spam, ever.</span>
+            <span>{content.privacy}</span>
           </div>
 
         </div>

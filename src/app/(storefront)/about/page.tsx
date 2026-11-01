@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -182,25 +183,25 @@ export default function AboutPage() {
       />
 
       {/* Decorative Corner Asset: Top Left Natural Spice Leaves Accent */}
-      <div className="absolute top-0 left-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-75 z-0 -scale-x-100">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 left-0 w-24 h-[88px] sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 -scale-x-100 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Leaves Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 176px, 384px"
+          sizes="(max-width: 640px) 96px, 384px"
           priority={false}
         />
       </div>
 
       {/* Decorative Corner Asset: Top Right Spices Accent */}
-      <div className="absolute top-0 right-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-75 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 right-0 w-24 h-[88px] sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Leaves Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 176px, 384px"
+          sizes="(max-width: 640px) 96px, 384px"
           priority={false}
         />
       </div>
@@ -208,7 +209,7 @@ export default function AboutPage() {
       {/* ═══════════════════════════════════════════════════════════════════════════════
           1. Hero Header Section — Matching Home Page Style & Sizing
          ═══════════════════════════════════════════════════════════════════════════════ */}
-      <section className="relative pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-20 border-b border-[#EDE4D9]/80 z-10">
+      <section className="relative pt-[104px] sm:pt-16 lg:pt-20 pb-16 sm:pb-20 border-b border-[#EDE4D9]/80 z-10">
         <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             

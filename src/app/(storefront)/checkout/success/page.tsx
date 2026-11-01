@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { NO_INDEX } from '@/lib/seo'
 import Image from 'next/image'
 import { Package, ArrowRight, Truck, ShieldCheck, Check, CreditCard, Banknote } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -9,7 +10,8 @@ import { describeRazorpayMethod } from '@/lib/razorpay'
 import CopyText from '@/components/storefront/CopyText'
 
 export const metadata = {
-  title: 'Order Confirmed | HS AgroFoods',
+  title: 'Order Confirmed',
+  robots: NO_INDEX,
 }
 
 export default async function CheckoutSuccessPage({

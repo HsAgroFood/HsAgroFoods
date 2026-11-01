@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { saveHeroSlide, deleteHeroSlide, toggleHeroSlideStatus } from '@/actions/admin/hero'
+import { saveHeroSlide, deleteHeroSlide, toggleHeroSlideStatus, type HeroLinkOptions } from '@/actions/admin/hero'
 import { Trash2, Plus, Image as ImageIcon, Loader2, Save, Check, ExternalLink } from 'lucide-react'
 import { SlideImagesField } from './SlideImagesField'
+import { LinkPicker } from './LinkPicker'
 
 interface SlideData {
   id: string
@@ -20,11 +21,15 @@ interface SlideData {
 export function HeroSlideList({ 
   initialSlides, 
   globalText: _globalText, 
-  textMode: _textMode 
+  textMode: _textMode,
+  showText,
+  linkOptions,
 }: { 
   initialSlides: any[], 
   globalText: any, 
-  textMode: 'global' | 'per_slide' 
+  textMode: 'global' | 'per_slide',
+  showText: boolean,
+  linkOptions: HeroLinkOptions
 }) {
   const [slides, setSlides] = useState<SlideData[]>(initialSlides || [])
   const [isPending, startTransition] = useTransition()
@@ -167,6 +172,8 @@ export function HeroSlideList({
 
             {/* Content Fields */}
             <div className="lg:col-span-8 space-y-4">
+{showText ? (
+<>
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1">Heading / Title</label>
                 <input
@@ -212,6 +219,21 @@ export function HeroSlideList({
                 </div>
               </div>
 
+</>
+) : (
+<div>
+                <label className="block text-xs font-bold text-stone-700 mb-1">When visitors click this image, open</label>
+                <LinkPicker
+                  value={newSlide.button_link}
+                  onChange={(href) => setNewSlide(prev => ({ ...prev, button_link: href }))}
+                  options={linkOptions}
+                  disabled={isPending}
+                />
+                <p className="mt-2 text-xs text-stone-400">
+                  Text is hidden on the hero, so clicking the image opens this page. Choose &quot;No link&quot; to keep it non-clickable.
+                </p>
+              </div>
+)}
               <div className="pt-2 flex sm:justify-end">
                 <button
                   type="button"
@@ -256,7 +278,8 @@ export function HeroSlideList({
                       #{index + 1}
                     </span>
                     <h3 className="min-w-0 text-sm font-bold text-stone-900 line-clamp-2 break-words">
-                      Slide {index + 1}: {slide.title || 'Untitled Slide'}
+                      Slide {index + 1}
+                      {showText && `: ${slide.title || 'Untitled Slide'}`}
                     </h3>
                   </div>
 
@@ -306,6 +329,8 @@ export function HeroSlideList({
 
                   {/* Right: Editable content fields */}
                   <div className="lg:col-span-8 space-y-4">
+{showText ? (
+<>
                     <div>
                       <label className="block text-xs font-bold text-stone-700 mb-1">Heading / Title</label>
                       <input
@@ -364,6 +389,21 @@ export function HeroSlideList({
                       </div>
                     </div>
 
+</>
+) : (
+<div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1">When visitors click this image, open</label>
+                      <LinkPicker
+                        value={slide.button_link || ''}
+                        onChange={(href) => updateSlideField(slide.id, 'button_link', href)}
+                        options={linkOptions}
+                        disabled={isPending}
+                      />
+                      <p className="mt-2 text-xs text-stone-400">
+                        Text is hidden on the hero, so clicking this slide&apos;s image opens this page. Choose &quot;No link&quot; to keep it non-clickable.
+                      </p>
+                    </div>
+)}
                     {/* Bottom Save Action for this Slide */}
                     <div className="pt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <span className="text-xs text-stone-400">

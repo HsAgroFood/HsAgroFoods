@@ -1,21 +1,31 @@
+import { Fragment, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { HeroSection } from '@/components/storefront/HeroSection'
+import { ShopByCategory } from '@/components/storefront/ShopByCategory'
 import { PillarsBar } from '@/components/storefront/PillarsBar'
 import {
   SpiceRangeSection,
   LiveSpiceItem,
   CategoryItem,
 } from '@/components/storefront/SpiceRangeSection'
+import { ReelsSection } from '@/components/storefront/ReelsSection'
+import { getActiveReels } from '@/actions/admin/reels'
+import { getActiveGlobalFaqs } from '@/actions/global_faqs'
+import { HomeFaqSection } from '@/components/storefront/HomeFaqSection'
 import { HealthBenefitsSection } from '@/components/storefront/HealthBenefitsSection'
+import { ShowcaseSection } from '@/components/storefront/ShowcaseSection'
+import { getHomeContent } from '@/actions/admin/homeContent'
 import { PromiseSection } from '@/components/storefront/PromiseSection'
 import { BottomBanner } from '@/components/storefront/BottomBanner'
 import { SPICE_ASSETS } from '@/constants/assets'
 import { FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 
 export const metadata = {
-  title: 'HS AgroFoods — Pure Spices & Natural Dehydrated Veg & Fruit Powders',
+  // `absolute` skips the "| HS AgroFoods" suffix, because the brand is already in this title
+  title: { absolute: 'HS AgroFoods — Pure Spices & Natural Dehydrated Veg & Fruit Powders' },
   description:
-    "HS AgroFoods brings India's finest cold-ground spices and 100% natural dehydrated vegetable & fruit powders to your kitchen.",
+    "Buy 100% pure cold-ground Indian spices (turmeric, red chilli, coriander, zeera, garam masala) and natural dehydrated vegetable & fruit powders from HS AgroFoods, Hyderabad. Free shipping across India above ₹500.",
+  alternates: { canonical: '/' },
 }
 
 export const dynamic = 'force-dynamic'
@@ -91,25 +101,36 @@ export default async function HomePage() {
     categories = FALLBACK_CATEGORIES
   }
 
+  const [reels, faqs, content] = await Promise.all([getActiveReels(), getActiveGlobalFaqs(), getHomeContent()])
+
+  // Section order and visibility are controlled in Admin > Home Customization
+  const sections: Record<string, ReactNode> = {
+    hero: <HeroSection />,
+    shopByCategory: <ShopByCategory content={content.shopByCategory} />,
+    pillars: <PillarsBar content={content.pillars} />,
+    spiceRange: (
+      <SpiceRangeSection
+        products={liveProducts}
+        categories={categories}
+        useLiveProducts={productsFromDatabase}
+        content={content.spiceRange}
+      />
+    ),
+    reels: <ReelsSection reels={reels} content={content.reels} />,
+    showcase: <ShowcaseSection content={content.showcase} />,
+    gallery: <HealthBenefitsSection content={content.gallery} />,
+    promise: <PromiseSection content={content.promise} />,
+    faq: <HomeFaqSection faqs={faqs} content={content.faq} />,
+    newsletter: <BottomBanner content={content.newsletter} />,
+  }
+
   return (
     <div className="bg-spice-dust min-h-screen flex flex-col">
-      {/* 1. Hero Section (Wired to Hero Slides / DB) */}
-      <HeroSection />
-
-      {/* 2. 4-Pillars Feature Bar (Floating) */}
-      <PillarsBar />
-
-      {/* 3. Our Spice Range Section (Wired to Shop Categories & Products) */}
-      <SpiceRangeSection products={liveProducts} categories={categories} useLiveProducts={productsFromDatabase} />
-
-      {/* 4. Spices That Do More Than Just Add Taste (Health Benefits & Recipes) */}
-      <HealthBenefitsSection />
-
-      {/* 5. Our Promise - Pure. Natural. Trusted. (Quality Seal Stamp & Guarantees) */}
-      <PromiseSection />
-
-      {/* 6. Bring Home The Taste of Purity (Full-Width Bottom Banner) */}
-      <BottomBanner />
+      {content.layout
+        .filter((item) => item.visible && sections[item.id])
+        .map((item) => (
+          <Fragment key={item.id}>{sections[item.id]}</Fragment>
+        ))}
     </div>
   )
 }

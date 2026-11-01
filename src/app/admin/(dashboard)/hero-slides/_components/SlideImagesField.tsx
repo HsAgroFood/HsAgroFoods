@@ -7,7 +7,7 @@ import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
 
 /**
  * Two independent image slots for a hero slide:
- *  - Desktop (16:9) -> image_url
+ *  - Desktop (16:7) -> image_url
  *  - Phone (4:5)    -> image_mobile_url (optional; empty = auto-crop of the desktop image)
  */
 export function SlideImagesField({
@@ -32,9 +32,9 @@ export function SlideImagesField({
       <div className="space-y-2">
         <div className="flex items-center gap-1.5 text-xs font-bold text-stone-700 uppercase tracking-wider">
           <Monitor className="w-3.5 h-3.5" />
-          Desktop image <span className="font-semibold normal-case text-stone-400">(16:9)</span>
+          Desktop image <span className="font-semibold normal-case text-stone-400">(16:7)</span>
         </div>
-        <div className="relative aspect-video w-full rounded-xl bg-stone-100 border border-stone-200 overflow-hidden flex items-center justify-center">
+        <div className="relative aspect-[16/7] w-full rounded-xl bg-stone-100 border border-stone-200 overflow-hidden flex items-center justify-center">
           {desktopUrl ? (
             <Image src={getDesktopSlideUrl(desktopUrl)} alt="Desktop slide" fill className="object-cover" />
           ) : (
@@ -57,7 +57,7 @@ export function SlideImagesField({
             </button>
           )}
         </ImageKitUpload>
-        <p className="text-[11px] text-stone-400">Recommended 1920×1080 (landscape).</p>
+        <p className="text-[11px] text-stone-400">Recommended 1920×840 (16:7 landscape).</p>
       </div>
 
       {/* Phone image */}

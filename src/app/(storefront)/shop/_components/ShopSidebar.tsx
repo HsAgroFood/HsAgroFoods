@@ -2,13 +2,65 @@
 
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Sparkles, ChevronDown, ShieldCheck, Truck, RotateCcw, Search, X, Check, Filter } from 'lucide-react'
-import { useState } from 'react'
+import { Sparkles, ChevronDown, ShieldCheck, Search, X, Check, SlidersHorizontal, LayoutGrid, Flame, Carrot, Sprout, type LucideIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 
 type Category = {
   id: string
   name: string
   slug: string
+}
+
+/** A friendly icon per category, guessed from its name (falls back to a sprout). */
+function categoryIcon(name: string, slug: string): LucideIcon {
+  const text = `${name} ${slug}`.toLowerCase()
+  if (/blend|masala|masale/.test(text)) return Sparkles
+  if (/veg|fruit|dehydrat/.test(text)) return Carrot
+  if (/ground|spice|powder/.test(text)) return Flame
+  return Sprout
+}
+
+function CategoryRow({
+  href,
+  label,
+  Icon,
+  active,
+  onClick,
+}: {
+  href: string
+  label: string
+  Icon: LucideIcon
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <li>
+      <Link
+        href={href}
+        onClick={onClick}
+        aria-current={active ? 'true' : undefined}
+        className={`group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-all active:scale-[0.99] ${
+          active
+            ? 'bg-gradient-to-r from-[#E07B0C] to-[#D1491B] text-white shadow-md shadow-[#E07B0C]/25'
+            : 'text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#14361F]'
+        }`}
+      >
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+            active ? 'bg-white/20 text-white' : 'bg-[#FAF3EB] text-[#E07B0C] group-hover:bg-white'
+          }`}
+        >
+          <Icon className="h-[18px] w-[18px]" />
+        </span>
+        <span className={`flex-1 text-sm leading-snug ${active ? 'font-bold' : 'font-semibold'}`}>{label}</span>
+        {active && (
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/25">
+            <Check className="h-3 w-3 text-white" />
+          </span>
+        )}
+      </Link>
+    </li>
+  )
 }
 
 export function ShopSidebar({
@@ -24,6 +76,27 @@ export function ShopSidebar({
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
   const [localSearch, setLocalSearch] = useState(searchQuery || '')
+  const filterRef = useRef<HTMLDivElement>(null)
+  const activeName = categories.find((cat) => cat.slug === categoryFilter)?.name ?? 'All Products'
+
+  // Mobile: the category list floats over the products; close it on an outside tap or Escape
+  useEffect(() => {
+    if (!isOpen) return
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) setIsOpen(false)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false)
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('touchstart', onPointerDown, { passive: true })
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('touchstart', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isOpen])
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,7 +119,7 @@ export function ShopSidebar({
   }
 
   return (
-    <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 lg:sticky lg:top-24 space-y-5">
+    <div className="relative z-20 w-full lg:w-64 xl:w-72 flex-shrink-0 lg:sticky lg:top-24 space-y-5">
       
       {/* 1. Quick Search Box Widget */}
       <div className="bg-white rounded-[5px] border border-[#EDE4D9] p-3.5 shadow-xs">
@@ -72,87 +145,70 @@ export function ShopSidebar({
       </div>
 
       {/* 2. Categories Filter Widget */}
-      <div className="bg-white rounded-[5px] border border-[#EDE4D9] shadow-xs overflow-hidden">
-        {/* Mobile Toggle Button */}
+      <div ref={filterRef} className="relative rounded-2xl border border-[#EDE4D9] bg-white shadow-sm lg:overflow-hidden">
+        {/* Mobile toggle: shows what is selected right now */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
-          className="w-full lg:hidden flex items-center justify-between p-3.5 bg-[#14361F] text-white font-bold cursor-pointer"
+          aria-expanded={isOpen}
+          className="flex w-full cursor-pointer items-center gap-3 rounded-2xl bg-gradient-to-r from-[#14361F] to-[#1F5A33] p-3.5 text-left text-white lg:hidden"
         >
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-[#E07B0C]" />
-            <span className="text-xs sm:text-sm tracking-wider uppercase">Filter by Category</span>
-          </div>
-          <ChevronDown
-            className={`w-4 h-4 text-white/80 transition-transform duration-300 ${
-              isOpen ? 'rotate-180' : ''
-            }`}
-          />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15">
+            <SlidersHorizontal className="h-[18px] w-[18px] text-[#F09819]" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13px] font-bold uppercase tracking-wider">Filter by Category</span>
+            <span className="mt-0.5 block truncate text-xs text-white/70">Showing: {activeName}</span>
+          </span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15">
+            <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+          </span>
         </button>
 
-        {/* Desktop Header */}
-        <div className="hidden lg:flex items-center justify-between bg-[#14361F] text-white px-4 py-3 border-b border-[#0C2414]">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#E07B0C]" />
+        {/* Desktop header */}
+        <div className="hidden items-center justify-between bg-gradient-to-r from-[#14361F] to-[#1F5A33] px-4 py-3.5 text-white lg:flex">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
+              <SlidersHorizontal className="h-4 w-4 text-[#F09819]" />
+            </span>
             <h3 className="font-serif text-sm font-bold tracking-wide text-white">Categories</h3>
           </div>
           {categoryFilter && (
             <Link
-              href={`/shop${searchQuery ? `?q=${searchQuery}` : ''}`}
-              className="text-[11px] text-[#FAF7F2]/80 hover:text-white underline"
+              href={`/shop${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`}
+              className="rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-white/25"
             >
               Reset
             </Link>
           )}
         </div>
 
-        {/* Categories List */}
+        {/* Categories list: floats over the products on phones, sits in the sidebar on desktop */}
         <div
-          className={`grid transition-all duration-300 ease-in-out lg:grid-rows-[1fr] ${
-            isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-          }`}
+          className={`${
+            isOpen ? 'block' : 'hidden'
+          } absolute inset-x-0 top-full z-30 mt-2 max-h-[70vh] overflow-y-auto overscroll-contain rounded-2xl border border-[#EDE4D9] bg-white shadow-2xl shadow-[#14361F]/15 animate-in fade-in slide-in-from-top-2 duration-200 lg:static lg:mt-0 lg:block lg:max-h-none lg:overflow-visible lg:rounded-none lg:border-0 lg:shadow-none lg:animate-none`}
         >
-          <div className="overflow-hidden">
-            <ul className="space-y-1 p-2.5 sm:p-3">
-              {/* All Products Link */}
-              <li>
-                <Link
-                  href={`/shop${searchQuery ? `?q=${searchQuery}` : ''}`}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center justify-between px-3 py-2 rounded-[5px] text-xs sm:text-sm font-semibold transition-all ${
-                    !categoryFilter
-                      ? 'bg-[#E07B0C] text-white shadow-xs'
-                      : 'text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#14361F]'
-                  }`}
-                >
-                  <span>All Products</span>
-                  {!categoryFilter && <Check className="w-3.5 h-3.5 text-white" />}
-                </Link>
-              </li>
+          <ul className="space-y-1 p-2.5">
+            <CategoryRow
+              href={`/shop${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`}
+              label="All Products"
+              Icon={LayoutGrid}
+              active={!categoryFilter}
+              onClick={() => setIsOpen(false)}
+            />
 
-              {/* Dynamic Categories */}
-              {categories.map((cat) => {
-                const isActive = categoryFilter === cat.slug
-
-                return (
-                  <li key={cat.id}>
-                    <Link
-                      href={`/shop?category=${cat.slug}${searchQuery ? `&q=${searchQuery}` : ''}`}
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center justify-between px-3 py-2 rounded-[5px] text-xs sm:text-sm font-medium transition-all ${
-                        isActive
-                          ? 'bg-[#E07B0C] text-white font-bold shadow-xs'
-                          : 'text-[#5A433B] hover:bg-[#FAF3EB] hover:text-[#14361F]'
-                      }`}
-                    >
-                      <span>{cat.name}</span>
-                      {isActive && <Check className="w-3.5 h-3.5 text-white" />}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
+            {categories.map((cat) => (
+              <CategoryRow
+                key={cat.id}
+                href={`/shop?category=${cat.slug}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                label={cat.name}
+                Icon={categoryIcon(cat.name, cat.slug)}
+                active={categoryFilter === cat.slug}
+                onClick={() => setIsOpen(false)}
+              />
+            ))}
+          </ul>
         </div>
       </div>
 

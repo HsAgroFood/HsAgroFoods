@@ -1,6 +1,7 @@
 import { getHeroSlides, getHeroConfig } from '@/actions/admin/hero'
 import { HeroBackgroundSlider, HeroSlideItem, GlobalHeroText } from '@/components/storefront/HeroBackgroundSlider'
 import { getMobileSlideUrl } from '@/lib/imageUtils'
+import { DEFAULT_BANNER_VISIBILITY } from '@/lib/heroBanner'
 import { SPICE_ASSETS } from '@/constants/assets'
 
 export const dynamic = 'force-dynamic'
@@ -95,6 +96,8 @@ const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
 export async function HeroSection() {
   let activeSlides: HeroSlideItem[] = []
   let textMode: 'global' | 'per_slide' = 'per_slide'
+  let showText = true
+  let bannerVisibility = DEFAULT_BANNER_VISIBILITY
   let globalText: GlobalHeroText = {
     title: 'Pure Spices & Natural Dehydrated Powders.',
     subtitle: "HS AgroFoods brings India's finest cold-ground spices and nutrient-rich dehydrated fruit & vegetable powders straight to your kitchen.",
@@ -106,6 +109,8 @@ export async function HeroSection() {
     const [slides, heroConfig] = await Promise.all([getHeroSlides(), getHeroConfig()])
 
     textMode = heroConfig.text_mode
+    showText = heroConfig.show_text
+    bannerVisibility = heroConfig.banner_visibility
     globalText = heroConfig.global_text
 
     if (slides && slides.length > 0) {
@@ -132,6 +137,8 @@ export async function HeroSection() {
       slides={activeSlides}
       textMode={textMode}
       globalText={globalText}
+      showText={showText}
+      bannerVisibility={bannerVisibility}
     />
   )
 }

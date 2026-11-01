@@ -1,19 +1,25 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
+import { CornerAccentImage, CornerAccentsProvider } from '@/components/storefront/CornerAccents'
+import { getCornerAccents } from '@/lib/cornerAccents'
+import { NO_INDEX } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title: 'Sign In | HS AgroFoods',
+  title: 'Sign In',
   description: 'Sign in or create an account with HS AgroFoods for 100% pure authentic spices and dehydrated powders.',
+  robots: NO_INDEX,
 }
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const cornerAccents = await getCornerAccents()
+
   return (
+    <CornerAccentsProvider accents={cornerAccents}>
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-[#FAF7F2] py-6 sm:py-10 px-4 sm:px-6">
       {/* ── Ambient Background Lighting Gradients (Matching Home Page) ── */}
       <div
@@ -27,13 +33,13 @@ export default function AuthLayout({
         }}
       />
 
-      {/* Decorative Corner Asset: Top Right Accent Spices */}
-      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 pointer-events-none select-none mix-blend-multiply opacity-65 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
-          alt="Natural Spice Accent"
+      {/* Decorative Corner Asset: Top Right Dried Chillies (flipped so they hang from the top) */}
+      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 pointer-events-none select-none mix-blend-multiply z-0 -scale-100 opacity-100">
+        <CornerAccentImage
+          kind="chillies"
+          alt="Dried Chillies Accent"
           fill
-          className="object-contain object-top-right"
+          className="object-contain object-bottom-left"
           sizes="(max-width: 768px) 128px, 256px"
           priority={false}
         />
@@ -59,5 +65,6 @@ export default function AuthLayout({
         {children}
       </div>
     </div>
+    </CornerAccentsProvider>
   )
 }

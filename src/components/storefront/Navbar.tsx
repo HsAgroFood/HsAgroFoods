@@ -25,6 +25,9 @@ import {
   LogOut,
   MapPin,
   ShieldCheck,
+  ChevronRight,
+  Truck,
+  type LucideIcon,
 } from 'lucide-react'
 import { logout } from '@/actions/auth'
 import { useCart } from '@/contexts/CartContext'
@@ -33,16 +36,6 @@ import { useShippingConfig } from '@/contexts/ShippingConfigContext'
 import { shippingCopy } from '@/lib/shippingText'
 import { FALLBACK_PRODUCTS } from '@/constants/fallbackProducts'
 import { getWishlistCount } from '@/lib/wishlist'
-
-// Quick Trending Spices for Instant Mobile Search
-const POPULAR_MOBILE_TAGS = [
-  'Red Chilli',
-  'Turmeric Powder',
-  'Garam Masala',
-  'Coriander',
-  'Cumin',
-  'Dehydrated Powders',
-]
 
 // Fast Local Catalog Index for 0ms Instant Client-Side Search
 const LOCAL_SEARCH_INDEX = Object.values(FALLBACK_PRODUCTS).map((p) => {
@@ -319,33 +312,33 @@ export function Navbar({
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-[#FAF7F2]/95 backdrop-blur-md text-[#14361F] shadow-sm border-b border-[#EDE4D9] transition-all">
-        <nav className="mx-auto max-w-[1360px] px-3 sm:px-6 lg:px-8">
-          <div className="flex h-[70px] sm:h-20 items-center justify-between gap-2 sm:gap-4">
+        <nav className="mx-auto max-w-[1360px] px-2.5 sm:px-6 lg:px-8">
+          <div className="flex h-[64px] sm:h-20 items-center justify-between gap-1.5 sm:gap-4">
 
             {/* ── Brand Logo (Restored to Original Sizing) ── */}
             <div className="flex items-center shrink-0">
               <Link
                 href="/"
                 onClick={handleHomeClick}
-                className="group flex items-center gap-2 sm:gap-2.5"
+                className="group flex items-center gap-1.5 sm:gap-2.5"
                 aria-label="HS AgroFoods"
               >
-                <div className="relative w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] lg:w-[76px] lg:h-[76px] group-hover:scale-105 transition-transform shrink-0">
+                <div className="relative w-[64px] h-[64px] max-[360px]:w-[54px] max-[360px]:h-[54px] sm:w-[70px] sm:h-[70px] lg:w-[76px] lg:h-[76px] group-hover:scale-105 transition-transform shrink-0">
                   <Image
                     src="/images/logo.png"
                     alt="HS AgroFoods Logo"
                     fill
                     priority
                     unoptimized
-                    className="object-contain drop-shadow-2xs"
-                    sizes="(max-width: 640px) 60px, (max-width: 1024px) 70px, 76px"
+                    className="object-contain drop-shadow-2xs scale-110 sm:scale-100"
+                    sizes="(max-width: 640px) 72px, (max-width: 1024px) 70px, 76px"
                   />
                 </div>
                 <div className="flex flex-col leading-none whitespace-nowrap shrink-0">
-                  <span className="font-serif text-[17px] sm:text-lg lg:text-xl font-extrabold tracking-tight text-[#14361F]">
+                  <span className="font-serif text-[15px] sm:text-lg lg:text-xl font-extrabold tracking-tight text-[#14361F]">
                     HS <span className="text-[#E07B0C]">AgroFoods</span>
                   </span>
-                  <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.16em] text-[#7A6458] mt-0.5">
+                  <span className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.16em] text-[#7A6458] mt-0.5">
                     100% Pure &amp; Natural
                   </span>
                 </div>
@@ -524,7 +517,7 @@ export function Navbar({
             </div>
 
             {/* ── Right Side Actions: Live Search, Circular Wishlist, Cart & Profile ── */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
               
               {/* Desktop Live Autocomplete Search Input */}
               <div className="hidden lg:block relative" ref={searchContainerRef}>
@@ -641,7 +634,7 @@ export function Navbar({
                   setMobileSearchOpen(true)
                   setShowSuggestions(true)
                 }}
-                className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#FAF7F2] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+                className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#FAF7F2] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
                 aria-label="Search"
               >
                 <Search className="w-[18px] h-[18px]" />
@@ -650,7 +643,7 @@ export function Navbar({
               {/* ── Modern Circular Wishlist Icon with Red Badge (Mobile & Desktop) ── */}
               <Link
                 href="/wishlist"
-                className="relative w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#FDF0E6] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] hover:border-[#FADCC3] shadow-2xs hover:shadow-xs transition-all active:scale-95 group shrink-0"
+                className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#FDF0E6] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] hover:border-[#FADCC3] shadow-2xs hover:shadow-xs transition-all active:scale-95 group shrink-0"
                 aria-label="Wishlist"
                 title={wishlistCount > 0 ? `${wishlistCount} items saved in wishlist` : 'Your Wishlist'}
               >
@@ -665,7 +658,7 @@ export function Navbar({
               {/* ── Modern Circular Cart Icon with Saffron Badge (Desktop Only) ── */}
               <Link
                 href="/cart"
-                className="hidden lg:flex relative w-10 h-10 rounded-full items-center justify-center bg-white hover:bg-[#FDF0E6] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] hover:border-[#FADCC3] shadow-2xs hover:shadow-xs transition-all active:scale-95 group shrink-0"
+                className="hidden lg:flex relative w-9 h-9 sm:w-10 sm:h-10 rounded-full items-center justify-center bg-white hover:bg-[#FDF0E6] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] hover:border-[#FADCC3] shadow-2xs hover:shadow-xs transition-all active:scale-95 group shrink-0"
                 aria-label="Shopping Cart"
                 title={`${itemCount} items in cart`}
               >
@@ -686,7 +679,7 @@ export function Navbar({
                 >
                   <Link
                     href="/account"
-                    className="relative w-10 h-10 rounded-full flex items-center justify-center bg-[#144D29] hover:bg-[#E07B0C] text-white font-bold text-xs sm:text-sm ring-2 ring-[#EDE4D9] hover:ring-[#E07B0C]/40 shadow-2xs transition-all active:scale-95 shrink-0"
+                    className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-[#144D29] hover:bg-[#E07B0C] text-white font-bold text-xs sm:text-sm ring-2 ring-[#EDE4D9] hover:ring-[#E07B0C]/40 shadow-2xs transition-all active:scale-95 shrink-0"
                     title={`My Account (${user.name || user.email})`}
                     aria-label="My Account"
                   >
@@ -792,7 +785,7 @@ export function Navbar({
                 >
                   <Link
                     href="/login"
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#EAF5ED] text-[#14361F] hover:text-[#144D29] border border-[#EDE4D9] hover:border-[#CFE3D3] shadow-2xs hover:shadow-xs transition-all active:scale-95 group shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#EAF5ED] text-[#14361F] hover:text-[#144D29] border border-[#EDE4D9] hover:border-[#CFE3D3] shadow-2xs hover:shadow-xs transition-all active:scale-95 group shrink-0"
                     title="Sign In / Account"
                     aria-label="Sign In"
                   >
@@ -827,7 +820,7 @@ export function Navbar({
               {/* Mobile Hamburger Toggle Button (Circular) */}
               <button
                 type="button"
-                className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#FAF7F2] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] shadow-2xs active:scale-95 transition-all focus:outline-none cursor-pointer shrink-0"
+                className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white hover:bg-[#FAF7F2] text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] shadow-2xs active:scale-95 transition-all focus:outline-none cursor-pointer shrink-0"
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
                 aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
@@ -904,23 +897,6 @@ export function Navbar({
               </button>
             </div>
 
-            {/* Quick Popular Keywords Chips */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2.5 pb-0.5">
-              <span className="text-[10px] font-bold text-[#7A6458] shrink-0 uppercase tracking-wider">
-                Popular:
-              </span>
-              {['Haldi', 'Red Chilli', 'Garam Masala', 'Beetroot', 'Jeera', 'Tomato'].map((term) => (
-                <button
-                  key={term}
-                  type="button"
-                  onClick={() => handleSearchChange(term)}
-                  className="px-2.5 py-1 rounded-[4px] bg-white hover:bg-[#FAF7F2] text-[#14361F] text-xs font-semibold border border-[#EDE4D9] shrink-0 active:scale-95 transition-all shadow-2xs cursor-pointer"
-                >
-                  {term}
-                </button>
-              ))}
-            </div>
-
             {/* Live Search Suggestions Dropdown */}
             {desktopSearchQuery.trim().length >= 1 && (
               <div className="mt-3 bg-white rounded-[5px] text-[#14361F] overflow-hidden shadow-xl border border-[#EDE4D9] max-h-72 overflow-y-auto">
@@ -983,318 +959,268 @@ export function Navbar({
           />
 
           {/* Drawer Container */}
-          <div className="fixed inset-y-0 right-0 z-[100000] w-[85%] max-w-[320px] sm:max-w-[340px] bg-[#FAF7F2] text-[#14361F] p-4 sm:p-5 shadow-2xl border-l border-[#EDE4D9] overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-250 ease-out">
-            <div>
-              {/* Drawer Top Header */}
-              <div className="flex items-center justify-between border-b border-[#EDE4D9] pb-3.5">
-                <div className="flex items-center gap-2">
-                  <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0">
-                    <Image
-                      src="/images/logo.png"
-                      alt="HS AgroFoods Logo"
-                      fill
-                      className="object-contain"
-                      sizes="36px"
-                    />
-                  </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="font-serif text-base font-extrabold text-[#14361F]">
+          <div className="fixed inset-y-0 right-0 z-[100000] flex w-[88%] max-w-[360px] flex-col overflow-hidden rounded-l-3xl bg-[#FAF7F2] text-[#14361F] shadow-2xl animate-in slide-in-from-right duration-300 ease-out">
+            {/* Header */}
+            <div className="relative shrink-0 border-b border-[#EDE4D9] bg-gradient-to-b from-white to-[#FAF7F2] px-5 pb-4 pt-5">
+              <div className="flex items-center justify-between">
+                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3">
+                  <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#EDE4D9] bg-white shadow-sm">
+                    <Image src="/images/logo.png" alt="HS AgroFoods Logo" width={32} height={32} className="h-8 w-8 object-contain" />
+                  </span>
+                  <span className="flex flex-col leading-none">
+                    <span className="font-serif text-lg font-extrabold text-[#14361F]">
                       HS <span className="text-[#E07B0C]">AgroFoods</span>
                     </span>
-                    <span className="text-[8px] font-semibold uppercase tracking-[0.14em] text-[#7A6458] mt-0.5">
+                    <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#7A6458]">
                       Pure &amp; Natural Spices
                     </span>
-                  </div>
-                </div>
+                  </span>
+                </Link>
                 <button
                   type="button"
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-[#14361F] hover:text-[#E07B0C] hover:bg-white border border-[#EDE4D9] transition-colors cursor-pointer active:scale-95"
+                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EDE4D9] bg-white text-[#14361F] shadow-sm transition-all hover:text-[#E07B0C] active:scale-90"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Close menu"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-[18px] w-[18px]" />
                 </button>
               </div>
 
-              {/* User Profile / Greeting Card at Top */}
-              <div className="mt-3">
+              {/* Account card */}
+              <div className="mt-4">
                 {isLoggedIn && user ? (
-                  <div className="p-3.5 rounded-[5px] bg-white border border-[#EDE4D9] shadow-2xs">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#E07B0C] to-[#D1491B] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs border border-[#F09819]/40">
+                  <div className="rounded-2xl border border-[#EDE4D9] bg-white p-3.5 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#F09819] to-[#D1491B] text-base font-bold text-white shadow-md shadow-[#E07B0C]/25">
                         {(user.name?.trim() ? user.name.trim().split(' ')[0] : 'U').charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5">
-                          <p className="text-xs font-bold text-[#14361F] truncate">{user.name || 'Customer'}</p>
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                        </div>
-                        <p className="text-[10px] text-[#7A6458] truncate">{user.email}</p>
+                        <p className="truncate text-sm font-bold text-[#14361F]">{user.name || 'Customer'}</p>
+                        <p className="truncate text-xs text-[#7A6458]">{user.email}</p>
                       </div>
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#EAF5ED] px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-[#144D29]">
+                        <ShieldCheck className="h-3 w-3" />
+                        {user.role === 'admin' ? 'Admin' : 'Member'}
+                      </span>
                     </div>
-                    <div className="mt-2.5 pt-2 border-t border-[#EDE4D9] grid grid-cols-2 gap-1.5">
+                    <div className="mt-3 grid grid-cols-2 gap-2">
                       <Link
                         href="/account"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="text-center py-1.5 px-2 rounded-[5px] bg-[#FAF7F2] hover:bg-[#FDF0E6] text-[11px] font-semibold text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] transition-colors truncate"
+                        className="rounded-xl bg-[#FAF7F2] py-2 text-center text-xs font-semibold text-[#14361F] transition-colors hover:bg-[#FDF0E6] hover:text-[#E07B0C]"
                       >
                         My Profile
                       </Link>
-                      <Link
-                        href="/account/orders"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-center py-1.5 px-2 rounded-[5px] bg-[#FAF7F2] hover:bg-[#FDF0E6] text-[11px] font-semibold text-[#14361F] hover:text-[#E07B0C] border border-[#EDE4D9] transition-colors truncate"
-                      >
-                        My Orders
-                      </Link>
-                    </div>
-                    {/* Modern Sign Out Button inside Profile Greeting Card */}
-                    <button
-                      onClick={() => {
-                        setMobileMenuOpen(false)
-                        handleLogout()
-                      }}
-                      disabled={isLoggingOut}
-                      type="button"
-                      className="mt-2 w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[5px] bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 text-[11px] font-bold transition-colors cursor-pointer disabled:opacity-60"
-                    >
-                      {isLoggingOut ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                      {user.role === 'admin' ? (
+                        <Link
+                          href="/admin"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="rounded-xl bg-[#EAF5ED] py-2 text-center text-xs font-bold text-[#144D29] transition-colors hover:bg-[#DCEFE1]"
+                        >
+                          Admin Panel
+                        </Link>
                       ) : (
-                        <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                        <Link
+                          href="/account/orders"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="rounded-xl bg-[#FAF7F2] py-2 text-center text-xs font-semibold text-[#14361F] transition-colors hover:bg-[#FDF0E6] hover:text-[#E07B0C]"
+                        >
+                          My Orders
+                        </Link>
                       )}
-                      <span>{isLoggingOut ? 'Signing out...' : 'Sign Out'}</span>
-                    </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-[5px] bg-gradient-to-r from-[#FAF5EE] via-[#FFF8F0] to-[#FAF5EE] border border-[#EDE4D9] flex items-center justify-between gap-2 shadow-2xs">
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-[#14361F]">Welcome to HS AgroFoods</p>
-                      <p className="text-[10px] text-[#7A6458] truncate">Sign in to track orders & wishlist</p>
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#14361F] to-[#1F5A33] p-4 text-white shadow-md">
+                    <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#F09819]/20 blur-xl" />
+                    <div className="relative flex items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15">
+                        <User className="h-5 w-5" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold leading-tight">Welcome to HS AgroFoods</p>
+                        <p className="mt-0.5 text-xs leading-snug text-white/75">Sign in to track orders &amp; wishlist</p>
+                      </div>
                     </div>
                     <Link
                       href="/login"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="px-3 py-1.5 rounded-[5px] bg-[#14361F] hover:bg-[#E07B0C] text-white text-[11px] font-bold transition-colors shrink-0 shadow-xs active:scale-95"
+                      className="relative mt-3.5 flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#E07B0C] py-2.5 text-sm font-bold text-white shadow-lg shadow-black/20 transition-all hover:bg-[#F09819] active:scale-[0.98]"
                     >
-                      Sign In
+                      Sign In / Register
+                      <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
                 )}
               </div>
+            </div>
 
-              {/* Navigation Links with Icons */}
-              <nav className="mt-3.5 flex flex-col space-y-1">
-                {/* 1. Home */}
-                <Link
+            {/* Scrollable menu */}
+            <nav className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+              <p className="px-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9C8A7F]">Browse</p>
+              <div className="space-y-1">
+                <MobileNavItem
                   href="/"
+                  label="Home"
+                  Icon={Home}
+                  tone="orange"
+                  active={pathname === '/'}
                   onClick={(e) => {
                     setMobileMenuOpen(false)
                     handleHomeClick(e)
                   }}
-                  className={`flex items-center gap-2.5 py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                    pathname === '/' ? 'bg-[#FFF3E6] text-[#E07B0C]' : 'text-[#14361F] hover:bg-white hover:text-[#E07B0C]'
-                  }`}
-                >
-                  <Home className="w-4 h-4 shrink-0 text-[#E07B0C]" />
-                  <span>Home</span>
-                </Link>
+                />
 
-                {/* 2. Categories Accordion */}
-                <div className="rounded-[5px] border border-[#EDE4D9] bg-white overflow-hidden my-0.5">
+                {/* Categories accordion */}
+                <div className={`overflow-hidden rounded-2xl transition-colors ${mobileCategoriesOpen ? 'bg-white shadow-sm ring-1 ring-[#EDE4D9]' : ''}`}>
                   <button
                     type="button"
                     onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
-                    className="w-full flex items-center justify-between py-2 px-2.5 text-xs font-semibold text-[#14361F] hover:text-[#E07B0C] transition-colors cursor-pointer"
+                    aria-expanded={mobileCategoriesOpen}
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors hover:bg-white"
                   >
-                    <span className="flex items-center gap-2.5">
-                      <LayoutGrid className="w-4 h-4 text-[#144D29] shrink-0" />
-                      <span>Spice Categories</span>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EAF5ED] text-[#144D29]">
+                      <LayoutGrid className="h-[18px] w-[18px]" />
                     </span>
+                    <span className="flex-1 text-[15px] font-semibold text-[#14361F]">Spice Categories</span>
                     <ChevronDown
-                      className={`w-3.5 h-3.5 text-[#7A6458] transition-transform duration-200 ${
-                        mobileCategoriesOpen ? 'rotate-180 text-[#E07B0C]' : ''
-                      }`}
+                      className={`h-4 w-4 text-[#9C8A7F] transition-transform duration-200 ${mobileCategoriesOpen ? 'rotate-180 text-[#E07B0C]' : ''}`}
                     />
                   </button>
 
                   {mobileCategoriesOpen && (
-                    <div className="p-2 space-y-1.5 bg-[#FAF7F2] border-t border-[#EDE4D9] animate-in fade-in duration-150">
+                    <div className="space-y-1.5 px-2.5 pb-2.5 animate-in fade-in slide-in-from-top-1 duration-150">
                       {resolvedShopCategories.map((cat) => (
                         <Link
                           key={cat.name}
                           href={cat.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center justify-between p-2.5 rounded-[5px] bg-white hover:bg-[#FDF0E6] border border-[#EDE4D9] hover:border-[#E07B0C]/40 transition-all group active:scale-[0.99] shadow-2xs"
+                          className="group flex items-center gap-3 rounded-xl bg-[#FAF7F2] p-2 transition-all hover:bg-[#FDF0E6] active:scale-[0.99]"
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="relative w-9 h-9 rounded-[4px] bg-[#FAF5EE] border border-[#EDE4D9] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                              <Image
-                                src={cat.image}
-                                alt={cat.name}
-                                fill
-                                sizes="36px"
-                                className="object-cover group-hover:scale-105 transition-transform"
-                              />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-[#14361F] group-hover:text-[#E07B0C] transition-colors truncate block">
-                                  {cat.name}
+                          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-[#EDE4D9] bg-white">
+                            <Image src={cat.image} alt={cat.name} fill sizes="44px" className="object-cover" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="flex items-center gap-1.5">
+                              <span className="truncate text-sm font-bold text-[#14361F] group-hover:text-[#E07B0C]">{cat.name}</span>
+                              {cat.badge && (
+                                <span className="shrink-0 rounded-full bg-[#FFF3E6] px-1.5 py-0.5 text-[8px] font-bold uppercase text-[#E07B0C]">
+                                  {cat.badge}
                                 </span>
-                                {cat.badge && (
-                                        <span className="text-[8px] uppercase font-bold text-[#E07B0C] bg-[#FFF3E6] border border-[#E07B0C]/20 px-1 py-0.2 rounded-[2px] shrink-0">{cat.badge}</span>
-                                      )}
-                              </div>
-                              <span className="text-[10px] text-[#7A6458] truncate block leading-tight mt-0.5">
-                                {cat.subtext}
-                              </span>
-                            </div>
-                          </div>
-                          <ArrowRight className="w-3.5 h-3.5 text-stone-300 group-hover:text-[#E07B0C] group-hover:translate-x-0.5 transition-all shrink-0 ml-1.5" />
+                              )}
+                            </span>
+                            <span className="mt-0.5 block truncate text-[11px] text-[#7A6458]">{cat.subtext}</span>
+                          </span>
+                          <ChevronRight className="h-4 w-4 shrink-0 text-[#C9B9AB] transition-transform group-hover:translate-x-0.5 group-hover:text-[#E07B0C]" />
                         </Link>
                       ))}
-
-                      {/* View All Categories Link */}
                       <Link
                         href="/shop"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-1.5 py-2 rounded-[5px] bg-[#14361F] text-white text-xs font-bold transition-colors mt-1 shadow-2xs"
+                        className="mt-1 flex items-center justify-center gap-1.5 rounded-xl bg-[#14361F] py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#1F5A33]"
                       >
-                        <span>Browse All Categories</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        Browse All Categories
+                        <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </div>
                   )}
                 </div>
 
-                {/* 3. Shop All Spices */}
-                <Link
+                <MobileNavItem
                   href="/shop"
+                  label="Shop All Spices"
+                  Icon={Store}
+                  tone="orange"
+                  active={pathname === '/shop'}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                    pathname === '/shop' ? 'bg-[#FFF3E6] text-[#E07B0C]' : 'text-[#14361F] hover:bg-white hover:text-[#E07B0C]'
-                  }`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <Store className="w-4 h-4 shrink-0 text-[#E07B0C]" />
-                    <span>Shop All Spices</span>
-                  </span>
-                  <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-[3px] bg-[#E07B0C] text-white">
-                    Pure
-                  </span>
-                </Link>
-
-                {/* 4. Saved Wishlist */}
-                <Link
-                  href="/wishlist"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                    pathname === '/wishlist' ? 'bg-rose-50 text-rose-600' : 'text-[#14361F] hover:bg-white hover:text-rose-600'
-                  }`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <Heart className="w-4 h-4 shrink-0 text-rose-500" />
-                    <span>Saved Wishlist</span>
-                  </span>
-                  {wishlistCount > 0 ? (
-                    <span className="px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-600 text-[10px] font-bold">
-                      {wishlistCount}
-                    </span>
-                  ) : (
-                    <span className="text-[10px] text-[#9C8A7F]">0 items</span>
-                  )}
-                </Link>
-
-                {/* 5. My Orders */}
-                <Link
-                  href="/account/orders"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                    pathname === '/account/orders' ? 'bg-[#FFF3E6] text-[#E07B0C]' : 'text-[#14361F] hover:bg-white hover:text-[#E07B0C]'
-                  }`}
-                >
-                  <Package className="w-4 h-4 shrink-0 text-[#144D29]" />
-                  <span>My Orders</span>
-                </Link>
-
-                {/* 5b. Saved Addresses (When Logged In) */}
-                {isLoggedIn && (
-                  <Link
-                    href="/account/addresses"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-2.5 py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                      pathname === '/account/addresses' ? 'bg-[#FFF3E6] text-[#E07B0C]' : 'text-[#14361F] hover:bg-white hover:text-[#E07B0C]'
-                    }`}
-                  >
-                    <MapPin className="w-4 h-4 shrink-0 text-[#144D29]" />
-                    <span>Saved Addresses</span>
-                  </Link>
-                )}
-
-                {/* 6. About Us */}
-                <Link
+                  right={<span className="rounded-full bg-[#E07B0C] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">Pure</span>}
+                />
+                <MobileNavItem
                   href="/about"
+                  label="About Us"
+                  Icon={Leaf}
+                  tone="green"
+                  active={pathname === '/about'}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                    pathname === '/about' ? 'bg-[#FFF3E6] text-[#E07B0C]' : 'text-[#14361F] hover:bg-white hover:text-[#E07B0C]'
-                  }`}
-                >
-                  <Leaf className="w-4 h-4 shrink-0 text-[#144D29]" />
-                  <span>About Us</span>
-                </Link>
-
-                {/* 7. Contact Us */}
-                <Link
+                />
+                <MobileNavItem
                   href="/contact"
+                  label="Contact"
+                  Icon={Phone}
+                  tone="orange"
+                  active={pathname === '/contact'}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-2.5 py-2 px-2.5 rounded-[5px] text-xs font-semibold transition-colors ${
-                    pathname === '/contact' ? 'bg-[#FFF3E6] text-[#E07B0C]' : 'text-[#14361F] hover:bg-white hover:text-[#E07B0C]'
-                  }`}
-                >
-                  <Phone className="w-4 h-4 shrink-0 text-[#E07B0C]" />
-                  <span>Contact</span>
-                </Link>
+                />
+              </div>
 
-                {/* Modern Sign Out Action in Mobile Menu */}
+              <p className="px-2 pb-1.5 pt-5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9C8A7F]">My Account</p>
+              <div className="space-y-1">
+                <MobileNavItem
+                  href="/wishlist"
+                  label="Saved Wishlist"
+                  Icon={Heart}
+                  tone="rose"
+                  active={pathname === '/wishlist'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  right={
+                    wishlistCount > 0 ? (
+                      <span className="min-w-5 rounded-full bg-rose-500 px-1.5 py-0.5 text-center text-[10px] font-bold text-white">{wishlistCount}</span>
+                    ) : (
+                      <span className="text-[11px] text-[#9C8A7F]">Empty</span>
+                    )
+                  }
+                />
+                <MobileNavItem
+                  href="/account/orders"
+                  label="My Orders"
+                  Icon={Package}
+                  tone="green"
+                  active={pathname === '/account/orders'}
+                  onClick={() => setMobileMenuOpen(false)}
+                />
                 {isLoggedIn && (
-                  <div className="pt-2 mt-1 border-t border-[#EDE4D9]/80">
-                    <button
-                      onClick={() => {
-                        setMobileMenuOpen(false)
-                        handleLogout()
-                      }}
-                      disabled={isLoggingOut}
-                      type="button"
-                      className="w-full flex items-center justify-between py-2 px-2.5 rounded-[5px] text-xs font-bold text-rose-700 bg-rose-50/80 hover:bg-rose-100 border border-rose-200/70 transition-colors cursor-pointer disabled:opacity-60 text-left"
-                    >
-                      <div className="flex items-center gap-2">
-                        {isLoggingOut ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
-                        ) : (
-                          <LogOut className="w-3.5 h-3.5 text-rose-600" />
-                        )}
-                        <span>{isLoggingOut ? 'Signing Out...' : 'Sign Out'}</span>
-                      </div>
-                      <span className="text-[10px] text-rose-500 font-medium">Leave session</span>
-                    </button>
-                  </div>
+                  <MobileNavItem
+                    href="/account/addresses"
+                    label="Saved Addresses"
+                    Icon={MapPin}
+                    tone="green"
+                    active={pathname === '/account/addresses'}
+                    onClick={() => setMobileMenuOpen(false)}
+                  />
                 )}
-              </nav>
-            </div>
+                {isLoggedIn && (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      handleLogout()
+                    }}
+                    disabled={isLoggingOut}
+                    type="button"
+                    className="group flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors hover:bg-rose-50 disabled:opacity-60"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                      {isLoggingOut ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <LogOut className="h-[18px] w-[18px]" />}
+                    </span>
+                    <span className="flex-1 text-[15px] font-semibold text-rose-700">{isLoggingOut ? 'Signing out...' : 'Sign Out'}</span>
+                  </button>
+                )}
+              </div>
+            </nav>
 
-            {/* Bottom Drawer Actions & Purity Guarantee */}
-            <div className="mt-4 pt-3 border-t border-[#EDE4D9] space-y-2">
+            {/* Fixed bottom actions */}
+            <div className="shrink-0 space-y-2.5 border-t border-[#EDE4D9] bg-white/70 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3.5 backdrop-blur">
               <Link
                 href="/shop"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-1.5 rounded-[5px] bg-[#E07B0C] hover:bg-[#C96B06] py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs transition-all active:scale-95"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#E07B0C] to-[#D1491B] py-3.5 text-sm font-bold uppercase tracking-wider text-white shadow-lg shadow-[#E07B0C]/30 transition-all active:scale-[0.98]"
               >
-                <span>Shop Fresh Spices</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <Sparkles className="h-4 w-4" />
+                Shop Fresh Spices
+                <ArrowRight className="h-4 w-4" />
               </Link>
-              <div className="py-1 px-2 rounded-[5px] bg-white border border-[#EDE4D9] text-center text-[10px] font-medium text-[#7A6458]">
-                🚚 {shipping.acrossIndia}
+              <div className="flex items-center justify-center gap-2 rounded-xl bg-[#EAF5ED] px-3 py-2 text-[11px] font-semibold text-[#144D29]">
+                <Truck className="h-4 w-4 shrink-0" />
+                <span>{shipping.acrossIndia}</span>
               </div>
             </div>
           </div>
@@ -1302,5 +1228,49 @@ export function Navbar({
         document.body
       )}
     </>
+  )
+}
+
+const NAV_TONES = {
+  orange: 'bg-[#FFF3E6] text-[#E07B0C]',
+  green: 'bg-[#EAF5ED] text-[#144D29]',
+  rose: 'bg-rose-50 text-rose-500',
+} as const
+
+/** One row of the mobile menu: icon tile, label, optional badge and a chevron. */
+function MobileNavItem({
+  href,
+  label,
+  Icon,
+  tone,
+  active,
+  right,
+  onClick,
+}: {
+  href: string
+  label: string
+  Icon: LucideIcon
+  tone: keyof typeof NAV_TONES
+  active: boolean
+  right?: React.ReactNode
+  onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      aria-current={active ? 'page' : undefined}
+      className={`group relative flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-[0.99] ${
+        active ? 'bg-white shadow-sm ring-1 ring-[#EDE4D9]' : 'hover:bg-white'
+      }`}
+    >
+      {active && <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[#E07B0C]" />}
+      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${NAV_TONES[tone]}`}>
+        <Icon className="h-[18px] w-[18px]" />
+      </span>
+      <span className={`flex-1 text-[15px] font-semibold ${active ? 'text-[#E07B0C]' : 'text-[#14361F]'}`}>{label}</span>
+      {right}
+      <ChevronRight className="h-4 w-4 shrink-0 text-[#C9B9AB] transition-transform group-hover:translate-x-0.5" />
+    </Link>
   )
 }

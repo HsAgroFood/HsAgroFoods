@@ -8,14 +8,6 @@ import { Home, Store, Search, ShoppingBag, X, ArrowRight, Loader2, Package, User
 import { useCart } from '@/contexts/CartContext'
 import { resolveShopCategories } from '@/lib/shopCategories'
 
-const POPULAR_SEARCHES = [
-  'Red Chilly Powder',
-  'Turmeric Powder',
-  'Garam Masala',
-  'Coriander Powder',
-  'Cumin Powder',
-]
-
 type CategoryItem = {
   name: string
   slug: string
@@ -87,11 +79,6 @@ export function MobileBottomBar({
     }
   }
 
-  const handleQuickTagClick = (tag: string) => {
-    router.push(`/shop?q=${encodeURIComponent(tag)}`)
-    setSearchOpen(false)
-  }
-
   const handleScrollToSection = (sectionId: string) => {
     if (pathname === '/') {
       const el = document.getElementById(sectionId)
@@ -156,7 +143,7 @@ export function MobileBottomBar({
               </div>
             </form>
 
-            {/* Live Search Suggestions or Popular Searches */}
+            {/* Live search suggestions (shown once the visitor starts typing) */}
             {searchQuery.trim().length >= 2 ? (
               <div className="pt-2">
                 <div className="flex items-center justify-between mb-2">
@@ -207,25 +194,7 @@ export function MobileBottomBar({
                   </div>
                 )}
               </div>
-            ) : (
-              /* Popular Searches */
-              <div className="pt-2">
-                <span className="text-[11px] uppercase tracking-wider font-semibold text-[#8C7567] block mb-2.5">
-                  Popular Searches
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {POPULAR_SEARCHES.map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => handleQuickTagClick(tag)}
-                      className="px-3.5 py-1.5 rounded-full bg-white hover:bg-[#FFF3DF] text-[#4A382D] hover:text-[#E07B0C] border border-[#E8DACB] hover:border-[#E07B0C]/40 text-xs font-medium transition-colors active:scale-95 cursor-pointer"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { NO_INDEX } from '@/lib/seo'
 import { isAdminAuthenticated } from '@/lib/adminAuth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -13,7 +14,8 @@ import Image from 'next/image'
 import { OrdersFilterBar } from './_components/OrdersFilterBar'
 
 export const metadata = {
-  title: 'My Orders & Live Tracking | HS AgroFoods',
+  title: 'My Orders & Live Tracking',
+  robots: NO_INDEX,
 }
 
 export const dynamic = 'force-dynamic'

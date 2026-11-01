@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useState } from 'react'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import { adminLogin, type AuthResult } from '@/actions/auth'
 import { Eye, EyeOff, Shield, ShieldCheck, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
@@ -28,9 +29,9 @@ export default function AdminLoginPage() {
       />
 
       {/* Decorative Corner Asset: Top Right Accent Spices */}
-      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 pointer-events-none select-none mix-blend-multiply opacity-65 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Accent"
           fill
           className="object-contain object-top-right"

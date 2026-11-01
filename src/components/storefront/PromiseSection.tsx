@@ -1,96 +1,52 @@
 'use client'
 
 import Image from 'next/image'
-import { Leaf, FlaskConical, Trophy, Heart, ShieldCheck } from 'lucide-react'
+import { Leaf, FlaskConical, Trophy, Heart } from 'lucide-react'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import { SPICE_ASSETS } from '@/constants/assets'
+import { HOME_DEFAULTS, type HomeContent } from '@/lib/homeContent'
+import { resolveHomeIcon } from '@/lib/homeIcons'
 
-export function PromiseSection() {
-  // 4 Feature Pillars in the 2x2 Grid (Right Column)
-  const promiseCards = [
-    {
-      id: 'natural',
-      title: '100% Natural',
-      desc: 'Nothing artificial, Just pure spices.',
-      Icon: Leaf,
-      iconColor: 'text-[#227B44]',
-      iconBg: 'bg-[#EAF5ED]',
-    },
-    {
-      id: 'preservatives',
-      title: 'No Preservatives',
-      desc: 'No chemicals, no compromise.',
-      Icon: FlaskConical,
-      iconColor: 'text-[#D96B1C]',
-      iconBg: 'bg-[#FDF0E6]',
-    },
-    {
-      id: 'quality',
-      title: 'Finest Quality',
-      desc: 'Carefully selected & ground.',
-      Icon: Trophy,
-      iconColor: 'text-[#B87024]',
-      iconBg: 'bg-[#FAF3E8]',
-    },
-    {
-      id: 'trusted',
-      title: 'Trusted by Thousands',
-      desc: 'Customer trust is our biggest reward.',
-      Icon: Heart,
-      iconColor: 'text-[#D96B1C]',
-      iconBg: 'bg-[#FDF0E6]',
-    },
-  ]
+/** Colours stay fixed per position; text and icon come from the admin (Home Customization). */
+const CARD_STYLES = [
+  { Icon: Leaf, iconColor: 'text-[#227B44]', iconBg: 'bg-[#EAF5ED]' },
+  { Icon: FlaskConical, iconColor: 'text-[#D96B1C]', iconBg: 'bg-[#FDF0E6]' },
+  { Icon: Trophy, iconColor: 'text-[#B87024]', iconBg: 'bg-[#FAF3E8]' },
+  { Icon: Heart, iconColor: 'text-[#D96B1C]', iconBg: 'bg-[#FDF0E6]' },
+]
 
-  // 4 Mini Trust Highlights under left description
-  const leftMiniBadges = [
-    {
-      label: '100% Natural',
-      Icon: Leaf,
-      color: 'text-[#144D29]',
-    },
-    {
-      label: 'No Preservatives',
-      Icon: FlaskConical,
-      color: 'text-[#D97706]',
-    },
-    {
-      label: 'Premium Quality',
-      Icon: ShieldCheck,
-      color: 'text-[#144D29]',
-    },
-    {
-      label: 'Trusted by Thousands',
-      Icon: Heart,
-      color: 'text-[#D97706]',
-    },
-  ]
+export function PromiseSection({ content = HOME_DEFAULTS.promise }: { content?: HomeContent['promise'] }) {
+  const promiseCards = content.cards.map((card, index) => {
+    const style = CARD_STYLES[index % CARD_STYLES.length]
+    return { ...card, ...style, Icon: resolveHomeIcon(card.icon, style.Icon), id: `promise-card-${index}` }
+  })
 
   return (
     <section
       id="our-promise"
-      className="relative overflow-hidden py-10 sm:py-14 lg:py-16 bg-[#FAF7F2] text-[#14361F]"
+      className="relative overflow-hidden pt-[185px] pb-[185px] sm:py-14 lg:py-16 bg-[#FAF7F2] text-[#14361F]"
     >
       {/* ─── Ambient Decorative Side Backgrounds from images_010 ─── */}
       {/* Left Decor: Turmeric Bowl & Golden Spice Dust */}
-      <div className="absolute top-0 bottom-[-50px] left-[-170px] w-44 sm:w-64 md:w-80 lg:w-96 xl:w-[420px] pointer-events-none select-none z-0 mix-blend-multiply opacity-80 sm:opacity-90">
-        <Image
-          src="/images/images_010/left.png"
+      <div className="absolute top-0 sm:bottom-[-50px] left-[-18px] sm:left-[-170px] h-[180px] sm:h-auto w-[125px] sm:w-64 md:w-80 lg:w-96 xl:w-[420px] pointer-events-none select-none z-0 mix-blend-multiply opacity-100">
+        <CornerAccentImage
+          kind="promiseLeft"
           alt="Turmeric & Spices Left Decor"
           fill
           className="object-contain object-left"
-          sizes="(max-width: 768px) 192px, 420px"
+          sizes="(max-width: 640px) 125px, (max-width: 768px) 256px, 420px"
           priority={false}
         />
       </div>
 
       {/* Right Decor: Red Chilli Bowl & Fiery Spices Dust */}
-      <div className="absolute top-0 bottom-0 right-[-30px] w-44 sm:w-64 md:w-80 lg:w-96 xl:w-[420px] pointer-events-none select-none z-0 mix-blend-multiply opacity-80 sm:opacity-90">
-        <Image
-          src="/images/images_010/right.png"
+      <div className="absolute bottom-0 sm:top-0 right-[-18px] sm:right-[-30px] h-[180px] sm:h-auto w-[125px] sm:w-64 md:w-80 lg:w-96 xl:w-[420px] pointer-events-none select-none z-0 mix-blend-multiply opacity-100">
+        <CornerAccentImage
+          kind="promiseRight"
           alt="Chilli & Spices Right Decor"
           fill
           className="object-contain object-right"
-          sizes="(max-width: 768px) 192px, 420px"
+          sizes="(max-width: 640px) 145px, (max-width: 768px) 256px, 420px"
           priority={false}
         />
       </div>
@@ -113,13 +69,13 @@ export function PromiseSection() {
             {/* Top Tag Pill */}
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBF3ED] border border-[#CFE3D3] text-[#144D29] text-[10px] sm:text-xs font-bold tracking-wider uppercase shadow-2xs">
               <Leaf className="w-3 h-3 text-[#144D29] fill-[#144D29]/20" />
-              <span>NATURAL • HEALTHY • PURE</span>
+              <span>{content.tag}</span>
             </div>
 
             {/* Main Headline */}
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#14361F] leading-[1.15]">
-              Our Promise<br />
-              Pure. Natural. <span className="text-[#E07B0C]">Trusted.</span>
+              {content.line1}<br />
+              {content.line2First} <span className="text-[#E07B0C]">{content.line2Highlight}</span>
             </h2>
 
             {/* Small Organic Green Accent Line */}
@@ -127,7 +83,7 @@ export function PromiseSection() {
 
             {/* Description Subtitle */}
             <p className="text-sm sm:text-base bg-[#FAF7F2] text-[#5A433B] leading-relaxed max-w-sm mx-auto lg:mx-0 font-medium px-4 py-4 rounded-[20px]">
-              At HS AgroFoods, we promise to deliver pure Indian spices and dehydrated vegetable &amp; fruit powders that are 100% natural &amp; free from harmful additives.
+              {content.description}
             </p>
 
           
@@ -172,7 +128,7 @@ export function PromiseSection() {
                     style={{ letterSpacing: '0.22em' }}
                   >
                     <textPath href="#promise-heritage-text-path" startOffset="0%">
-                      ★ HS AGROFOODS ★ 100% PURE &amp; NATURAL ★ TRADITIONAL TASTE ★
+                      {content.sealText}
                     </textPath>
                   </text>
                 </svg>
@@ -209,7 +165,7 @@ export function PromiseSection() {
             {/* 3. HERITAGE SEAL Pill Badge Under Circle */}
             <div className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-1.5 rounded-full bg-[#C8762D] text-white text-xs sm:text-sm font-bold tracking-wider uppercase shadow-md -mt-4 sm:mt-2 relative z-20">
               <Leaf className="w-3.5 h-3.5 text-white fill-white/30" />
-              <span>HERITAGE SEAL</span>
+              <span>{content.sealBadge}</span>
             </div>
           </div>
 

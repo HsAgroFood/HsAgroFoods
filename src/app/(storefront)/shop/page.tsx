@@ -1,14 +1,60 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { breadcrumbJsonLd } from '@/lib/seo'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ShopSidebar } from './_components/ShopSidebar'
 import { Sparkles, X, Leaf, FlaskConical, ShieldCheck, Truck, ChevronLeft, ChevronRight } from 'lucide-react'
 import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 
-export const metadata = {
-  title: 'Shop 100% Pure Spices & Dehydrated Powders | HS AgroFoods',
-  description: 'Explore our full range of 100% pure ground spices, royal blended masale, and natural dehydrated vegetable & fruit powders (Beetroot, Tomato, Banana, Garlic, Carrot & Radish).',
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const categorySlug = typeof params.category === 'string' ? params.category : null
+  const searchText = typeof params.q === 'string' ? params.q.trim() : ''
+  const pageNumber = parseInt(typeof params.page === 'string' ? params.page : '1', 10) || 1
+
+  let categoryName: string | null = null
+  if (categorySlug) {
+    try {
+      const supabase = await createClient()
+      const { data } = await supabase.from('categories').select('name').eq('slug', categorySlug).eq('is_active', true).maybeSingle()
+      categoryName = data?.name ?? null
+    } catch {
+      // use the built-in list below
+    }
+    categoryName = categoryName ?? FALLBACK_CATEGORIES.find((c) => c.slug === categorySlug)?.name ?? null
+  }
+
+  const base = categorySlug && categoryName ? `/shop?category=${categorySlug}` : '/shop'
+  const canonical = pageNumber > 1 ? `${base}${base.includes('?') ? '&' : '?'}page=${pageNumber}` : base
+
+  const title = categoryName
+    ? `${categoryName} — Buy 100% Pure ${categoryName} Online`
+    : 'Shop 100% Pure Spices & Dehydrated Powders Online'
+  const description = categoryName
+    ? `Shop ${categoryName} from HS AgroFoods, Hyderabad. 100% pure, no artificial colours or preservatives, freshly packed and delivered across India.`
+    : 'Explore our full range of 100% pure ground spices, royal blended masale, and natural dehydrated vegetable & fruit powders (Beetroot, Tomato, Banana, Garlic, Carrot & Radish).'
+
+  return {
+    title: pageNumber > 1 ? `${title} (Page ${pageNumber})` : title,
+    description,
+    alternates: { canonical },
+    // Search result pages are thin and endless, so Google follows their links but does not list them
+    robots: searchText ? { index: false, follow: true } : { index: true, follow: true },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'HS AgroFoods' }],
+    },
+  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -197,6 +243,13 @@ export default async function ShopPage({
 
   return (
     <div className="bg-[#FAF7F2] min-h-screen text-[#14361F] pb-16 relative overflow-hidden">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Shop', path: '/shop' },
+          ...(categoryFilter && selectedCategory ? [{ name: selectedCategory.name, path: `/shop?category=${categoryFilter}` }] : []),
+        ])}
+      />
       {/* ── Ambient Background Lighting Gradients (matching Home Page) ── */}
       <div
         className="absolute inset-0 pointer-events-none select-none z-0"
@@ -211,18 +264,18 @@ export default async function ShopPage({
       />
 
       {/* Decorative Corner Asset: Top Right Accent Spices */}
-      <div className="absolute top-0 right-0 w-36 h-36 sm:w-56 sm:h-56 lg:w-80 lg:h-80 pointer-events-none select-none mix-blend-multiply opacity-75 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 right-0 w-28 h-24 sm:w-56 sm:h-56 lg:w-80 lg:h-80 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 144px, 320px"
+          sizes="(max-width: 640px) 112px, 320px"
           priority={false}
         />
       </div>
 
-      <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8 relative z-10 pt-6 sm:pt-10">
+      <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-8 relative z-10 pt-[100px] sm:pt-10">
 
         {/* ── Modern Hero Header Banner (Home Page Typography & Style) ── */}
         <div className="text-center space-y-3 max-w-3xl mx-auto mb-8 sm:mb-10">

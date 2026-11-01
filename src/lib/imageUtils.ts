@@ -1,5 +1,5 @@
 /**
- * Utility to generate auto-cropped responsive slide URLs for Desktop (16:9) and Mobile (4:5).
+ * Utility to generate auto-cropped responsive slide URLs for Desktop (16:7) and Mobile (4:5).
  * Works seamlessly with ImageKit, Cloudinary, Unsplash, and local slide assets.
  */
 
@@ -16,22 +16,22 @@ function removeImageKitTransform(url: string): string {
 export function getDesktopSlideUrl(imageUrl?: string): string {
   if (!imageUrl || imageUrl.trim() === '') return ''
 
-  // 1. ImageKit URL transformation (16:9, max width 1600px, smart subject focus)
+  // 1. ImageKit URL transformation (16:7, max width 1920px, smart subject focus)
   if (imageUrl.includes('ik.imagekit.io')) {
     const cleanUrl = removeImageKitTransform(imageUrl)
     const separator = cleanUrl.includes('?') ? '&' : '?'
-    return `${cleanUrl}${separator}tr=w-1600,ar-16-9,fo-auto`
+    return `${cleanUrl}${separator}tr=w-1920,ar-16-7,fo-auto`
   }
 
   // 2. Cloudinary URL transformation
   if (imageUrl.includes('res.cloudinary.com') && imageUrl.includes('/upload/')) {
-    return imageUrl.replace('/upload/', '/upload/c_fill,ar_16:9,g_auto,w_1600/')
+    return imageUrl.replace('/upload/', '/upload/c_fill,ar_16:7,g_auto,w_1920/')
   }
 
   // 3. Unsplash
   if (imageUrl.includes('images.unsplash.com')) {
     const cleanUrl = imageUrl.split('?')[0]
-    return `${cleanUrl}?w=1600&h=900&fit=crop&q=80`
+    return `${cleanUrl}?w=1600&h=700&fit=crop&q=80`
   }
 
   return imageUrl

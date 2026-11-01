@@ -1,17 +1,19 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { NO_INDEX } from '@/lib/seo'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import { getEffectiveUser } from '@/lib/userAuth'
 import { redirect } from 'next/navigation'
 import { getCart } from '@/actions/cart'
 import { getShippingConfig } from '@/actions/shipping'
 import { getAppliedCoupon } from '@/actions/coupons'
 import { CheckoutClient } from './_components/CheckoutClient'
-import Image from 'next/image'
 import Link from 'next/link'
 import { ShieldCheck } from 'lucide-react'
 
 export const metadata = {
-  title: 'Secure Checkout | HS AgroFoods',
+  title: 'Secure Checkout',
   description: 'Complete your order of 100% pure authentic spices and natural dehydrated powders.',
+  robots: NO_INDEX,
 }
 
 export const dynamic = 'force-dynamic'
@@ -59,13 +61,13 @@ export default async function CheckoutPage() {
       />
 
       {/* Decorative Corner Asset: Top Right Accent Spices */}
-      <div className="absolute top-0 right-0 w-36 h-36 sm:w-56 sm:h-56 lg:w-80 lg:h-80 pointer-events-none select-none mix-blend-multiply opacity-75 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 right-0 w-24 h-[84px] sm:w-56 sm:h-56 lg:w-80 lg:h-80 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Leaves Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 144px, 320px"
+          sizes="(max-width: 640px) 96px, 320px"
           priority={false}
         />
       </div>

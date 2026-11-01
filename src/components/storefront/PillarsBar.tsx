@@ -1,213 +1,87 @@
-import Image from 'next/image'
+import { ChefHat, FlaskConical, PackageCheck, Sprout, type LucideIcon } from 'lucide-react'
+import { HOME_DEFAULTS, type HomeContent } from '@/lib/homeContent'
+import { resolveHomeIcon } from '@/lib/homeIcons'
 
-export function PillarsBar() {
-  const pillars = [
-    {
-      id: 'sourced',
-      titleFirst: 'Sourced with ',
-      titleHighlight: 'Care',
-      desc: 'Handpicked from the best farms across India.',
-      dashColor: 'bg-[#4E8D42]',
-      blobBg: 'bg-[#EAF4ED]',
-      icon: (
-        <div className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center shrink-0">
-          {/* Organic Blob Shape */}
-          <div className="absolute inset-0 rounded-[46%_54%_58%_42%/48%_45%_55%_52%] bg-[#EAF4ED] transition-transform duration-300 group-hover:scale-105" />
-          
-          {/* Floating Leaf Accent */}
-          <svg
-            viewBox="0 0 24 24"
-            className="absolute -top-1 -right-0.5 w-4 h-4 text-[#529342] transform rotate-12 drop-shadow-xs transition-transform duration-300 group-hover:rotate-45"
-            fill="currentColor"
-          >
-            <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.5 2.5 6 1.5-1.5 3-4 3.5-7 1 1 2.5 1.5 4 1.5 5.5 0 10-4.5 10-10-2.5 0-6.5 1.5-10-.5z" />
-          </svg>
+/** Colour tone stays fixed per position; text and icon come from the admin (Home Customization). */
+const PILLAR_STYLES: { Icon: LucideIcon; tone: 'green' | 'saffron' }[] = [
+  { Icon: Sprout, tone: 'green' },
+  { Icon: ChefHat, tone: 'saffron' },
+  { Icon: PackageCheck, tone: 'green' },
+  { Icon: FlaskConical, tone: 'saffron' },
+]
 
-          {/* Sprout & Tilled Soil SVG */}
-          <svg
-            viewBox="0 0 44 44"
-            className="relative z-10 w-8 h-8 sm:w-9 sm:h-9 text-[#144D29]"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {/* Seedling Stem */}
-            <path d="M22 30V15" strokeWidth="2.4" />
-            {/* Left Leaf */}
-            <path d="M22 20C18 16 12 16 12 21C16 23 20 21 22 20Z" fill="#144D29" />
-            {/* Right Leaf */}
-            <path d="M22 17C26 13 32 13 32 18C28 20 24 18 22 17Z" fill="#144D29" />
-            {/* Soil Arcs */}
-            <path d="M12 30C15 28 18 28 22 30C26 32 29 32 32 30" strokeWidth="2.2" />
-            <path d="M14 34C17 32 19 32 22 34C25 36 27 36 30 34" strokeWidth="2.2" />
-            <path d="M17 38C19 37 21 37 22 38C23 39 25 39 27 38" strokeWidth="2.2" />
-          </svg>
-        </div>
-      ),
-    },
-    {
-      id: 'aroma',
-      titleFirst: 'Rich in Aroma & ',
-      titleHighlight: 'Flavor',
-      desc: 'Finely ground to lock in natural oils and taste.',
-      dashColor: 'bg-[#E07B0C]',
-      blobBg: 'bg-[#FDF2E4]',
-      icon: (
-        <div className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center shrink-0">
-          {/* Organic Blob Shape */}
-          <div className="absolute inset-0 rounded-[52%_48%_45%_55%/50%_54%_46%_50%] bg-[#FDF2E4] transition-transform duration-300 group-hover:scale-105" />
-          
-          {/* Floating Leaf Accent */}
-          <svg
-            viewBox="0 0 24 24"
-            className="absolute -top-1 -right-0.5 w-4 h-4 text-[#529342] transform rotate-12 drop-shadow-xs transition-transform duration-300 group-hover:rotate-45"
-            fill="currentColor"
-          >
-            <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.5 2.5 6 1.5-1.5 3-4 3.5-7 1 1 2.5 1.5 4 1.5 5.5 0 10-4.5 10-10-2.5 0-6.5 1.5-10-.5z" />
-          </svg>
+const TONES = {
+  green: {
+    badge:
+      'from-[#EEF7F0] to-[#D6EBDB] text-[#144D29] ring-[#C6E0CC] shadow-[#144D29]/10 group-hover:from-[#1A6234] group-hover:to-[#0F3F22] group-hover:text-white group-hover:ring-[#144D29] group-hover:shadow-[#144D29]/30',
+    halo: 'bg-[#4E8D42]/15',
+    dash: 'bg-[#4E8D42]',
+  },
+  saffron: {
+    badge:
+      'from-[#FFF5E6] to-[#FCE0B6] text-[#B45309] ring-[#F6D6A8] shadow-[#E07B0C]/10 group-hover:from-[#F09819] group-hover:to-[#E07B0C] group-hover:text-white group-hover:ring-[#E07B0C] group-hover:shadow-[#E07B0C]/30',
+    halo: 'bg-[#F09819]/15',
+    dash: 'bg-[#E07B0C]',
+  },
+}
 
-          {/* Mortar & Pestle SVG */}
-          <svg
-            viewBox="0 0 44 44"
-            className="relative z-10 w-8 h-8 sm:w-9 sm:h-9 text-[#144D29]"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {/* Pestle Handle */}
-            <path d="M30 11L22 22" strokeWidth="2.8" />
-            {/* Mortar Bowl */}
-            <path d="M11 20H33C33 29 27 33 22 33C17 33 11 29 11 20Z" strokeWidth="2.4" />
-            {/* Mortar Base */}
-            <path d="M16 33H28" strokeWidth="2.6" />
-            {/* Fresh Herb Sprig */}
-            <path d="M16 18C15 14 12 13 12 17C14 18 15 18 16 18Z" fill="#144D29" />
-          </svg>
-        </div>
-      ),
-    },
-    {
-      id: 'hygienic',
-      titleFirst: 'Hygienically ',
-      titleHighlight: 'Packed',
-      desc: 'Advanced packaging to ensure purity & freshness.',
-      dashColor: 'bg-[#4E8D42]',
-      blobBg: 'bg-[#EAF4ED]',
-      icon: (
-        <div className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center shrink-0">
-          {/* Organic Blob Shape */}
-          <div className="absolute inset-0 rounded-[48%_52%_55%_45%/46%_50%_50%_54%] bg-[#EAF4ED] transition-transform duration-300 group-hover:scale-105" />
-          
-          {/* Floating Leaf Accent */}
-          <svg
-            viewBox="0 0 24 24"
-            className="absolute -top-1 -right-0.5 w-4 h-4 text-[#529342] transform rotate-12 drop-shadow-xs transition-transform duration-300 group-hover:rotate-45"
-            fill="currentColor"
-          >
-            <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.5 2.5 6 1.5-1.5 3-4 3.5-7 1 1 2.5 1.5 4 1.5 5.5 0 10-4.5 10-10-2.5 0-6.5 1.5-10-.5z" />
-          </svg>
-
-          {/* Shield with Leaf SVG */}
-          <svg
-            viewBox="0 0 44 44"
-            className="relative z-10 w-8 h-8 sm:w-9 sm:h-9 text-[#144D29]"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {/* Shield Frame */}
-            <path d="M22 10L32 14V22C32 29 27 34 22 36C17 34 12 29 12 22V14L22 10Z" strokeWidth="2.4" />
-            {/* Leaf Inside Shield */}
-            <path d="M22 16C18 20 18 25 22 28C26 25 26 20 22 16Z" fill="#144D29" />
-            <path d="M22 18V26" stroke="#EAF4ED" strokeWidth="1.5" />
-          </svg>
-        </div>
-      ),
-    },
-    {
-      id: 'tested',
-      titleFirst: 'Lab ',
-      titleHighlight: 'Tested',
-      desc: 'Every batch is tested for purity & safety.',
-      dashColor: 'bg-[#E07B0C]',
-      blobBg: 'bg-[#FDF2E4]',
-      icon: (
-        <div className="relative w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center shrink-0">
-          {/* Organic Blob Shape */}
-          <div className="absolute inset-0 rounded-[50%_50%_45%_55%/52%_47%_53%_48%] bg-[#FDF2E4] transition-transform duration-300 group-hover:scale-105" />
-          
-          {/* Floating Leaf Accent */}
-          <svg
-            viewBox="0 0 24 24"
-            className="absolute -top-1 -right-0.5 w-4 h-4 text-[#529342] transform rotate-12 drop-shadow-xs transition-transform duration-300 group-hover:rotate-45"
-            fill="currentColor"
-          >
-            <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.5 2.5 6 1.5-1.5 3-4 3.5-7 1 1 2.5 1.5 4 1.5 5.5 0 10-4.5 10-10-2.5 0-6.5 1.5-10-.5z" />
-          </svg>
-
-          {/* Chemical Flask with Checkmark Seal SVG */}
-          <svg
-            viewBox="0 0 44 44"
-            className="relative z-10 w-8 h-8 sm:w-9 sm:h-9 text-[#144D29]"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {/* Flask Lip & Neck */}
-            <path d="M18 10H26" strokeWidth="2.4" />
-            <path d="M20 10V16L12 29C10.8 31 12.2 34 14.8 34H28" strokeWidth="2.4" />
-            <path d="M24 10V16L27 21" strokeWidth="2.4" />
-            {/* Fluid Indicator */}
-            <path d="M15 29H27" strokeWidth="1.8" strokeDasharray="2 2" />
-            {/* Verification Checkmark Badge */}
-            <circle cx="29.5" cy="29.5" r="5.5" fill="#144D29" stroke="none" />
-            <path d="M27.5 29.5L29 31L32 28" stroke="#FDF2E4" strokeWidth="1.6" />
-          </svg>
-        </div>
-      ),
-    },
-  ]
+export function PillarsBar({ content = HOME_DEFAULTS.pillars }: { content?: HomeContent['pillars'] }) {
+  const pillars = content.items.map((item, index) => {
+    const style = PILLAR_STYLES[index % PILLAR_STYLES.length]
+    return { ...item, tone: style.tone, Icon: resolveHomeIcon(item.icon, style.Icon), id: `pillar-${index}` }
+  })
 
   return (
-    <section className="relative z-30 mx-auto max-w-full py-8 sm:py-12 lg:py-16">
-    
+    <section className="relative z-30 w-full py-8 sm:py-12 lg:py-14">
+      <div className="mx-auto max-w-[1330px] px-2.5 sm:px-6 lg:px-8">
+        {/* Main floating card */}
+        <div className="relative overflow-hidden rounded-3xl border border-[#EFE7DC] bg-white shadow-[0_18px_50px_rgba(45,20,9,0.08)]">
+          <div className="grid grid-cols-2 gap-y-2 p-3 sm:p-4 lg:grid-cols-4 lg:p-5">
+            {pillars.map((item, index) => {
+              const tone = TONES[item.tone]
 
-     <div className="max-w-[1450px] mx-auto">
-       {/* Main Floating White Card */}
-      <div className="relative z-10 rounded-[5px] bg-white border border-[#EFE7DC] shadow-[0_10px_35px_rgba(45,20,9,0.06)] p-5 sm:p-7 lg:py-8 lg:px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-7 sm:gap-x-6 sm:gap-y-9 lg:gap-0 lg:divide-x divide-[#EFE7DC]">
-          {pillars.map((item) => (
-            <div
-              key={item.id}
-              className="group flex flex-col items-center text-center space-y-2.5 px-1.5 sm:px-3 lg:px-4 cursor-default"
-            >
-              {/* Organic Icon Badge */}
-              <div className="mb-6">
-                {item.icon}
-              </div>
+              return (
+                <div
+                  key={item.id}
+                  className="group relative flex cursor-default flex-col items-center rounded-2xl px-3 py-5 text-center transition-all duration-300 hover:-translate-y-1 hover:bg-gradient-to-b hover:from-[#FFFBF4] hover:to-[#FAF4EA] hover:shadow-lg hover:shadow-[#2D1409]/5 sm:px-4 sm:py-6 lg:px-5"
+                >
+                  {/* Soft divider between columns (desktop) */}
+                  {index > 0 && (
+                    <span className="pointer-events-none absolute left-0 top-1/2 hidden h-16 w-px -translate-y-1/2 bg-gradient-to-b from-transparent via-[#E8DCC8] to-transparent lg:block" />
+                  )}
 
-              {/* Two-Tone Serif Headline */}
-              <h3 className="font-serif text-sm sm:text-base lg:text-[18px] font-bold text-[#144D29] tracking-tight leading-snug">
-                <span>{item.titleFirst}</span>
-                <span className="text-[#E07B0C]">{item.titleHighlight}</span>
-              </h3>
+                  {/* Icon badge with soft halo */}
+                  <div className="relative">
+                    <span
+                      className={`absolute -inset-2 rounded-[22px] blur-md transition-opacity duration-300 group-hover:opacity-0 ${tone.halo}`}
+                    />
+                    <div
+                      className={`relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg ring-1 transition-all duration-300 group-hover:-rotate-3 group-hover:scale-110 sm:h-[68px] sm:w-[68px] ${tone.badge}`}
+                    >
+                      <item.Icon className="h-7 w-7 sm:h-8 sm:w-8" strokeWidth={1.75} />
+                    </div>
+                  </div>
 
-              {/* Accent Dash Line */}
-              <span className={`block w-7 h-[2px] ${item.dashColor} rounded-full mx-auto my-1.5`} />
+                  {/* Two-tone serif headline */}
+                  <h3 className="mt-4 font-serif text-[15px] font-bold leading-snug tracking-tight text-[#144D29] sm:text-base lg:text-[19px]">
+                    {item.titleFirst && <span>{item.titleFirst} </span>}
+                    <span className="text-[#E07B0C]">{item.titleHighlight}</span>
+                  </h3>
 
-              {/* Clean Description */}
-              <p className="text-sm sm:text-base lg:text-[16px] text-[#6E5951] leading-relaxed max-w-[210px] mx-auto font-normal">
-                {item.desc}
-              </p>
-            </div>
-          ))}
+                  {/* Accent dash grows on hover */}
+                  <span
+                    className={`my-2.5 block h-[3px] w-8 rounded-full transition-all duration-300 group-hover:w-14 ${tone.dash}`}
+                  />
+
+                  <p className="mx-auto max-w-[220px] text-[13px] leading-relaxed text-[#6E5951] sm:text-sm lg:text-[15px]">
+                    {item.desc}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
-     </div>
     </section>
   )
 }

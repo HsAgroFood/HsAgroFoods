@@ -1,7 +1,9 @@
-import { getHeroSlides, getHeroConfig } from '@/actions/admin/hero'
+import { getHeroSlides, getHeroConfig, getHeroLinkOptions } from '@/actions/admin/hero'
 import { GlobalHeroTextForm } from './_components/GlobalHeroTextForm'
 import { HeroSlideList } from './_components/HeroSlideList'
 import { TextModeToggle } from './_components/TextModeToggle'
+import { ShowTextToggle } from './_components/ShowTextToggle'
+import { BannerVisibilityControl } from './_components/BannerVisibilityControl'
 
 export const metadata = {
   title: 'Hero Slides | Admin Dashboard',
@@ -10,9 +12,10 @@ export const metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function AdminHeroSlidesPage() {
-  const [slides, heroConfig] = await Promise.all([getHeroSlides(), getHeroConfig()])
+  const [slides, heroConfig, linkOptions] = await Promise.all([getHeroSlides(), getHeroConfig(), getHeroLinkOptions()])
 
   const currentMode = heroConfig.text_mode
+  const showText = heroConfig.show_text
 
   const globalText = {
     ...heroConfig.global_text,
@@ -29,24 +32,38 @@ export default async function AdminHeroSlidesPage() {
           </p>
         </div>
         
-        <TextModeToggle currentMode={currentMode} />
+        {showText && <TextModeToggle currentMode={currentMode} />}
+      </div>
+
+      <div className="space-y-4">
+        <ShowTextToggle initialShowText={showText} />
+
+        {/* The dark overlay only exists to keep text readable, so this only matters when text is shown */}
+        {showText && (
+          <BannerVisibilityControl
+            initialValue={heroConfig.banner_visibility}
+            previewImage={slides.find((s: { is_active?: boolean }) => s.is_active)?.image_url ?? slides[0]?.image_url}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         
         {/* Left Column: Global Text Overlay (only visible if mode is global) */}
-        {currentMode === 'global' && (
+        {showText && currentMode === 'global' && (
           <div className="xl:col-span-5">
             <GlobalHeroTextForm initialData={globalText} />
           </div>
         )}
 
         {/* Right Column: Background Images (Slides) */}
-        <div className={currentMode === 'global' ? 'xl:col-span-7' : 'xl:col-span-12'}>
+        <div className={showText && currentMode === 'global' ? 'xl:col-span-7' : 'xl:col-span-12'}>
           <HeroSlideList 
             initialSlides={slides} 
             globalText={globalText} 
             textMode={currentMode} 
+            showText={showText}
+            linkOptions={linkOptions}
           />
         </div>
 

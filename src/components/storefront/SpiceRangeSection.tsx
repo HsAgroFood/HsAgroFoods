@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, LayoutGrid, Leaf } from 'lucide-react'
 import { SPICE_ASSETS } from '@/constants/assets'
 import { FALLBACK_CATEGORIES } from '@/constants/fallbackProducts'
 import { ProductCard } from '@/components/storefront/ProductCard'
+import { HOME_DEFAULTS, type HomeContent } from '@/lib/homeContent'
 
 export type CategoryItem = {
   id: string
@@ -285,7 +286,9 @@ export function SpiceRangeSection({
   products = [],
   categories = [],
   useLiveProducts = false,
+  content = HOME_DEFAULTS.spiceRange,
 }: {
+  content?: HomeContent['spiceRange']
   products?: LiveSpiceItem[]
   categories?: CategoryItem[]
   /** true: show only the products passed in (from the database). false: fall back to the built-in sample range. */
@@ -376,7 +379,7 @@ export function SpiceRangeSection({
   const activeCategoryObj = resolvedCategories.find((c) => c.slug === activeCategorySlug)
 
   return (
-    <section className="relative overflow-hidden py-8 sm:py-12 lg:py-16 bg-[#FBF7EE]">
+    <section className="relative overflow-hidden pt-8 pb-36 sm:py-12 lg:py-16 bg-[#FBF7EE]">
       {/* Studio Lighting & Warm Organic Background Gradients */}
       <div
         className="absolute inset-0 pointer-events-none select-none z-0"
@@ -391,22 +394,22 @@ export function SpiceRangeSection({
         }}
       />
 
-      {/* Decorative Corner Asset: Top Right Bay Leaves, Chillies & Golden Spice Dust */}
-      <div className="absolute top-0 right-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-85 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
-          alt="Natural Spice Leaves Accent"
+      {/* Decorative Corner Asset: Top Right Dried Kashmiri Chillies (flipped to hang from the top) */}
+      <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 -scale-100 opacity-100">
+        <CornerAccentImage
+          kind="chillies"
+          alt="Dried Kashmiri Chillies Accent"
           fill
-          className="object-contain object-top-right"
-          sizes="(max-width: 768px) 176px, 384px"
+          className="object-contain object-bottom-left"
+          sizes="(max-width: 640px) 128px, (max-width: 768px) 256px, 384px"
           priority={false}
         />
       </div>
 
       {/* Decorative Corner Asset: Bottom Left Kashmiri Chillies & Spices */}
-      <div className="absolute bottom-0 left-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-85 z-0">
-        <Image
-          src="/images/accent-chillies-corner.png"
+      <div className="absolute bottom-0 left-0 w-56 h-56 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="chillies"
           alt="Dried Kashmiri Chillies Accent"
           fill
           className="object-contain object-bottom-left"
@@ -415,22 +418,22 @@ export function SpiceRangeSection({
         />
       </div>
 
-      {/* Decorative Corner Asset: Top Left Natural Spices Accent (Mirrored horizontally like Right Corner) */}
-      <div className="absolute top-0 left-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-85 z-0 -scale-x-100">
-        <Image
-          src="/images/accent-leaves-spices.png"
-          alt="Natural Spice Leaves Accent"
+      {/* Decorative Corner Asset: Top Left Dried Kashmiri Chillies (flipped to hang from the top) */}
+      <div className="absolute top-0 left-0 w-32 h-32 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 -scale-y-100 opacity-100">
+        <CornerAccentImage
+          kind="chillies"
+          alt="Dried Kashmiri Chillies Accent"
           fill
-          className="object-contain object-top-right"
-          sizes="(max-width: 768px) 176px, 384px"
+          className="object-contain object-bottom-left"
+          sizes="(max-width: 640px) 128px, (max-width: 768px) 256px, 384px"
           priority={false}
         />
       </div>
 
       {/* Decorative Corner Asset: Bottom Right Spices & Herbal Accent */}
-      <div className="absolute bottom-0 right-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-85 z-0 -scale-x-100">
-        <Image
-          src="/images/accent-chillies-corner.png"
+      <div className="absolute bottom-0 right-0 w-56 h-56 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 -scale-x-100 opacity-100">
+        <CornerAccentImage
+          kind="chillies"
           alt="Spices Corner Accent"
           fill
           className="object-contain object-bottom-left"
@@ -456,17 +459,17 @@ export function SpiceRangeSection({
           {/* 100% PURE & NATURAL Pill */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EBF3ED] border border-[#CFE3D3] text-[#144D29] text-[11px] sm:text-xs font-semibold tracking-wider uppercase shadow-2xs">
             <Leaf className="w-3.5 h-3.5 text-[#144D29] fill-[#144D29]/20" />
-            <span>100% PURE &amp; NATURAL</span>
+            <span>{content.badge}</span>
           </div>
 
           {/* Heading */}
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#14361F]">
-            Our Spices &amp; Dehydrated Range
+            {content.title}
           </h2>
 
           {/* Subheading */}
           <p className="text-sm sm:text-base text-[#615147] max-w-2xl mx-auto leading-relaxed">
-            From pure ground &amp; blended Indian masale to 100% natural dehydrated vegetable and fruit powders.
+            {content.subtitle}
           </p>
         </div>
 
@@ -496,7 +499,7 @@ export function SpiceRangeSection({
 
         {displayedProducts.length === 0 && (
           <p className="py-10 text-center text-sm text-[#7A6458]">
-            No featured products to show here yet. Browse the full range in our shop.
+            {content.emptyText}
           </p>
         )}
 
@@ -520,7 +523,7 @@ export function SpiceRangeSection({
         </div>
 
         {/* View All Products Centered Button Flanked by Fresh Botanical Leaves */}
-        <div className="mt-12 sm:mt-16 text-center relative flex items-center justify-center">
+        <div className="mt-6 sm:mt-14 text-center relative flex items-center justify-center">
           {/* Left Decorative Botanical Leaf */}
           <div className="hidden sm:block absolute right-[calc(50%+145px)] lg:right-[calc(50%+170px)] w-9 h-14 -rotate-35 opacity-90 pointer-events-none drop-shadow-sm">
             <RealisticLeaf className="w-full h-full" />
@@ -543,7 +546,7 @@ export function SpiceRangeSection({
                 className="inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-[#14361F] hover:bg-[#0D2515] px-7 sm:px-9 py-3.5 sm:py-4 text-sm sm:text-base font-semibold text-white shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:scale-95 z-10"
               >
                 <LayoutGrid className="w-4 h-4 text-emerald-400" />
-                <span>Explore Full Store Catalog</span>
+                <span>{content.catalogButtonText}</span>
                 <ArrowRight className="w-4 h-4 text-white" />
               </Link>
             )

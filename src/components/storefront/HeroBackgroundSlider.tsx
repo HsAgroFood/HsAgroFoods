@@ -15,6 +15,7 @@ import {
   Pause,
 } from 'lucide-react'
 import { getDesktopSlideUrl, getMobileSlideUrl } from '@/lib/imageUtils'
+import { DEFAULT_BANNER_VISIBILITY, getHeroOverlays } from '@/lib/heroBanner'
 
 export type HeroSlideItem = {
   id: string
@@ -42,54 +43,29 @@ function normalizeBrandText(text: string): string {
     .replace(/jaandaar/gi, 'HS AgroFoods')
 }
 
-const CHIP_MAX_LENGTH = 22
-const GENERIC_BUTTON_TARGETS = new Set(['now', 'all', 'all products', 'more', 'today', 'here', 'online'])
-
-function fitChipLabel(text: string): string {
-  const label = text.replace(/\s+/g, ' ').trim()
-  if (label.length <= CHIP_MAX_LENGTH) return label
-  const words = label.split(' ')
-  let out = ''
-  for (const word of words) {
-    const next = out ? `${out} ${word}` : word
-    if (next.length > CHIP_MAX_LENGTH - 1) break
-    out = next
-  }
-  return `${out || label.slice(0, CHIP_MAX_LENGTH - 1)}…`
-}
-
-// Short name shown on the slide tabs: explicit tag -> product name from the button -> title -> "Slide 0N"
-function getSlideChipLabel(slide: HeroSlideItem, index: number): string {
-  if (slide.tag) {
-    const cleaned = slide.tag.replace(/^[✦★•\s]+/, '').split('·')[0].trim()
-    if (cleaned) return fitChipLabel(cleaned)
-  }
-
-  // "Shop Beetroot Powder" -> "Beetroot Powder"
-  const product = (slide.button_text || '').replace(/^(shop|buy|order|explore|discover)\s+/i, '').trim()
-  if (product && product !== (slide.button_text || '').trim() && !GENERIC_BUTTON_TARGETS.has(product.toLowerCase())) {
-    return fitChipLabel(product)
-  }
-
-  if (slide.title) {
-    const firstPart = slide.title.split(/[—–.,:|!]/)[0].trim()
-    if (firstPart) return fitChipLabel(firstPart)
-  }
-  return `Slide ${String(index + 1).padStart(2, '0')}`
-}
-
 export function HeroBackgroundSlider({
   slides,
   textMode = 'per_slide',
   globalText,
+  showText = true,
+  bannerVisibility = DEFAULT_BANNER_VISIBILITY,
 }: {
   slides: HeroSlideItem[]
   textMode?: 'global' | 'per_slide'
   globalText?: GlobalHeroText
+  /** Admin switch: false = image-only hero (no text, buttons, badges or dark text scrims). */
+  showText?: boolean
+  /** Admin slider 0-100: higher = lighter dark overlay, so the banner image is more visible behind the text. */
+  bannerVisibility?: number
 }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  // The slide that is sliding out, and which way the slides are moving (next = new one enters from the right)
+  const [leavingIndex, setLeavingIndex] = useState<number | null>(null)
+  const [direction, setDirection] = useState<'next' | 'prev'>('next')
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
+  const indexRef = useRef(0)
+  const progressRef = useRef(0)
 
   // Touch gesture support for mobile devices
   const touchStartXRef = useRef<number | null>(null)
@@ -98,22 +74,30 @@ export function HeroBackgroundSlider({
   const slideCount = slides.length
   const SLIDE_DURATION = 5500 // 5.5 seconds per slide
 
+  const goTo = useCallback((target: number, dir: 'next' | 'prev') => {
+    if (target === indexRef.current) return
+    setLeavingIndex(indexRef.current)
+    setDirection(dir)
+    indexRef.current = target
+    setCurrentIndex(target)
+    progressRef.current = 0
+    setProgress(0)
+  }, [])
+
   const nextSlide = useCallback(() => {
     if (slideCount <= 1) return
-    setCurrentIndex((prev) => (prev + 1) % slideCount)
-    setProgress(0)
-  }, [slideCount])
+    goTo((indexRef.current + 1) % slideCount, 'next')
+  }, [slideCount, goTo])
 
   const prevSlide = useCallback(() => {
     if (slideCount <= 1) return
-    setCurrentIndex((prev) => (prev - 1 + slideCount) % slideCount)
-    setProgress(0)
-  }, [slideCount])
+    goTo((indexRef.current - 1 + slideCount) % slideCount, 'prev')
+  }, [slideCount, goTo])
 
-  const goToSlide = useCallback((index: number) => {
-    setCurrentIndex(index)
-    setProgress(0)
-  }, [])
+  const goToSlide = useCallback(
+    (index: number) => goTo(index, index > indexRef.current ? 'next' : 'prev'),
+    [goTo]
+  )
 
   // Auto-advance with smooth progress bar
   useEffect(() => {
@@ -123,13 +107,12 @@ export function HeroBackgroundSlider({
     const increment = (stepMs / SLIDE_DURATION) * 100
 
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          nextSlide()
-          return 0
-        }
-        return prev + increment
-      })
+      progressRef.current += increment
+      if (progressRef.current >= 100) {
+        nextSlide()
+      } else {
+        setProgress(progressRef.current)
+      }
     }, stepMs)
 
     return () => clearInterval(timer)
@@ -187,30 +170,44 @@ export function HeroBackgroundSlider({
       ? currentSlide.button_link || globalText?.button_link || '/shop'
       : globalText?.button_link || currentSlide.button_link || '/shop'
 
+  // Image-only mode: the slide's own link (set in admin) makes the whole image clickable
+  const imageLink = currentSlide.button_link?.trim() || ''
+
+  const overlays = getHeroOverlays(bannerVisibility)
+
   const slideTag =
     currentSlide.tag || '✦ Single-Origin Indian Spices & Superfoods'
 
   return (
     <section
       aria-label="HS AgroFoods Corporate Hero Carousel"
-      className="relative overflow-hidden min-h-[580px] sm:min-h-[620px] lg:min-h-[max(560px,calc(100svh-120px))] flex flex-col justify-between select-none bg-[#160A04]"
+      className="relative overflow-hidden aspect-[4/5] md:aspect-[16/7] md:min-h-[440px] lg:min-h-[480px] lg:max-h-[900px] flex flex-col justify-between select-none bg-[#160A04]"
       onMouseEnter={() => setIsPaused(false)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* 🖼️ BACKGROUND IMAGES SLIDER WITH KEN BURNS EFFECT */}
+      {/* 🖼️ BACKGROUND IMAGES SLIDER (each banner slides in from the right, no zoom) */}
       <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
         {slides.map((slide, index) => {
           const isActive = index === currentIndex
+          const isLeaving = !isActive && index === leavingIndex
+          const motion = isActive
+            ? leavingIndex === null
+              ? ''
+              : `hero-slide-in-${direction}`
+            : isLeaving
+              ? `hero-slide-out-${direction}`
+              : ''
           const mobileUrl = getMobileSlideUrl(slide.image_url, slide.image_mobile_url)
 
           return (
             <div
               key={slide.id || index}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-                isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+              aria-hidden={!isActive}
+              className={`absolute inset-0 w-full h-full ${motion} ${
+                isActive ? 'z-10' : isLeaving ? 'z-[9] pointer-events-none' : 'invisible z-0 pointer-events-none'
               }`}
             >
               {/* 📱 Mobile Portrait 4:5 Slide Image */}
@@ -221,13 +218,11 @@ export function HeroBackgroundSlider({
                   fill
                   priority={index === 0}
                   sizes="100vw"
-                  className={`object-cover object-center transition-transform duration-[6000ms] ease-out ${
-                    isActive ? 'scale-105' : 'scale-100'
-                  }`}
+                  className="object-cover object-center"
                 />
               </div>
 
-              {/* 💻 Desktop Landscape 16:9 Slide Image */}
+              {/* 💻 Desktop Landscape 16:7 Slide Image */}
               <div className="relative w-full h-full hidden md:block">
                 <Image
                   src={getDesktopSlideUrl(slide.image_url)}
@@ -235,169 +230,162 @@ export function HeroBackgroundSlider({
                   fill
                   priority={index === 0}
                   sizes="100vw"
-                  className={`object-cover object-center lg:object-right transition-transform duration-[6000ms] ease-out ${
-                    isActive ? 'scale-105' : 'scale-100'
-                  }`}
+                  className={`object-cover ${showText ? 'object-center lg:object-right' : 'object-center'}`}
                 />
               </div>
             </div>
           )
         })}
 
-        {/* 🎬 HIGH-CONTRAST MODERN CORPORATE GRADIENT OVERLAYS */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          {/* Mobile bottom-to-top gradient scrim for crisp text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/35 md:hidden" />
+        {/* Dark overlays exist only to keep the text readable. In image-only mode the banner is shown untouched. */}
+        {showText && (
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            {/* Mobile bottom-to-top gradient scrim for crisp text readability */}
+            <div className="absolute inset-0 md:hidden" style={{ backgroundImage: overlays.mobile }} />
 
-          {/* Desktop cinematic left-to-right gradient for corporate banner typography */}
-          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-black/92 via-black/65 to-black/25" />
+            {/* Desktop cinematic left-to-right gradient for corporate banner typography */}
+            <div className="hidden md:block absolute inset-0" style={{ backgroundImage: overlays.desktop }} />
 
-          {/* Compact bottom vignette to blend softly into the next section */}
-          <div className="absolute inset-x-0 bottom-0 h-16 lg:h-10 bg-gradient-to-t from-[#140A05] via-[#140A05]/80 to-transparent" />
+            {/* Compact bottom vignette to blend softly into the next section */}
+            <div className="absolute inset-x-0 bottom-0 h-16 lg:h-10 bg-gradient-to-t from-[#140A05] via-[#140A05]/80 to-transparent" />
 
-          {/* Subtle top edge shadow for smooth navbar integration */}
-          <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/50 to-transparent" />
-        </div>
+            {/* Subtle top edge shadow for smooth navbar integration */}
+            <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-black/50 to-transparent" />
+          </div>
+        )}
       </div>
 
-      {/* 📝 CORPORATE CONTENT GRID */}
-      <div className="relative z-20 mx-auto max-w-[1350px] px-4 sm:px-6 lg:px-8 w-full pt-10 sm:pt-14 lg:pt-12 pb-5 sm:pb-6 lg:pb-4 lg:flex-1 lg:flex lg:items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center w-full">
+      {showText ? (
+        // Corporate content grid: headline, badges, CTAs and trust badges
+        <div className="relative z-20 mx-auto max-w-[1350px] px-4 sm:px-6 lg:px-8 w-full pt-10 sm:pt-14 lg:pt-12 pb-5 sm:pb-6 lg:pb-4 lg:flex-1 lg:flex lg:items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center w-full">
           
-          {/* 🏷️ LEFT CONTENT: CORPORATE HEADLINE, BADGES & CTAs */}
-          <div className="lg:col-span-9 xl:col-span-8 space-y-4 sm:space-y-6 lg:space-y-5 text-left">
+            {/* 🏷️ LEFT CONTENT: CORPORATE HEADLINE, BADGES & CTAs */}
+            <div className="lg:col-span-9 xl:col-span-8 space-y-4 sm:space-y-6 lg:space-y-5 text-left">
             
-            {/* Live Status Corporate Pill Badge */}
-            <div
-              key={`tag-${currentIndex}`}
-              className="inline-flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-amber-300 shadow-md animate-in fade-in slide-in-from-top-2 duration-500"
-            >
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="truncate max-w-[280px] sm:max-w-md drop-shadow-xs">
-                {slideTag}
-              </span>
-            </div>
-
-            {/* Authoritative Corporate Headline */}
-            <div
-              key={`title-${currentIndex}`}
-              className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-2"
-            >
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-[48px] xl:text-[56px] font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
-                {title}
-              </h1>
-            </div>
-
-            {/* Subtitle with High Readability */}
-            <div
-              key={`sub-${currentIndex}`}
-              className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-3"
-            >
-              <p className="text-sm sm:text-base lg:text-base text-stone-200/95 max-w-xl leading-relaxed font-normal sm:font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
-                {subtitle}
-              </p>
-            </div>
-
-            {/* Dual CTA Action Cluster */}
-            <div
-              key={`cta-${currentIndex}`}
-              className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
-            >
-              <Link
-                href={buttonLink}
-                className="inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#F09819] via-[#E07B0C] to-[#C96B06] hover:from-[#E07B0C] hover:to-[#B45309] text-white px-4 py-4 text-sm sm:text-base font-bold shadow-xl shadow-amber-950/40 hover:shadow-amber-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group"
+              {/* Live Status Corporate Pill Badge */}
+              <div
+                key={`tag-${currentIndex}`}
+                className="inline-flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-amber-300 shadow-md animate-in fade-in slide-in-from-top-2 duration-500"
               >
-                <span>{buttonText}</span>
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white" />
-              </Link>
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="truncate max-w-[280px] sm:max-w-md drop-shadow-xs">
+                  {slideTag}
+                </span>
+              </div>
 
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-[5px] bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/25 hover:border-white/40 px-4 py-4 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              {/* Authoritative Corporate Headline */}
+              <div
+                key={`title-${currentIndex}`}
+                className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-2"
               >
-                <span>Corporate &amp; Bulk Orders</span>
-              </Link>
-            </div>
-
-            {/* 4 Corporate Trust Micro-Badges */}
-            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-5 pt-4 border-t border-white/20">
-              <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-white/15 text-emerald-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
-                  <Leaf className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-                  100% Farm-Direct
-                </span>
+                <h1 className="font-serif text-3xl sm:text-5xl lg:text-[48px] xl:text-[56px] font-extrabold tracking-tight text-white leading-[1.12] drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
+                  {title}
+                </h1>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-white/15 text-amber-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
-                  <Sparkles className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-                  Cryo-Ground &lt;40°C
-                </span>
+              {/* Subtitle with High Readability */}
+              <div
+                key={`sub-${currentIndex}`}
+                className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-3"
+              >
+                <p className="text-sm sm:text-base lg:text-base text-stone-200/95 max-w-xl leading-relaxed font-normal sm:font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                  {subtitle}
+                </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-white/15 text-blue-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-                  NABL Lab Tested
-                </span>
+              {/* Dual CTA Action Cluster */}
+              <div
+                key={`cta-${currentIndex}`}
+                className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 transition-all duration-500 animate-in fade-in slide-in-from-bottom-4"
+              >
+                <Link
+                  href={buttonLink}
+                  className="inline-flex items-center justify-center gap-2.5 rounded-[5px] bg-gradient-to-r from-[#F09819] via-[#E07B0C] to-[#C96B06] hover:from-[#E07B0C] hover:to-[#B45309] text-white px-4 py-4 text-sm sm:text-base font-bold shadow-xl shadow-amber-950/40 hover:shadow-amber-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group"
+                >
+                  <span>{buttonText}</span>
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform text-white" />
+                </Link>
+
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 rounded-[5px] bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/25 hover:border-white/40 px-4 py-4 text-sm sm:text-base font-semibold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                >
+                  <span>Corporate &amp; Bulk Orders</span>
+                </Link>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-white/15 text-amber-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
-                  <Award className="w-3.5 h-3.5" />
+              {/* 4 Corporate Trust Micro-Badges */}
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-5 pt-4 border-t border-white/20">
+                <div className="flex items-center gap-2">
+                  <div className="p-1 rounded-full bg-white/15 text-emerald-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
+                    <Leaf className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                    100% Farm-Direct
+                  </span>
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-                  Export Grade Purity
-                </span>
+
+                <div className="flex items-center gap-2">
+                  <div className="p-1 rounded-full bg-white/15 text-amber-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                    Cryo-Ground &lt;40°C
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="p-1 rounded-full bg-white/15 text-blue-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                    NABL Lab Tested
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="p-1 rounded-full bg-white/15 text-amber-300 backdrop-blur-xs border border-white/20 shadow-xs shrink-0">
+                    <Award className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                    Export Grade Purity
+                  </span>
+                </div>
               </div>
+
             </div>
 
           </div>
-
         </div>
-      </div>
+      ) : (
+        // Image-only hero: keep the controls pinned to the bottom and the headline available to screen readers/SEO
+        <div className="relative z-20 flex-1">
+          <h1 className="sr-only">{title}</h1>
+        </div>
+      )}
+
+      {!showText && imageLink && (
+        <Link
+          href={imageLink}
+          aria-label={`Open: ${title}`}
+          className="absolute inset-0 z-20 cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-amber-400"
+        />
+      )}
 
       {/* 🔘 MODERN CORPORATE SLIDE CONTROL BAR */}
       {slideCount > 1 && (
         <div className="relative z-30 mx-auto max-w-[1350px] px-4 sm:px-6 lg:px-8 pb-3 sm:pb-3.5 w-full">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-2 pt-2 border-t border-white/10">
+          <div className="flex flex-col md:flex-row items-center justify-between md:justify-end gap-2 pt-2 border-t border-white/10">
             
-            {/* Quick Jump Category Chips (Desktop & Tablet) */}
-            <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto max-w-full pb-0.5 no-scrollbar">
-              {slides.map((slide, i) => {
-                const isActive = i === currentIndex
-                const label = getSlideChipLabel(slide, i)
-                return (
-                  <button
-                    key={slide.id || i}
-                    type="button"
-                    onClick={() => goToSlide(i)}
-                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                      isActive
-                        ? 'bg-amber-500 text-stone-950 font-bold shadow-md shadow-amber-500/30'
-                        : 'bg-white/10 hover:bg-white/20 text-white/80 hover:text-white border border-white/10'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
-            </div>
-
             {/* Slide Navigation + Counter + Controls */}
             <div className="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto">
               
               {/* Slide Counter (e.g. 01 / 07) */}
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white/90 bg-white/10 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/15">
+              <div className={`flex items-center gap-1.5 text-xs font-mono font-bold text-white/90 ${showText ? 'bg-white/10' : 'bg-black/45'} backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/15`}>
                 <span className="text-amber-400">
                   {String(currentIndex + 1).padStart(2, '0')}
                 </span>
@@ -421,7 +409,7 @@ export function HeroBackgroundSlider({
               </div>
 
               {/* Action Arrows + Play/Pause Toggle */}
-              <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-white/15">
+              <div className={`flex items-center gap-1 ${showText ? 'bg-white/10' : 'bg-black/45'} backdrop-blur-md px-1.5 py-0.5 rounded-full border border-white/15`}>
                 {/* Pause / Play Toggle */}
                 <button
                   type="button"

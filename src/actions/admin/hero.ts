@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
+import { DEFAULT_BANNER_VISIBILITY } from '@/lib/heroBanner'
 
 export type HeroTextMode = 'global' | 'per_slide'
 
@@ -14,6 +15,9 @@ export type HeroGlobalText = {
 }
 
 export type HeroConfig = {
+  banner_visibility: number
+  /** When false the storefront hero shows only the slide images (no headline, subtitle, buttons or badges). */
+  show_text: boolean
   text_mode: HeroTextMode
   global_text: HeroGlobalText
 }
@@ -34,6 +38,8 @@ const DEFAULT_GLOBAL_TEXT: HeroGlobalText = {
 }
 
 const DEFAULT_HERO_CONFIG: HeroConfig = {
+  banner_visibility: DEFAULT_BANNER_VISIBILITY,
+  show_text: true,
   text_mode: 'per_slide',
   global_text: DEFAULT_GLOBAL_TEXT,
 }
@@ -54,6 +60,11 @@ async function readHeroConfig(
     const text = parsed?.global_text || {}
 
     return {
+      banner_visibility:
+        typeof parsed?.banner_visibility === 'number'
+          ? Math.min(100, Math.max(0, Math.round(parsed.banner_visibility)))
+          : DEFAULT_BANNER_VISIBILITY,
+      show_text: parsed?.show_text !== false,
       text_mode: parsed?.text_mode === 'global' ? 'global' : 'per_slide',
       global_text: {
         title: typeof text.title === 'string' ? sanitizeBrandName(text.title) : DEFAULT_GLOBAL_TEXT.title,
@@ -87,6 +98,8 @@ async function saveHeroConfig(
     const adminClient = createAdminClient()
     const current = await readHeroConfig(adminClient)
     const next: HeroConfig = {
+      banner_visibility: patch.banner_visibility ?? current.banner_visibility,
+      show_text: patch.show_text ?? current.show_text,
       text_mode: patch.text_mode ?? current.text_mode,
       global_text: patch.global_text ?? current.global_text,
     }
@@ -133,6 +146,15 @@ export async function updateHeroTextMode(mode: 'global' | 'per_slide'): Promise<
     return { success: false, error: 'Invalid hero text mode.' }
   }
   return saveHeroConfig({ text_mode: mode })
+}
+
+export async function updateHeroShowText(show: boolean): Promise<{ success: boolean; error?: string }> {
+  return saveHeroConfig({ show_text: Boolean(show) })
+}
+
+export async function updateHeroBannerVisibility(value: number): Promise<{ success: boolean; error?: string }> {
+  if (!Number.isFinite(value)) return { success: false, error: 'Invalid banner visibility.' }
+  return saveHeroConfig({ banner_visibility: Math.min(100, Math.max(0, Math.round(value))) })
 }
 
 export async function updateHeroSlideText(id: string, data: {
@@ -229,6 +251,41 @@ const DEFAULT_HERO_DATA = [
     display_order: 6,
   },
 ]
+
+export type HeroLinkOption = { label: string; href: string }
+
+export type HeroLinkOptions = {
+  pages: HeroLinkOption[]
+  categories: HeroLinkOption[]
+  products: HeroLinkOption[]
+}
+
+const STATIC_LINK_PAGES: HeroLinkOption[] = [
+  { label: 'Page: Home', href: '/' },
+  { label: 'Page: Shop All (all products list)', href: '/shop' },
+  { label: 'Page: About Us', href: '/about' },
+  { label: 'Page: Contact', href: '/contact' },
+]
+
+/** Pages, categories and products an admin can point a hero image at. */
+export async function getHeroLinkOptions(): Promise<HeroLinkOptions> {
+  const options: HeroLinkOptions = { pages: STATIC_LINK_PAGES, categories: [], products: [] }
+
+  try {
+    const adminClient = createAdminClient()
+    const [categories, products] = await Promise.all([
+      adminClient.from('categories').select('name, slug').eq('is_active', true).order('name'),
+      adminClient.from('products').select('name, slug').eq('is_active', true).order('name'),
+    ])
+
+    options.categories = (categories.data || []).map((c) => ({ label: `Category: ${c.name} (products list)`, href: `/shop?category=${c.slug}` }))
+    options.products = (products.data || []).map((p) => ({ label: `Product: ${p.name}`, href: `/product/${p.slug}` }))
+  } catch {
+    // The picker still works with the static pages and a custom URL
+  }
+
+  return options
+}
 
 export async function getHeroSlides() {
   const adminClient = createAdminClient()

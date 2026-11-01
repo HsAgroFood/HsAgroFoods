@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdminAuthenticated, UNAUTHORIZED_ERROR } from '@/lib/adminAuth'
 import { revalidatePath } from 'next/cache'
+import { cleanFaqIcon } from '@/lib/faqIcons'
 
 function revalidateFaqConsumers() {
   revalidatePath('/admin/global-faqs')
@@ -49,6 +50,7 @@ export async function addGlobalFaq(formData: FormData) {
 
   const question = formData.get('question')?.toString().trim()
   const answer = formData.get('answer')?.toString().trim()
+  const icon = cleanFaqIcon(formData.get('icon'))
 
   if (!question || !answer) {
     return { success: false, error: 'Question and answer are required' }
@@ -69,6 +71,7 @@ export async function addGlobalFaq(formData: FormData) {
       {
         question,
         answer,
+        icon,
         display_order: newOrder
       }
     ])
@@ -91,6 +94,7 @@ export async function updateGlobalFaq(id: string, formData: FormData) {
 
   const question = formData.get('question')?.toString().trim()
   const answer = formData.get('answer')?.toString().trim()
+  const icon = cleanFaqIcon(formData.get('icon'))
 
   if (!question || !answer) {
     return { success: false, error: 'Question and answer are required' }
@@ -98,7 +102,7 @@ export async function updateGlobalFaq(id: string, formData: FormData) {
 
   const { data, error } = await supabase
     .from('global_faqs')
-    .update({ question, answer, updated_at: new Date().toISOString() })
+    .update({ question, answer, icon, updated_at: new Date().toISOString() })
     .eq('id', id)
     .select()
 
@@ -185,4 +189,29 @@ export async function getGlobalFaqUsage(): Promise<{ using: number; total: numbe
     supabase.from('products').select('id', { count: 'exact', head: true }).eq('use_global_faqs', true),
   ])
   return { using: using ?? 0, total: total ?? 0 }
+}
+
+/** Visible global FAQs for the homepage FAQ section. Returns [] on any error so the section just hides. */
+export async function getActiveGlobalFaqs(): Promise<
+  { id: string; question: string; answer: string; icon: string | null }[]
+> {
+  try {
+    const supabase = await createClient()
+    const query = (columns: string) =>
+      supabase.from('global_faqs').select(columns).eq('is_active', true).order('display_order', { ascending: true })
+
+    // If the icon column has not been added yet, fall back to the auto-picked icons instead of hiding the section.
+    let { data, error } = await query('id, question, answer, icon')
+    if (error) ({ data, error } = await query('id, question, answer'))
+
+    if (error || !data) return []
+    return (data as unknown as { id: string; question: string; answer: string; icon?: string | null }[]).map((faq) => ({
+      id: faq.id,
+      question: sanitizeFaqText(faq.question),
+      answer: sanitizeFaqText(faq.answer),
+      icon: cleanFaqIcon(faq.icon),
+    }))
+  } catch {
+    return []
+  }
 }

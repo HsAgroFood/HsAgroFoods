@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { NO_INDEX } from '@/lib/seo'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAuthUser } from '@/lib/userAuth'
 import { redirect } from 'next/navigation'
@@ -8,8 +9,9 @@ import { MapPin, Package, ShieldCheck, ArrowRight, UserCheck, Store } from 'luci
 import { ProfileForm } from './_components/ProfileForm'
 
 export const metadata = {
-  title: 'My Profile & Details | HS AgroFoods',
+  title: 'My Profile & Details',
   description: 'Manage your personal details, contact number, and delivery settings.',
+  robots: NO_INDEX,
 }
 
 export default async function AccountProfilePage() {

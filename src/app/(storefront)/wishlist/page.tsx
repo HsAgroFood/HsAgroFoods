@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -323,13 +324,13 @@ export default function WishlistPage() {
       />
 
       {/* Decorative Corner Asset: Top Right Accent Spices */}
-      <div className="absolute top-0 right-0 w-36 h-36 sm:w-56 sm:h-56 lg:w-80 lg:h-80 pointer-events-none select-none mix-blend-multiply opacity-75 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 right-0 w-24 h-[84px] sm:w-56 sm:h-56 lg:w-80 lg:h-80 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 144px, 320px"
+          sizes="(max-width: 640px) 96px, 320px"
           priority={false}
         />
       </div>

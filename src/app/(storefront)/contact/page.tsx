@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import Link from 'next/link'
 import {
   Mail,
@@ -16,9 +16,10 @@ import {
 import { ContactForm } from '@/components/storefront/ContactForm'
 
 export const metadata = {
-  title: 'Contact Us — We Are Here To Help | HS AgroFoods',
+  title: 'Contact Us — We Are Here To Help',
   description:
     'Get in touch with the HS AgroFoods customer care team for product queries, wholesale & bulk orders, or shipping assistance.',
+  alternates: { canonical: '/contact' },
 }
 
 export default function ContactPage() {
@@ -160,25 +161,25 @@ export default function ContactPage() {
       />
 
       {/* Decorative Corner Asset: Top Left Natural Spices Accent */}
-      <div className="absolute top-0 left-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-75 z-0 -scale-x-100">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 left-0 w-24 h-[88px] sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 -scale-x-100 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spices Leaves Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 176px, 384px"
+          sizes="(max-width: 640px) 96px, 384px"
           priority={false}
         />
       </div>
 
       {/* Decorative Corner Asset: Top Right Spices Accent */}
-      <div className="absolute top-0 right-0 w-44 h-44 sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply opacity-75 z-0">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 right-0 w-24 h-[88px] sm:w-64 sm:h-64 lg:w-96 lg:h-96 pointer-events-none select-none mix-blend-multiply z-0 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spices Leaves Accent"
           fill
           className="object-contain object-top-right"
-          sizes="(max-width: 768px) 176px, 384px"
+          sizes="(max-width: 640px) 96px, 384px"
           priority={false}
         />
       </div>
@@ -186,7 +187,7 @@ export default function ContactPage() {
       {/* ═══════════════════════════════════════════════════════════════════════════════
           1. Hero Header Section — Exact padding: py-10 sm:py-14 lg:py-16
          ═══════════════════════════════════════════════════════════════════════════════ */}
-      <section className="relative py-10 sm:py-14 lg:py-16 border-b border-[#EDE4D9]/80 z-10">
+      <section className="relative pt-[104px] pb-10 sm:py-14 lg:py-16 border-b border-[#EDE4D9]/80 z-10">
         <div className="mx-auto max-w-[1370px] px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4 sm:space-y-5">
           
           {/* Category Tag Pill */}

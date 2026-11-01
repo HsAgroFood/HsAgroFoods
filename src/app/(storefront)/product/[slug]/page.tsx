@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
+import { CornerAccentImage } from '@/components/storefront/CornerAccents'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Leaf } from 'lucide-react'
 import { ProductImageGallery } from '@/components/storefront/ProductImageGallery'
 import { ProductVariantSelector } from '@/components/storefront/ProductVariantSelector'
@@ -11,6 +11,8 @@ import { ProductCard } from '@/components/storefront/ProductCard'
 import { RelatedProductsCarousel } from '@/components/storefront/RelatedProductsCarousel'
 import { FALLBACK_PRODUCTS, getFallbackProductBySlug } from '@/constants/fallbackProducts'
 import { getEffectiveUser } from '@/lib/userAuth'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { absoluteUrl, breadcrumbJsonLd, clip, productJsonLd, stripBrand } from '@/lib/seo'
 
 function sanitizeBrand(str?: string | null): string | null | undefined {
   if (!str || typeof str !== 'string') return str
@@ -21,39 +23,68 @@ function sanitizeBrand(str?: string | null): string | null | undefined {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+
+  let name: string | null = null
+  let title: string | null = null
+  let description: string | null = null
+  let image: string | null = null
+  let canonicalSlug = slug
+
   try {
     const supabase = await createClient()
     const { data: product } = await supabase
       .from('products')
-      .select('seo_title, seo_description, name, short_description')
+      .select('seo_title, seo_description, name, short_description, featured_image_url')
       .eq('slug', slug)
       .single()
 
     if (product) {
-      return {
-        title: sanitizeBrand(product.seo_title) || `${sanitizeBrand(product.name)} | HS AgroFoods`,
-        description:
-          sanitizeBrand(product.seo_description) ||
-          sanitizeBrand(product.short_description) ||
-          `Buy authentic ${sanitizeBrand(product.name)} from HS AgroFoods.`,
-      }
+      name = sanitizeBrand(product.name) || null
+      title = stripBrand(sanitizeBrand(product.seo_title)) || name
+      description = sanitizeBrand(product.seo_description) || sanitizeBrand(product.short_description) || null
+      image = product.featured_image_url || null
     }
   } catch {
-    // Fallback
+    // fall back to the built-in catalogue below
   }
 
-  const fallback = getFallbackProductBySlug(slug)
-  if (fallback) {
-    return {
-      title: `${fallback.name} | HS AgroFoods`,
-      description: fallback.short_description,
+  if (!name) {
+    const fallback = getFallbackProductBySlug(slug)
+    if (fallback) {
+      name = fallback.name
+      title = fallback.name
+      description = fallback.short_description
+      image = fallback.featured_image_url
+      canonicalSlug = fallback.slug
     }
   }
 
-  const formattedName = slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  if (!name) {
+    name = slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    title = name
+  }
+
+  const finalTitle = `${title} — Buy Online`
+  const finalDescription = clip(description || `Buy authentic, 100% pure ${name} from HS AgroFoods. Freshly packed and delivered across India.`)
+  const canonical = `/product/${canonicalSlug}`
+
   return {
-    title: `${formattedName} | HS AgroFoods`,
-    description: `Buy authentic, 100% pure ${formattedName} from HS AgroFoods.`,
+    title: finalTitle,
+    description: finalDescription,
+    alternates: { canonical },
+    openGraph: {
+      type: 'website',
+      title: `${title} | HS AgroFoods`,
+      description: finalDescription,
+      url: canonical,
+      ...(image ? { images: [{ url: absoluteUrl(image), alt: name }] } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | HS AgroFoods`,
+      description: finalDescription,
+      ...(image ? { images: [absoluteUrl(image)] } : {}),
+    },
   }
 }
 
@@ -268,10 +299,55 @@ export default async function ProductDetailsPage({
   const sortedFaqs = (product.product_faqs || []).sort(
     (a: any, b: any) => (a.display_order || 0) - (b.display_order || 0)
   )
-  const displayedFaqs = product.use_global_faqs && globalFaqs.length > 0 ? globalFaqs : sortedFaqs
+  // The product's own FAQs always come first; store-wide FAQs are only appended when the admin switched that on.
+  const displayedFaqs = product.use_global_faqs ? [...sortedFaqs, ...globalFaqs] : sortedFaqs
+
+  // Structured data so Google can show price, availability and star ratings in search results
+  const ratingCount = reviews.length > 0 ? reviews.length : Number(product.review_count) || 0
+  const ratingValue =
+    reviews.length > 0
+      ? reviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 0), 0) / reviews.length
+      : Number(product.average_rating) || 0
+
+  const structuredData: Record<string, unknown>[] = [
+    productJsonLd({
+      slug: product.slug || slug,
+      name: product.name,
+      description: product.short_description || product.description,
+      images: [product.featured_image_url, ...((product.product_images || []) as any[]).map((img) => img.image_url)],
+      category: product.categories?.name,
+      variants: product.product_variants || [],
+      ratingValue,
+      ratingCount,
+      reviews: reviews.map((r: any) => ({
+        author: r.user?.full_name || 'Verified Customer',
+        rating: Number(r.rating) || 5,
+        text: r.review_text,
+        date: r.created_at,
+      })),
+    }),
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: 'Shop', path: '/shop' },
+      ...(product.categories?.slug ? [{ name: product.categories.name, path: `/shop?category=${product.categories.slug}` }] : []),
+      { name: product.name, path: `/product/${product.slug || slug}` },
+    ]),
+  ]
+  if (displayedFaqs.length > 0) {
+    structuredData.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: displayedFaqs.slice(0, 10).map((faq: any) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+      })),
+    })
+  }
 
   return (
     <div className="bg-[#FAF7F2] min-h-screen py-6 sm:py-10 text-[#14361F] relative overflow-hidden">
+      <JsonLd data={structuredData} />
       {/* ── Ambient Background Lighting Gradients ── */}
       <div
         className="absolute inset-0 pointer-events-none select-none z-0"
@@ -286,9 +362,9 @@ export default async function ProductDetailsPage({
       />
 
       {/* Decorative Corner Asset: Top Left Herbal Accent */}
-      <div className="absolute top-0 left-0 w-36 h-36 sm:w-56 sm:h-56 lg:w-72 lg:h-72 pointer-events-none select-none mix-blend-multiply opacity-75 z-0 -scale-x-100">
-        <Image
-          src="/images/accent-leaves-spices.png"
+      <div className="absolute top-0 left-0 w-36 h-36 sm:w-56 sm:h-56 lg:w-72 lg:h-72 pointer-events-none select-none mix-blend-multiply z-0 -scale-x-100 opacity-100">
+        <CornerAccentImage
+          kind="leaves"
           alt="Natural Spice Accent"
           fill
           className="object-contain object-top-right"

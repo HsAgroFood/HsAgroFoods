@@ -19,6 +19,8 @@ import {
   Star,
   Ticket,
   Mail,
+  Clapperboard,
+  LayoutTemplate,
   X,
 } from 'lucide-react'
 import { useAdminNav } from '@/contexts/AdminNavContext'
@@ -28,11 +30,13 @@ const navItems = [
   { label: 'Categories', href: '/admin/categories', icon: FolderTree },
   { label: 'Products', href: '/admin/products', icon: Package },
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart },
+  { label: 'Home Customization', href: '/admin/home-customization', icon: LayoutTemplate },
   { label: 'Customers', href: '/admin/customers', icon: Users },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
   { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
   { label: 'Subscribers', href: '/admin/subscribers', icon: Mail },
   { label: 'Hero Slides', href: '/admin/hero-slides', icon: ImageIcon },
+  { label: 'Reels', href: '/admin/reels', icon: Clapperboard },
   { label: 'Announcements', href: '/admin/announcements', icon: Megaphone },
   { label: 'Coupons', href: '/admin/coupons', icon: Ticket },
   { label: 'Delivery Settings', href: '/admin/delivery-settings', icon: Truck },

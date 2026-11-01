@@ -78,11 +78,11 @@ export default function ProductFaqEditor({
             Frequently Asked Questions
           </h2>
           <p className="text-xs text-stone-400 mt-0.5">
-            Product-specific Q&A displayed on the product detail page
+            Questions for this product only. They are shown on its product page under FAQs &amp; Care.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-stone-700">Use Global FAQs</label>
+        <div className="flex items-center gap-2" title="Adds the store-wide FAQs (Admin > Global FAQs) after this product's own FAQs">
+          <label className="text-sm font-medium text-stone-700">Also show store-wide FAQs</label>
           <button
             type="button"
             onClick={async () => {
@@ -109,8 +109,7 @@ export default function ProductFaqEditor({
         </div>
       </div>
 
-      {!useGlobal && (
-        <>
+      <>
           <div className="flex justify-end">
             <button
               type="button"
@@ -185,8 +184,7 @@ export default function ProductFaqEditor({
         )}
         Save FAQs
       </button>
-        </>
-      )}
+      </>
     </div>
   )
 }

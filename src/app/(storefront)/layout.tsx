@@ -1,4 +1,6 @@
 import { Navbar } from '@/components/storefront/Navbar'
+import { CornerAccentsProvider } from '@/components/storefront/CornerAccents'
+import { getCornerAccents } from '@/lib/cornerAccents'
 import { Footer } from '@/components/storefront/Footer'
 import { CartProvider } from '@/contexts/CartContext'
 import { getCartCount } from '@/actions/cart'
@@ -89,7 +91,10 @@ export default async function StorefrontLayout({
     // Safe offline fallback
   }
 
+  const cornerAccents = await getCornerAccents()
+
   return (
+    <CornerAccentsProvider accents={cornerAccents}>
     <ShippingConfigProvider config={shippingConfig}>
     <CartProvider initialCount={cartCount}>
       <div className="min-h-screen flex flex-col bg-[#FBF5EE]">
@@ -104,5 +109,6 @@ export default async function StorefrontLayout({
       </div>
     </CartProvider>
     </ShippingConfigProvider>
+    </CornerAccentsProvider>
   )
 }

@@ -16,8 +16,9 @@ import {
 } from 'lucide-react'
 
 export const metadata = {
-  title: 'Terms of Service | HS AgroFoods',
+  title: 'Terms of Service',
   description: 'Understand the terms, shipping conditions, and return guarantees for purchasing pure spices and dehydrated vegetable & fruit powders from HS AgroFoods.',
+  alternates: { canonical: '/terms' },
 }
 
 export const dynamic = 'force-dynamic'

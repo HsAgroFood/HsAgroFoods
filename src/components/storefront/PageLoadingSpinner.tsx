@@ -16,7 +16,7 @@ export function PageLoadingSpinner({
       className={`flex flex-col items-center justify-center text-center select-none ${className}`}
     >
       {/* ── Center Logo & Outside Small Rotating Circle ── */}
-      <div className="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28">
+      <div className="relative flex items-center justify-center w-32 h-32 sm:w-36 sm:h-36">
         
         {/* Outside Rotating Circle (Small, Modern Gradient Arc) */}
         <svg
@@ -54,13 +54,13 @@ export function PageLoadingSpinner({
         </svg>
 
         {/* Center Brand Logo Box (Rounded 5px) */}
-        <div className="relative z-10 w-14 h-14 sm:w-16 sm:h-16  p-1.5 flex items-center justify-center  transition-transform duration-300">
+        <div className="relative z-10 w-[84px] h-[84px] sm:w-24 sm:h-24 p-1 flex items-center justify-center transition-transform duration-300">
           <Image
             src="/images/logo.png"
             alt="HS AgroFoods"
-            width={48}
-            height={48}
-            className="object-contain"
+            width={96}
+            height={96}
+            className="h-full w-full object-contain"
             priority
           />
         </div>
